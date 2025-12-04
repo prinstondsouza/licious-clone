@@ -37,6 +37,23 @@ const orderSchema = new mongoose.Schema(
       ref: "DeliveryPartner", // UPDATED (was "User")
       default: null,
     },
+
+    paymentInfo: {
+      id: { type: String },          // Razorpay payment ID
+      orderId: { type: String },     // Razorpay order ID
+      signature: { type: String },
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed", "cod"],
+      default: "pending",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["razorpay", "cod"],
+      default: "cod",
+    },
+
   },
   { timestamps: true }
 );

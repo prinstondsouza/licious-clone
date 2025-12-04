@@ -12,6 +12,7 @@ import userRoutes from "./routes/userRoutes.js";
 
 
 
+
 import adminRoutes from "./routes/adminRoutes.js";
 import vendorRoutes from "./routes/vendorRoutes.js";
 import deliveryRoutes from "./routes/deliveryRoutes.js";
@@ -19,6 +20,7 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import deliveryPartnerRoutes from "./routes/deliveryPartnerRoutes.js";
+// import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 
@@ -69,6 +71,9 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 
 app.use("/api/delivery", deliveryPartnerRoutes);
+
+// app.use("/api/payments", paymentRoutes);
+
 
 
 
