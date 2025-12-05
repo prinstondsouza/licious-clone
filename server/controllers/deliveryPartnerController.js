@@ -119,12 +119,69 @@
 
 import DeliveryPartner from "../models/deliveryPartnerModel.js";
 import Order from "../models/orderModel.js";
+import User from "../models/userModel.js";
 
 /**
- * Register Delivery Partner (Admin-only)
- * Optionally accepts userId to link to a User account
+ * Self-registration for Delivery Partners (public endpoint)
  */
 export const registerDeliveryPartner = async (req, res) => {
+  try {
+    const { name, phone, vehicleType, email, password } = req.body;
+
+    if (!name || !phone || !vehicleType || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if delivery partner already exists
+    const exists = await DeliveryPartner.findOne({ phone });
+    if (exists) {
+      return res.status(400).json({ message: "Delivery partner already registered with this phone number" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists with this email" });
+    }
+
+    // Create user account with delivery role
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: "delivery",
+      phone,
+    });
+
+    // Create delivery partner profile with pending status
+    const deliveryPartner = await DeliveryPartner.create({
+      name,
+      phone,
+      vehicleType,
+      userId: user._id,
+      status: "pending", // Will be approved by admin
+      assignedOrders: [],
+    });
+
+    res.status(201).json({
+      message: "Delivery partner registration submitted. Waiting for admin approval.",
+      deliveryPartner: {
+        id: deliveryPartner._id,
+        name: deliveryPartner.name,
+        phone: deliveryPartner.phone,
+        vehicleType: deliveryPartner.vehicleType,
+        status: deliveryPartner.status,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Admin creates a new delivery partner (alternative method)
+ */
+export const createDeliveryPartner = async (req, res) => {
   try {
     const { name, phone, vehicleType, userId } = req.body;
 
@@ -148,11 +205,12 @@ export const registerDeliveryPartner = async (req, res) => {
       phone,
       vehicleType,
       userId: userId || null,
+      status: "approved", // Admin-created partners are auto-approved
       assignedOrders: [],
     });
 
     res.status(201).json({
-      message: "Delivery partner registered successfully",
+      message: "Delivery partner created successfully",
       deliveryPartner,
     });
   } catch (error) {
@@ -289,6 +347,49 @@ export const linkUserToPartner = async (req, res) => {
 };
 
 /**
+ * Admin approves/rejects delivery partner
+ */
+export const updateDeliveryPartnerStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // status = approved/rejected
+
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status. Use 'approved' or 'rejected'" });
+    }
+
+    const deliveryPartner = await DeliveryPartner.findById(id);
+    if (!deliveryPartner) {
+      return res.status(404).json({ message: "Delivery partner not found" });
+    }
+
+    deliveryPartner.status = status;
+    await deliveryPartner.save();
+
+    res.json({ 
+      message: `Delivery partner ${status} successfully`, 
+      deliveryPartner 
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Get all delivery partners (Admin) - can filter by status
+ */
+export const getAllDeliveryPartners = async (req, res) => {
+  try {
+    const { status } = req.query; // Optional filter: ?status=pending
+    const query = status ? { status } : {};
+    const deliveryPartners = await DeliveryPartner.find(query).populate("userId", "name email");
+    res.json({ deliveryPartners });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * View all orders assigned to a delivery partner
  */
 export const getAssignedOrders = async (req, res) => {
@@ -298,6 +399,14 @@ export const getAssignedOrders = async (req, res) => {
     
     if (!deliveryPartner) {
       return res.status(404).json({ message: "Delivery partner profile not found for this user. Please link your account to a delivery partner." });
+    }
+
+    // Check if delivery partner is approved
+    if (deliveryPartner.status !== "approved") {
+      return res.status(403).json({ 
+        message: "Your delivery partner account is pending approval",
+        status: deliveryPartner.status 
+      });
     }
 
     // Query orders assigned to this DeliveryPartner

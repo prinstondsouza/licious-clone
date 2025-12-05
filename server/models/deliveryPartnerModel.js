@@ -8,9 +8,16 @@ const deliveryPartnerSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
+      required: true,
     },
     vehicleType: {
       type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,10 +1,13 @@
 import express from "express";
 import {
   registerDeliveryPartner,
+  createDeliveryPartner,
   assignDeliveryPartner,
   updateDeliveryStatus,
   getAssignedOrders,
-  linkUserToPartner
+  linkUserToPartner,
+  updateDeliveryPartnerStatus,
+  getAllDeliveryPartners
 } from "../controllers/deliveryPartnerController.js";
 
 import { protect, authorizeRoles, optionalProtect } from "../middlewares/authMiddleware.js";
@@ -12,13 +15,32 @@ import { protect, authorizeRoles, optionalProtect } from "../middlewares/authMid
 const router = express.Router();
 
 /**
- * Admin registers new delivery partner
+ * Public self-registration for delivery partners
+ */
+router.post("/register", registerDeliveryPartner);
+
+/**
+ * Admin routes
  */
 router.post(
-  "/register",
+  "/create",
   protect,
   authorizeRoles("admin"),
-  registerDeliveryPartner
+  createDeliveryPartner
+);
+
+router.get(
+  "/",
+  protect,
+  authorizeRoles("admin"),
+  getAllDeliveryPartners
+);
+
+router.put(
+  "/status/:id",
+  protect,
+  authorizeRoles("admin"),
+  updateDeliveryPartnerStatus
 );
 
 /**

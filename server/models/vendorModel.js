@@ -33,9 +33,15 @@ const vendorSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected"],
       default: "pending",
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      unique: true,
+      sparse: true, // Allows multiple null values
+    },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Admin who created the vendor
+      ref: "User", // Admin who created/approved the vendor (optional)
     },
     products: [
       {
