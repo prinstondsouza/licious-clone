@@ -20,7 +20,7 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import deliveryPartnerRoutes from "./routes/deliveryPartnerRoutes.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
+// import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 
@@ -37,12 +37,12 @@ app.use(express.json());
 // connect to db
 connectDB();
 
-
+// sample route
 app.get("/", (req, res) => {
     res.send("API is running...");
 });
 
-
+// server
 const PORT = process.env.PORT || 5000;
 
 
@@ -72,7 +72,7 @@ app.use("/api/orders", orderRoutes);
 
 app.use("/api/delivery", deliveryPartnerRoutes);
 
-app.use("/api/payments", paymentRoutes);
+// app.use("/api/payments", paymentRoutes);
 
 
 
