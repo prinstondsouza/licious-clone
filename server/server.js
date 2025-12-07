@@ -20,7 +20,7 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import deliveryPartnerRoutes from "./routes/deliveryPartnerRoutes.js";
-// import paymentRoutes from "./routes/paymentRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 
 
