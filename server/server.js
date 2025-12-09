@@ -42,7 +42,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/vendor", vendorRoutes);
-app.use("/api/vendors", vendorRoutes); // Alias for consistency
+app.use("/api/vendors", vendorRoutes); // Alias for consistency // redundant
 app.use("/api/deliver", deliveryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
