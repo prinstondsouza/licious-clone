@@ -56,13 +56,12 @@ const deliveryPartnerSchema = new mongoose.Schema(
 );
 
 // Hash password before saving
-deliveryPartnerSchema.pre("save", async function (next) {
+deliveryPartnerSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    return next();
+    return;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 // Create geospatial index for location-based queries
