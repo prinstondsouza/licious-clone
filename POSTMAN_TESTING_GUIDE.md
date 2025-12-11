@@ -290,7 +290,7 @@
   - **PUT** `http://localhost:5000/api/vendors/status/:id`
   - **Body (JSON)**: `{"status": "approved"}`
 - **Get All Delivery Partners**
-  - **GET** `http://localhost:5000/api/admin/delivery` (or `/api/delivery`)
+  - **GET** `http://localhost:5000/api/admin/delivery` (or `http://localhost:5000/api/delivery`)
 
 ---
 
