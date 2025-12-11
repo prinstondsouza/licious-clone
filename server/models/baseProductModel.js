@@ -28,8 +28,14 @@ const baseProductSchema = new mongoose.Schema(
     ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
       required: true,
+      refPath: "creatorModel",
+    },
+    creatorModel: {
+      type: String,
+      required: true,
+      enum: ["Admin", "Vendor"],
+      default: "Admin",
     },
     status: {
       type: String,

@@ -209,9 +209,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in km
 }
@@ -240,6 +240,60 @@ export const getAllVendorProducts = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json({ vendorProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Vendor creates their own product (BaseProduct + VendorProduct)
+export const createVendorOwnProduct = async (req, res) => {
+  try {
+    const { name, category, description, price, stock } = req.body;
+    const vendorId = req.user._id;
+
+    if (!name || !category || !price) {
+      return res.status(400).json({ message: "Name, category, and price are required" });
+    }
+
+    // Handle image uploads
+    const images = [];
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file) => {
+        images.push(`/uploads/${file.filename}`);
+      });
+    }
+
+    // 1. Create Base Product
+    const baseProduct = await BaseProduct.create({
+      name,
+      category,
+      description,
+      basePrice: parseFloat(price),
+      images,
+      createdBy: vendorId,
+      creatorModel: "Vendor",
+      status: "active",
+    });
+
+    // 2. Add to Vendor Inventory
+    const vendorProduct = await VendorProduct.create({
+      baseProduct: baseProduct._id,
+      vendor: vendorId,
+      price: parseFloat(price),
+      stock: stock ? parseInt(stock) : 0,
+      images, // Vendor product can have same images initially
+      addedBy: vendorId,
+      lastUpdatedBy: vendorId,
+    });
+
+    const populated = await VendorProduct.findById(vendorProduct._id)
+      .populate("baseProduct")
+      .populate("vendor", "storeName ownerName");
+
+    res.status(201).json({
+      message: "Product created and added to inventory successfully",
+      vendorProduct: populated,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

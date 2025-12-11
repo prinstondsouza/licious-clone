@@ -15,6 +15,7 @@ import {
   getProductsNearby,
   getAllVendorProducts,
   uploadVendorProductImages,
+  createVendorOwnProduct,
 } from "../controllers/vendorProductController.js";
 
 const router = express.Router();
@@ -58,6 +59,13 @@ router.post(
   authorizeRoles("vendor"),
   uploadVendorProductImages,
   addToInventory
+);
+router.post(
+  "/vendor/create-new",
+  protect,
+  authorizeRoles("vendor"),
+  uploadVendorProductImages,
+  createVendorOwnProduct
 );
 router.get(
   "/vendor/inventory",
