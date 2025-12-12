@@ -133,10 +133,11 @@
 ## 3. Product Catalog (Base Products)
 *Base Products are the global catalog items managed by Admin.*
 
-- **Get All Base Products (Public)**
+### Admin & Vendor Only
+- **Get All Base Products**
   - **GET** `http://localhost:5000/api/products/base`
   - **Query Params**: `?category=Chicken&status=active` (Optional)
-- **Get Base Product by ID (Public)**
+- **Get Base Product by ID**
   - **GET** `http://localhost:5000/api/products/base/:id`
 
 ### Admin Only
