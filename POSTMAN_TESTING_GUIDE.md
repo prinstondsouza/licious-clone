@@ -167,6 +167,8 @@
 - **Get All Vendor Products**
   - **GET** `http://localhost:5000/api/products/vendor`
   - **Query Params**: `?vendorId=<id>`
+- **Get Vendor Product by ID**
+  - **GET** `http://localhost:5000/api/products/vendor/:id`
 
 ### Vendor Only
 - **Add Product to Inventory** (From Base Catalog)

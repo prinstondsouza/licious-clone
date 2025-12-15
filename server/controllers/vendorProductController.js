@@ -400,6 +400,60 @@ export const createVendorOwnProduct = async (req, res) => {
   }
 };
 
+// Get single vendor product by ID
+export const getVendorProductById = async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    const vendorProduct = await VendorProduct.findById(productId)
+      .populate("baseProduct")
+      .populate("vendor", "storeName ownerName location address")
+      .populate("addedBy", "storeName")
+      .populate("lastUpdatedBy", "storeName");
+
+    if (!vendorProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const productObj = vendorProduct.toObject();
+    const base = productObj.baseProduct;
+
+    const normalizedProduct = {
+      _id: productObj._id,
+      vendor: productObj.vendor,
+      // Prioritize vendor-specific fields, fallback to baseProduct fields
+      name: productObj.name || (base ? base.name : undefined),
+      category: productObj.category || (base ? base.category : undefined),
+      description: productObj.description || (base ? base.description : ""),
+      price: productObj.price,
+      stock: productObj.stock,
+      // Use vendor images if available, otherwise base images
+      images: (productObj.images && productObj.images.length > 0)
+        ? productObj.images
+        : (base ? base.images : []),
+      addedBy: productObj.addedBy,
+      lastUpdatedBy: productObj.lastUpdatedBy,
+      status: productObj.status,
+      createdAt: productObj.createdAt,
+      updatedAt: productObj.updatedAt,
+      __v: productObj.__v,
+      // Keep baseProduct
+      baseProduct: base ? base : {
+        _id: productObj._id,
+        name: productObj.name,
+        category: productObj.category,
+        description: productObj.description,
+        images: productObj.images,
+        basePrice: productObj.price
+      }
+    };
+
+    res.json({ vendorProduct: normalizedProduct });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Export upload middleware
 export { uploadMultiple as uploadVendorProductImages };
 
