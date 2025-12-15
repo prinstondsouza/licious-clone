@@ -121,6 +121,16 @@ export const getVendorInventory = async (req, res) => {
     // Normalize response
     const normalizedProducts = vendorProducts.map(vp => {
       let productObj = vp.toObject();
+
+      if (productObj.baseProduct) {
+        productObj.name = productObj.name || productObj.baseProduct.name;
+        productObj.category = productObj.category || productObj.baseProduct.category;
+        productObj.description = productObj.description || productObj.baseProduct.description;
+        if (!productObj.images || productObj.images.length === 0) {
+          productObj.images = productObj.baseProduct.images;
+        }
+      }
+
       if (!productObj.baseProduct) {
         productObj.baseProduct = {
           _id: productObj._id,
@@ -197,6 +207,15 @@ export const getProductsNearby = async (req, res) => {
       let productObj = vp.toObject();
 
       // Normalize standalone products to look like linked products for frontend compatibility
+      if (productObj.baseProduct) {
+        productObj.name = productObj.name || productObj.baseProduct.name;
+        productObj.category = productObj.category || productObj.baseProduct.category;
+        productObj.description = productObj.description || productObj.baseProduct.description;
+        if (!productObj.images || productObj.images.length === 0) {
+          productObj.images = productObj.baseProduct.images;
+        }
+      }
+
       if (!productObj.baseProduct) {
         productObj.baseProduct = {
           _id: productObj._id,
@@ -280,6 +299,16 @@ export const getAllVendorProducts = async (req, res) => {
     // Normalize response
     const normalizedProducts = vendorProducts.map(vp => {
       let productObj = vp.toObject();
+
+      if (productObj.baseProduct) {
+        productObj.name = productObj.name || productObj.baseProduct.name;
+        productObj.category = productObj.category || productObj.baseProduct.category;
+        productObj.description = productObj.description || productObj.baseProduct.description;
+        if (!productObj.images || productObj.images.length === 0) {
+          productObj.images = productObj.baseProduct.images;
+        }
+      }
+
       if (!productObj.baseProduct) {
         productObj.baseProduct = {
           _id: productObj._id,
