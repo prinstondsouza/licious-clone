@@ -21,9 +21,19 @@ import {
 const router = express.Router();
 
 // ========== BASE PRODUCTS (Catalog) ==========
-// Public routes
-router.get("/base", getAllBaseProducts);
-router.get("/base/:id", getBaseProductById);
+// Public routes - RESTRICTED to Admin and Vendor only
+router.get(
+  "/base",
+  protect,
+  authorizeRoles("admin", "vendor"),
+  getAllBaseProducts
+);
+router.get(
+  "/base/:id",
+  protect,
+  authorizeRoles("admin", "vendor"),
+  getBaseProductById
+);
 
 // Admin routes
 router.post(

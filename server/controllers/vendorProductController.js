@@ -118,7 +118,23 @@ export const getVendorInventory = async (req, res) => {
       .populate("lastUpdatedBy", "storeName")
       .sort({ createdAt: -1 });
 
-    res.json({ vendorProducts });
+    // Normalize response
+    const normalizedProducts = vendorProducts.map(vp => {
+      let productObj = vp.toObject();
+      if (!productObj.baseProduct) {
+        productObj.baseProduct = {
+          _id: productObj._id,
+          name: productObj.name,
+          category: productObj.category,
+          description: productObj.description,
+          images: productObj.images,
+          basePrice: productObj.price
+        };
+      }
+      return productObj;
+    });
+
+    res.json({ vendorProducts: normalizedProducts });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -162,7 +178,11 @@ export const getProductsNearby = async (req, res) => {
     if (category) {
       const baseProducts = await BaseProduct.find({ category, status: "active" });
       const baseProductIds = baseProducts.map((bp) => bp._id);
-      query.baseProduct = { $in: baseProductIds };
+
+      query.$or = [
+        { baseProduct: { $in: baseProductIds } },
+        { category: category, baseProduct: null }
+      ];
     }
 
     const vendorProducts = await VendorProduct.find(query)
@@ -174,6 +194,20 @@ export const getProductsNearby = async (req, res) => {
     // Calculate distance for each vendor
     const productsWithDistance = vendorProducts.map((vp) => {
       const vendor = vp.vendor;
+      let productObj = vp.toObject();
+
+      // Normalize standalone products to look like linked products for frontend compatibility
+      if (!productObj.baseProduct) {
+        productObj.baseProduct = {
+          _id: productObj._id,
+          name: productObj.name,
+          category: productObj.category,
+          description: productObj.description,
+          images: productObj.images,
+          basePrice: productObj.price
+        };
+      }
+
       if (vendor.location && vendor.location.coordinates) {
         const [lng, lat] = vendor.location.coordinates;
         const distance = calculateDistance(
@@ -183,11 +217,11 @@ export const getProductsNearby = async (req, res) => {
           lng
         );
         return {
-          ...vp.toObject(),
+          ...productObj,
           distance: Math.round(distance * 100) / 100, // Round to 2 decimal places (km)
         };
       }
-      return vp.toObject();
+      return productObj;
     });
 
     res.json({
@@ -229,7 +263,11 @@ export const getAllVendorProducts = async (req, res) => {
     if (category) {
       const baseProducts = await BaseProduct.find({ category, status: "active" });
       const baseProductIds = baseProducts.map((bp) => bp._id);
-      query.baseProduct = { $in: baseProductIds };
+
+      query.$or = [
+        { baseProduct: { $in: baseProductIds } },
+        { category: category, baseProduct: null }
+      ];
     }
 
     const vendorProducts = await VendorProduct.find(query)
@@ -239,13 +277,29 @@ export const getAllVendorProducts = async (req, res) => {
       .populate("lastUpdatedBy", "storeName")
       .sort({ createdAt: -1 });
 
-    res.json({ vendorProducts });
+    // Normalize response
+    const normalizedProducts = vendorProducts.map(vp => {
+      let productObj = vp.toObject();
+      if (!productObj.baseProduct) {
+        productObj.baseProduct = {
+          _id: productObj._id,
+          name: productObj.name,
+          category: productObj.category,
+          description: productObj.description,
+          images: productObj.images,
+          basePrice: productObj.price
+        };
+      }
+      return productObj;
+    });
+
+    res.json({ vendorProducts: normalizedProducts });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Vendor creates their own product (BaseProduct + VendorProduct)
+// Vendor creates their own product (Standalone VendorProduct)
 export const createVendorOwnProduct = async (req, res) => {
   try {
     const { name, category, description, price, stock } = req.body;
@@ -263,35 +317,26 @@ export const createVendorOwnProduct = async (req, res) => {
       });
     }
 
-    // 1. Create Base Product
-    const baseProduct = await BaseProduct.create({
+    // Create Standalone Vendor Product (no baseProduct)
+    const vendorProduct = await VendorProduct.create({
+      // baseProduct: null, // Standalone - omitted so it's undefined
+
+      vendor: vendorId,
       name,
       category,
       description,
-      basePrice: parseFloat(price),
-      images,
-      createdBy: vendorId,
-      creatorModel: "Vendor",
-      status: "active",
-    });
-
-    // 2. Add to Vendor Inventory
-    const vendorProduct = await VendorProduct.create({
-      baseProduct: baseProduct._id,
-      vendor: vendorId,
       price: parseFloat(price),
       stock: stock ? parseInt(stock) : 0,
-      images, // Vendor product can have same images initially
+      images,
       addedBy: vendorId,
       lastUpdatedBy: vendorId,
     });
 
     const populated = await VendorProduct.findById(vendorProduct._id)
-      .populate("baseProduct")
       .populate("vendor", "storeName ownerName");
 
     res.status(201).json({
-      message: "Product created and added to inventory successfully",
+      message: "Product created successfully",
       vendorProduct: populated,
     });
   } catch (error) {
