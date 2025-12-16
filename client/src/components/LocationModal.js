@@ -3,7 +3,6 @@ import axios from "axios";
 import LocationSearchInput from "./LocationSearchInput";
 
 const LocationModal = ({ onClose, onSave }) => {
-  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -36,8 +35,6 @@ const LocationModal = ({ onClose, onSave }) => {
             }
           );
 
-          console.log(res.data);
-
           onSave(res.data.user.address);
           onClose();
         } catch (err) {
@@ -53,32 +50,6 @@ const LocationModal = ({ onClose, onSave }) => {
     );
   };
 
-  // Manual address
-  const saveManualAddress = async () => {   
-    if (!address) return alert("Enter address");
-
-    try {
-      setLoading(true);
-
-      const res = await axios.put(
-        "/api/users/location",
-        { address },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      onSave(res.data.user.address);
-      onClose();
-    } catch (err) {
-      alert("Failed to save address");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div style={overlayStyle}>
       <div style={modalStyle}>
@@ -91,32 +62,32 @@ const LocationModal = ({ onClose, onSave }) => {
         <hr />
 
         <LocationSearchInput
-  onSelect={async ({ address, latitude, longitude }) => {
-    try {
-      const token = localStorage.getItem("token");
+          onSelect={async ({ address, latitude, longitude }) => {
+            try {
+              const token = localStorage.getItem("token");
 
-      const res = await axios.put(
-        "/api/users/location",
-        {
-          address,
-          latitude,
-          longitude,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+              const res = await axios.put(
+                "/api/users/location",
+                {
+                  address,
+                  latitude,
+                  longitude,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
 
-      onSave(res.data.user.address);
-      onClose();
-    } catch (error) {
-      alert("Failed to save location");
-    }
-  }}
-/>
-
+              onSave(res.data.user.address);
+              onClose();
+            } catch (error) {
+              alert("Failed to save location");
+            }
+          }}
+        />
+        <button onClick={onClose}>Close</button>
       </div>
     </div>
   );
