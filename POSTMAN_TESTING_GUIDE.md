@@ -229,7 +229,15 @@
 ### User
 - **Place Order**
   - **POST** `http://localhost:5000/api/orders/place`
-  - **Body (JSON)**: `{}` (Uses items from cart)
+  - **Body (JSON)**:
+    ```json
+    {
+      "latitude": 12.9716, // Optional: Update location and check eligibility
+      "longitude": 77.5946,
+      "address": "123 New Street, Bangalore" // Optional
+    }
+    ```
+    *(Empty body `{}` uses existing profile location)*
 - **Get My Orders**
   - **GET** `http://localhost:5000/api/orders/my-orders`
 
