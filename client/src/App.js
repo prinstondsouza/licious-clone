@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Import your components
 import Navbar from './components/Navbar';
-import Home from './components/Home'; // We will build this next
+import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import Cart from './components/Cart';
@@ -13,8 +13,6 @@ function App() {
     <Router>
       <div className="App">
         <Navbar />
-        
-        {/* The Routes determine which component to show based on the URL */}
         <div style={{ padding: '20px' }}>
           <Routes>
             <Route path="/" element={<Home />} />

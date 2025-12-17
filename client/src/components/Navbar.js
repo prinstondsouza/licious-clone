@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import LocationModal from "./LocationModal";
-import LocationSearchInput from "./LocationSearchInput";
 
 const Navbar = () => {
   const [address, setAddress] = useState("");
+  const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
 
   useEffect(() => {
@@ -32,39 +32,6 @@ const Navbar = () => {
     fetchUserProfile();
   }, []);
 
-  // 👇 HANDLE ADDRESS CHANGE
-  const handleChange = async () => {
-    const newAddress = prompt("Enter your delivery address:");
-
-    if (!newAddress) return;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.put(
-        "/api/users/location",
-        {
-          address: newAddress,
-          // latitude & longitude optional
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setAddress(res.data.user.address);
-      alert("Location updated successfully!");
-    } catch (error) {
-      console.error(
-        "Update location error:",
-        error.response?.data || error.message
-      );
-      alert("Failed to update location");
-    }
-  };
-
   const navStyle = {
     display: "flex",
     justifyContent: "space-between",
@@ -90,7 +57,8 @@ const Navbar = () => {
           >
             Licious Clone
           </Link>
-
+        </div>
+        <div>
           <button
             onClick={() => setShowLocationModal(true)}
             style={{
@@ -107,19 +75,38 @@ const Navbar = () => {
           </button>
         </div>
 
+        <div>
+          <input
+            type="text"
+            placeholder="Search for products, categories..."
+            style={{
+              padding: "8px",
+              width: "300px",
+              borderRadius: "4px",
+              border: "1px solid #ddd",
+            }}
+          />
+        </div>
+
         {/* Links */}
         <div style={{ display: "flex", gap: "20px" }}>
-          <Link to="/" style={{ textDecoration: "none", color: "#333" }}>
-            Base Products
+          {/* <Link to="/" style={{ textDecoration: "none", color: "#333" }}>
+            Home
+          </Link> */}
+          <Link to="/categories" style={{ textDecoration: "none", color: "#333" }}>
+            Categories
           </Link>
+          <Link to="/stores" style={{ textDecoration: "none", color: "#333" }}>
+            Stores
+          </Link>
+          <Link to={isLoggedin ? "/profile" : "/login"} style={{ textDecoration: "none", color: "#333" }}>
+            {isLoggedin ? "Profile" : "Login"}
+          </Link>
+          {/* <Link to="/register" style={{ textDecoration: "none", color: "#333" }}>
+            Register
+          </Link> */}
           <Link to="/cart" style={{ textDecoration: "none", color: "#333" }}>
             Cart
-          </Link>
-          <Link to="/login" style={{ textDecoration: "none", color: "#333" }}>
-            Login
-          </Link>
-          <Link to="/register" style={{ textDecoration: "none", color: "#333" }}>
-            Register
           </Link>
         </div>
       </nav>

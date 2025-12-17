@@ -6,6 +6,7 @@ import axios from "axios";
 const Home = () => {
   const [items, setItems] = useState([]);
   const [username, setUsername] = useState("");
+
   const addToCart = async (vendorProductId) => {
   try {
     const token = localStorage.getItem("token");
@@ -22,9 +23,7 @@ const Home = () => {
         },
       }
     );
-
     alert("Item added to cart!");
-    console.log("Add to Cart Response:", res.data);
   } catch (error) {
     console.error("Add to cart error:", error.response?.data || error.message);
     alert(error.response?.data?.message || "Failed to add item");
@@ -35,8 +34,7 @@ const Home = () => {
     axios
       .get("/api/products/vendor")
       .then((response) => {
-        console.log("API Response:", response.data);
-        // Handling the "baseProducts" wrapper you saw earlier
+        // console.log("API Response:", response.data);
         setItems(response.data.vendorProducts || response.data);
       })
       .catch((error) => console.error("Error fetching products:", error));
