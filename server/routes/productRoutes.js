@@ -62,6 +62,14 @@ router.delete(
 // Public routes
 router.get("/nearby", getProductsNearby); // Requires latitude, longitude query params
 router.get("/vendor", getAllVendorProducts);
+
+router.get(
+  "/vendor/inventory",
+  protect,
+  authorizeRoles("vendor"),
+  getVendorInventory
+);
+
 router.get("/vendor/:id", getVendorProductById);
 
 // Vendor routes
@@ -79,12 +87,7 @@ router.post(
   uploadVendorProductImages,
   createVendorOwnProduct
 );
-router.get(
-  "/vendor/inventory",
-  protect,
-  authorizeRoles("vendor"),
-  getVendorInventory
-);
+
 router.put(
   "/vendor/:id",
   protect,
