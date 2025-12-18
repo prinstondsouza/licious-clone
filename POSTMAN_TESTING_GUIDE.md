@@ -409,7 +409,6 @@ Check if the product is visible to users (e.g., via "Nearby Products").
 
 ---
 
-
 ## 📝 Troubleshooting
 
 *   **401 Unauthorized:** check if you included `Bearer ` prefix in the token.
