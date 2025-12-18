@@ -83,3 +83,15 @@ Check if the product is visible to users (e.g., via "Nearby Products").
 *   **401 Unauthorized:** check if you included `Bearer ` prefix in the token.
 *   **403 Forbidden:** check if the user role is actually `vendor`.
 *   **400 Bad Request:** check if all required fields (`name`, `category`, `price`) are provided.
+
+|           Route            | Method | Auth Required |  Role |
+|----------------------------|--------|---------------|-------|
+| `/api/users/register`      | POST   |       No      |      |
+| `/api/users/login`         | POST   |       No      |      |
+| `/api/vendors/register`    | POST   |       No      |      |
+| `/api/delivery/register`   | POST   |       No      |      |
+| `/api/products`            | GET    |       No      |      |
+| `/api/cart`                | GET    |      Yes      | user  |
+| `/api/orders/place`        | POST   |      Yes      | user  |
+| `/api/vendors/status/:id`  | PUT    |      Yes      | admin |
+| `/api/delivery/status/:id` | PUT    |      Yes      | admin |
