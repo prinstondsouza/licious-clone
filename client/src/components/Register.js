@@ -1,31 +1,17 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const navigate = useNavigate();
-
-  const [role, setRole] = useState("user");
-
   const [formData, setFormData] = useState({
-    // common
-    name: "",
-    email: "",
-    password: "",
-    phone: "",
-    address: "",
-
-    // vendor
-    storeName: "",
-    ownerName: "",
-    documents: "",
-
-    // delivery
-    vehicleType: "",
-    vehicleNumber: "",
-
-    latitude: 12.9716,
-    longitude: 77.5946,
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    address: '',
+    latitude: 12.9716, // Hardcoded for now (Bangalore)
+    longitude: 77.5946 
   });
 
   const handleChange = (e) => {
@@ -34,127 +20,32 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      let url = "";
-      let payload = {};
-
-      if (role === "user") {
-        url = "/api/auth/user/register";
-        payload = {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone,
-          address: formData.address,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-        };
-      }
-
-      if (role === "vendor") {
-        url = "/api/auth/vendor/register";
-        payload = {
-          storeName: formData.storeName,
-          ownerName: formData.ownerName,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone,
-          address: formData.address,
-          documents: formData.documents,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-        };
-      }
-
-      if (role === "delivery") {
-        url = "/api/auth/delivery/register";
-        payload = {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone,
-          vehicleType: formData.vehicleType,
-          vehicleNumber: formData.vehicleNumber,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-        };
-      }
-
-      await axios.post(url, payload);
-
-      alert(
-        role === "user"
-          ? "Registration successful. Please login."
-          : "Registration submitted. Waiting for admin approval."
-      );
-
-      navigate("/login");
+      // POST request to your backend
+      const res = await axios.post('/api/auth/user/register', formData);
+      console.log('Registration Success:', res.data);
+      alert('Registration Successful! Please Login.');
+      navigate('/login'); // Redirect to login page
     } catch (error) {
-      alert(error.response?.data?.message || "Registration failed");
+      console.error('Registration Error:', error.response?.data || error.message);
+      alert('Registration Failed: ' + (error.response?.data?.message || 'Server Error'));
     }
   };
 
-  const inputStyle = {
-    width: "100%",
-    padding: "10px",
-    marginBottom: "10px",
-    borderRadius: "5px",
-    border: "1px solid #ddd",
-  };
+  // Simple CSS for the form
+  const inputStyle = { display: 'block', width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '5px', border: '1px solid #ddd' };
 
   return (
-    <div style={{ maxWidth: "420px", margin: "40px auto", padding: "20px" }}>
-      <h2 style={{ textAlign: "center", color: "#d92662" }}>Register</h2>
-
-      <select value={role} onChange={(e) => setRole(e.target.value)} style={inputStyle}>
-        <option value="user">User</option>
-        <option value="vendor">Vendor</option>
-        <option value="delivery">Delivery Partner</option>
-      </select>
-
+    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
+      <h2 style={{ textAlign: 'center', color: '#d92662' }}>Register</h2>
       <form onSubmit={handleSubmit}>
-        {(role === "user" || role === "delivery") && (
-          <input name="name" placeholder="Full Name" onChange={handleChange} style={inputStyle} required />
-        )}
-
-        {role === "vendor" && (
-          <>
-            <input name="storeName" placeholder="Store Name" onChange={handleChange} style={inputStyle} required />
-            <input name="ownerName" placeholder="Owner Name" onChange={handleChange} style={inputStyle} required />
-          </>
-        )}
-
-        <input name="email" type="email" placeholder="Email" onChange={handleChange} style={inputStyle} required />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} style={inputStyle} required />
-        <input name="phone" placeholder="Phone Number" onChange={handleChange} style={inputStyle} required />
-
-        {role === "user" || role === "vendor" ? (
-          <textarea name="address" placeholder="Address" onChange={handleChange} style={inputStyle} />
-        ) : null}
-
-        {role === "vendor" && (
-          <input name="documents" placeholder="Documents URL / ID" onChange={handleChange} style={inputStyle} />
-        )}
-
-        {role === "delivery" && (
-          <>
-            <input name="vehicleType" placeholder="Vehicle Type" onChange={handleChange} style={inputStyle} required />
-            <input name="vehicleNumber" placeholder="Vehicle Number" onChange={handleChange} style={inputStyle} />
-          </>
-        )}
-
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#d92662",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <input type="text" name="name" placeholder="Full Name" onChange={handleChange} style={inputStyle} required />
+        <input type="email" name="email" placeholder="Email" onChange={handleChange} style={inputStyle} required />
+        <input type="password" name="password" placeholder="Password" onChange={handleChange} style={inputStyle} required />
+        <input type="text" name="phone" placeholder="Phone Number" onChange={handleChange} style={inputStyle} required />
+        <textarea name="address" placeholder="Address" onChange={handleChange} style={inputStyle} required />
+        
+        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#d92662', color: 'white', border: 'none', cursor: 'pointer' }}>
           Create Account
         </button>
       </form>

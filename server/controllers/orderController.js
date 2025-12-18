@@ -85,7 +85,7 @@ export const placeOrder = async (req, res) => {
       const vendorLat = vendor.location.coordinates[1];
 
       const distance = calculateDistance(userLat, userLng, vendorLat, vendorLng);
-      if (distance > 5) { // 5km radius
+      if (distance > 5 ) { // 5km radius
         return res.status(400).json({
           message: `You are too far from ${vendor.storeName}. Delivery is only available within 5km. Current distance: ${distance.toFixed(2)}km.`,
           isEligible: false,

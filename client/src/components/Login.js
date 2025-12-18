@@ -26,6 +26,8 @@ const Login = () => {
 
     localStorage.setItem('token', token);
     localStorage.setItem('username', user.name);
+    localStorage.setItem('email', user.email);
+    localStorage.setItem('phone', user.phone);
 
     const userType = getUserTypeFromToken();
 
