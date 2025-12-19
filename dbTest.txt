@@ -78,8 +78,4 @@ Check if the product is visible to users (e.g., via "Nearby Products").
 
 ---
 
-## 📝 Troubleshooting
 
-*   **401 Unauthorized:** check if you included `Bearer ` prefix in the token.
-*   **403 Forbidden:** check if the user role is actually `vendor`.
-*   **400 Bad Request:** check if all required fields (`name`, `category`, `price`) are provided.
