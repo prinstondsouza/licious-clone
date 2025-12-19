@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Categories from "./Categories";
 
 const Home = () => {
   const [items, setItems] = useState([]);
@@ -95,6 +96,7 @@ const Home = () => {
           </div>
         ))}
       </div>
+      <Categories />
     </div>
   );
 };
