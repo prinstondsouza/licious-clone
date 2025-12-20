@@ -10,28 +10,31 @@ const Home = () => {
   const [username, setUsername] = useState("");
 
   const addToCart = async (vendorProductId) => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const res = await axios.post(
-      "/api/cart/add",
-      {
-        vendorProductId,
-        quantity: 1,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await axios.post(
+        "/api/cart/add",
+        {
+          vendorProductId,
+          quantity: 1,
         },
-      }
-    );
-    alert("Item added to cart!");
-  } catch (error) {
-    console.error("Add to cart error:", error.response?.data || error.message);
-    alert(error.response?.data?.message || "Failed to add item");
-  }
-};
-  
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Item added to cart!");
+    } catch (error) {
+      console.error(
+        "Add to cart error:",
+        error.response?.data || error.message
+      );
+      alert(error.response?.data?.message || "Failed to add item");
+    }
+  };
+
   useEffect(() => {
     axios
       .get("/api/products/vendor")

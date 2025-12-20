@@ -23,6 +23,32 @@ const Categories = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const addToCart = async (vendorProductId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        "/api/cart/add",
+        {
+          vendorProductId,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Item added to cart!");
+    } catch (error) {
+      console.error(
+        "Add to cart error:",
+        error.response?.data || error.message
+      );
+      alert(error.response?.data?.message || "Failed to add item");
+    }
+  };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -30,20 +56,20 @@ const Categories = () => {
         const res = await axios.get("/api/products/vendor");
         const products = res.data.vendorProducts;
         setAllProducts(products);
-        
+
         // Get unique categories
         const uniqueCategories = [
           ...new Set(products.map((item) => item.category)),
         ];
-        
+
         // Store categories as objects with name
         const categoryObjects = uniqueCategories.map((category, index) => ({
           id: index,
           name: category,
         }));
-        
+
         setCategories(categoryObjects);
-        
+
         // Initially show all products
         setCategoryItems(products);
       } catch (error) {
@@ -52,13 +78,13 @@ const Categories = () => {
         setLoading(false);
       }
     };
-    
+
     fetchCategories();
   }, []);
 
   const handleCategoryClick = (categoryName) => {
     setSelectedCategory(categoryName);
-    
+
     if (categoryName === "all") {
       setCategoryItems(allProducts);
     } else {
@@ -103,13 +129,16 @@ const Categories = () => {
             ? `Products in ${selectedCategory} (${categoryItems.length})`
             : `All Products (${categoryItems.length})`}
         </h2>
-        
+
         {categoryItems.length === 0 ? (
           <p className="no-products">No products found in this category.</p>
         ) : (
           <div className="products-grid">
             {categoryItems.map((item) => (
-              <ProductCard key={item._id} product={item} />
+              <ProductCard
+                addToCart={() => addToCart(item._id)}
+                product={item}
+              />
             ))}
           </div>
         )}
@@ -252,7 +281,7 @@ const styles = `
 `;
 
 // Add the styles to the document head
-if (typeof document !== 'undefined') {
+if (typeof document !== "undefined") {
   const styleSheet = document.createElement("style");
   styleSheet.innerText = styles;
   document.head.appendChild(styleSheet);
