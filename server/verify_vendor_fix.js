@@ -23,7 +23,6 @@ const verify = async () => {
         const vendor = await Vendor.create({
             storeName: "Test Store",
             ownerName: "Test Owner",
-            email,
             password: "password123",
             phone: "1234567890",
             status: "approved"
