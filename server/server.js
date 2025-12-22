@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === "development") {
 }
 app.use(express.json());
 
-// Serve static files (uploaded images)
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
