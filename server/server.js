@@ -20,11 +20,11 @@ dotenv.config();
 
 const app = express();
 
-// Get directory name for ES modules
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
