@@ -407,17 +407,7 @@ or
 **Headers:** `Authorization: Bearer <ADMIN_TOKEN>`  
 **Body:** None
 
-### 2. Get Vendors (Admin)
-**Method:** `GET`  
-**URL:** `http://localhost:5000/api/admin/vendors`  
-**Headers:** `Authorization: Bearer <ADMIN_TOKEN>`  
-**Body:** None
 
-### 3. Get Delivery Partners (Admin)
-**Method:** `GET`  
-**URL:** `http://localhost:5000/api/admin/delivery`  
-**Headers:** `Authorization: Bearer <ADMIN_TOKEN>`  
-**Body:** None
 
 ---
 
