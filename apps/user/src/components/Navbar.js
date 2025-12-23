@@ -7,6 +7,7 @@ const Navbar = () => {
   const [address, setAddress] = useState("");
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -30,6 +31,10 @@ const Navbar = () => {
     };
 
     fetchUserProfile();
+
+    const closeMenu = () => setShowProfileMenu(false);
+    window.addEventListener("click", closeMenu);
+    return () => window.removeEventListener("click", closeMenu);
   }, []);
 
   const navStyle = {
@@ -93,18 +98,107 @@ const Navbar = () => {
           {/* <Link to="/" style={{ textDecoration: "none", color: "#333" }}>
             Home
           </Link> */}
-          <Link to="/categories" style={{ textDecoration: "none", color: "#333" }}>
+          <Link
+            to="/categories"
+            style={{ textDecoration: "none", color: "#333" }}
+          >
             Categories
           </Link>
           <Link to="/stores" style={{ textDecoration: "none", color: "#333" }}>
             Stores
           </Link>
-          <Link to={isLoggedin ? "/profile" : "/login"} style={{ textDecoration: "none", color: "#333" }}>
-            {isLoggedin ? "Profile" : "Login"}
-          </Link>
-          {/* <Link to="/register" style={{ textDecoration: "none", color: "#333" }}>
-            Register
-          </Link> */}
+
+          <div style={{ position: "relative" }}>
+            {isLoggedin ? (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowProfileMenu((prev) => !prev);
+                  }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#333",
+                    fontSize: "1rem",
+                  }}
+                >
+                  Profile
+                </button>
+
+                {showProfileMenu && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      position: "absolute",
+                      top: "120%",
+                      right: 0,
+                      background: "#fff",
+                      border: "1px solid #ddd",
+                      borderRadius: "6px",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      width: "160px",
+                      zIndex: 1000,
+                    }}
+                  >
+                    <Link
+                      to="/profile"
+                      style={{
+                        display: "block",
+                        padding: "10px",
+                        textDecoration: "none",
+                        color: "#333",
+                      }}
+                      onClick={() => setShowProfileMenu(false)}
+                    >
+                      My Account
+                    </Link>
+
+                    <Link
+                      to="/orders"
+                      style={{
+                        display: "block",
+                        padding: "10px",
+                        textDecoration: "none",
+                        color: "#333",
+                      }}
+                      onClick={() => setShowProfileMenu(false)}
+                    >
+                      Orders
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        localStorage.removeItem("token");
+                        setShowProfileMenu(false);
+                        window.location.href = "/login";
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "10px",
+                        border: "none",
+                        background: "none",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        color: "#d92662",
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <Link
+                to="/login"
+                style={{ textDecoration: "none", color: "#333" }}
+              >
+                Login
+              </Link>
+            )}
+          </div>
+
           <Link to="/cart" style={{ textDecoration: "none", color: "#333" }}>
             Cart
           </Link>
