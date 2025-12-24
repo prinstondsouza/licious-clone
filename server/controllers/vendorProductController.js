@@ -318,36 +318,7 @@ export const getAllVendorProducts = async (req, res) => {
       const productObj = vp.toObject();
       const base = productObj.baseProduct;
 
-      return {
-        _id: productObj._id,
-        vendor: productObj.vendor,
-        // Prioritize vendor-specific fields, fallback to baseProduct fields
-        name: productObj.name || (base ? base.name : undefined),
-        category: productObj.category || (base ? base.category : undefined),
-        description: productObj.description || (base ? base.description : ""),
-        price: productObj.price,
-        stock: productObj.stock,
-        // Use vendor images if available, otherwise base images
-        images: (productObj.images && productObj.images.length > 0)
-          ? productObj.images
-          : (base ? base.images : []),
-        addedBy: productObj.addedBy,
-        lastUpdatedBy: productObj.lastUpdatedBy,
-        status: productObj.status,
-        createdAt: productObj.createdAt,
-        updatedAt: productObj.updatedAt,
-        __v: productObj.__v,
-        // Keep baseProduct if it exists, or create a virtual one to ensure consistency (matching the "wrong" but possibly desired structure from Step 0 if users rely on it, but user said "just like this" in step 82 which HAS it)
-        baseProduct: base ? base : {
-          _id: productObj._id,
-          name: productObj.name,
-          category: productObj.category,
-          description: productObj.description,
-          images: productObj.images,
-          basePrice: productObj.price
-        }
-      };
-    });
+
 
     res.json({ vendorProducts: normalizedProducts });
   } catch (error) {
