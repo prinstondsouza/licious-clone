@@ -456,4 +456,3 @@ export const getVendorProductById = async (req, res) => {
 
 // Export upload middleware
 export { uploadMultiple as uploadVendorProductImages };
-
