@@ -452,4 +452,8 @@ export const getVendorProductById = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+// Export upload middleware
+export { uploadMultiple as uploadVendorProductImages };
 
