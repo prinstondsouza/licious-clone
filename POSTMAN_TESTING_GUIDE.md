@@ -407,7 +407,6 @@ Check if the product is visible to users (e.g., via "Nearby Products").
     *(Replace lat/long with coordinates near the vendor's location)*
 *   **Response:** The product should be listed if within range.
 
----
 
 ## 📝 Troubleshooting
 
