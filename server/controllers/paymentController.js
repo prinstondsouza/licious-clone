@@ -1,35 +1,35 @@
-import Razorpay from "razorpay";
-import crypto from "crypto";
-import Payment from "../models/paymentModel.js";
-import Order from "../models/orderModel.js";
+// import Razorpay from "razorpay";
+// import crypto from "crypto";
+// import Payment from "../models/paymentModel.js";
+// import Order from "../models/orderModel.js";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// const razorpay = new Razorpay({
+//   key_id: process.env.RAZORPAY_KEY_ID,
+//   key_secret: process.env.RAZORPAY_KEY_SECRET,
+// });
 
-export const createPaymentOrder = async (req, res) => {
-  try {
-    const { orderId } = req.body;
+// export const createPaymentOrder = async (req, res) => {
+//   try {
+//     const { orderId } = req.body;
 
-    const order = await Order.findById(orderId);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+//     const order = await Order.findById(orderId);
+//     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    const options = {
-      amount: order.totalAmount * 100, // amount in paise
-      currency: "INR",
-      receipt: `receipt_${orderId}`,
-    };
+//     const options = {
+//       amount: order.totalAmount * 100, // amount in paise
+//       currency: "INR",
+//       receipt: `receipt_${orderId}`,
+//     };
 
-    const razorpayOrder = await razorpay.orders.create(options);
+//     const razorpayOrder = await razorpay.orders.create(options);
 
-    // Create Payment record
-    await Payment.create({
-      razorpayOrderId: razorpayOrder.id,
-      amount: order.totalAmount,
-      user: req.user._id,
-      order: orderId,
-    });
+//     // Create Payment record
+//     await Payment.create({
+//       razorpayOrderId: razorpayOrder.id,
+//       amount: order.totalAmount,
+//       user: req.user._id,
+//       order: orderId,
+//     });
 
 //     res.json({
 //       message: "Razorpay order created",
