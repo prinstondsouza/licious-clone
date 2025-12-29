@@ -9,31 +9,6 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [username, setUsername] = useState("");
 
-  const addToCart = async (vendorProductId) => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.post(
-        "/api/cart/add",
-        {
-          vendorProductId,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert("Item added to cart!");
-    } catch (error) {
-      console.error(
-        "Add to cart error:",
-        error.response?.data || error.message
-      );
-      alert(error.response?.data?.message || "Failed to add item");
-    }
-  };
 
   useEffect(() => {
     axios
@@ -72,7 +47,7 @@ const Home = () => {
               textAlign: "center",
             }}
           >
-            <ProductCard product={item} addToCart={() => addToCart(item._id)} />
+            <ProductCard product={item} />
           </div>
         ))}
       </div>
