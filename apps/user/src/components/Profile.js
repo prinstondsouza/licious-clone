@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const Profile = () => {
   const [username, setUsername] = useState("");
@@ -8,7 +9,8 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [hoveredOrderId, setHoveredOrderId] = useState(null); // Track which order date is hovered
+  const [hoveredOrderId, setHoveredOrderId] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -52,37 +54,38 @@ const Profile = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
-    
+
     // Handle future dates (just in case)
-    if (diffInSeconds < 0) return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
+    if (diffInSeconds < 0)
+      return date.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
 
     // For recent times, show relative format
     if (diffInSeconds < 60) {
-      return `${diffInSeconds} second${diffInSeconds !== 1 ? 's' : ''} ago`;
+      return `${diffInSeconds} second${diffInSeconds !== 1 ? "s" : ""} ago`;
     }
-    
+
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
+      return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
     }
-    
+
     const diffInHours = Math.floor(diffInSeconds / 3600);
     if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours !== 1 ? 's' : ''} ago`;
+      return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
     }
-    
+
     const diffInDays = Math.floor(diffInSeconds / 86400);
     if (diffInDays < 7) {
-      return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} ago`;
+      return `${diffInDays} day${diffInDays !== 1 ? "s" : ""} ago`;
     }
-    
+
     // For older dates (7+ days ago), show date and time
     return date.toLocaleString("en-US", {
       month: "short",
@@ -112,7 +115,7 @@ const Profile = () => {
   // Format currency if your order objects have price/total properties
   const formatCurrency = (amount) => {
     if (typeof amount !== "number") return "N/A";
-    return `$${amount.toFixed(2)}`;
+    return `₹${amount.toFixed(2)}`;
   };
 
   return (
@@ -138,7 +141,7 @@ const Profile = () => {
             {orders.map((order, index) => {
               const orderId = order.id || order._id || `order-${index}`;
               const dateString = order.createdAt || order.date;
-              
+
               return (
                 <li
                   key={orderId}
@@ -166,14 +169,14 @@ const Profile = () => {
                         <span
                           onMouseEnter={() => setHoveredOrderId(orderId)}
                           onMouseLeave={() => setHoveredOrderId(null)}
-                          style={{ 
-                            transition: "color 0.2s", cursor: "default"
+                          style={{
+                            transition: "color 0.2s",
+                            cursor: "default",
                           }}
                         >
-                          {hoveredOrderId === orderId 
+                          {hoveredOrderId === orderId
                             ? getFullDateTime(dateString)
-                            : formatDateAndTime(dateString)
-                          }
+                            : formatDateAndTime(dateString)}
                         </span>
                       </p>
                       <p style={{ margin: "5px 0" }}>
@@ -217,7 +220,9 @@ const Profile = () => {
                               </li>
                             ))}
                             {order.items.length > 3 && (
-                              <li>...and {order.items.length - 3} more items</li>
+                              <li>
+                                ...and {order.items.length - 3} more items
+                              </li>
                             )}
                           </ul>
                         </div>
@@ -236,13 +241,17 @@ const Profile = () => {
                           cursor: "pointer",
                         }}
                         onClick={() => {
-                          // Handle view order details
-                          console.log("View order:", order);
-                          // You can implement a modal or navigation to order details
+                          setSelectedOrder(order);
                         }}
                       >
                         View Details
                       </button>
+                      {selectedOrder && (
+                        <OrderDetailsModal
+                          order={selectedOrder}
+                          onClose={() => setSelectedOrder(null)}
+                        />
+                      )}
                     </div>
                   </div>
                 </li>
