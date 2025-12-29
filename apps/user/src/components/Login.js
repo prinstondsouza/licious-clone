@@ -67,6 +67,7 @@ const Login = () => {
           Login
         </button>
       </form>
+      <p>Not Registerd? <a href="/register">Register Here</a></p>
     </div>
   );
 };
