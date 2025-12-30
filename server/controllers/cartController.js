@@ -13,11 +13,11 @@ export const getCart = async (req, res) => {
         },
       })
       .populate("items.vendorProduct.vendor", "storeName ownerName");
-    
+
     if (!cart) {
       return res.json({ cart: null, message: "Cart is empty" });
     }
-    
+
     res.json({ cart });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -36,7 +36,7 @@ export const addToCart = async (req, res) => {
     const vendorProduct = await VendorProduct.findById(vendorProductId)
       .populate("baseProduct")
       .populate("vendor");
-    
+
     if (!vendorProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -81,7 +81,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// Remove product from cart
+// Remove product from cart (decrement quantity)
 export const removeFromCart = async (req, res) => {
   try {
     const { vendorProductId } = req.body;
@@ -93,23 +93,34 @@ export const removeFromCart = async (req, res) => {
     const cart = await Cart.findOne({ user: req.user._id });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-    cart.items = cart.items.filter(
-      (item) => item.vendorProduct.toString() !== vendorProductId
+    const itemIndex = cart.items.findIndex(
+      (item) => item.vendorProduct.toString() === vendorProductId
     );
 
-    await cart.save();
-    
-    const populatedCart = await Cart.findById(cart._id)
-      .populate({
-        path: "items.vendorProduct",
-        populate: {
-          path: "baseProduct",
-          select: "name category description images",
-        },
-      })
-      .populate("items.vendorProduct.vendor", "storeName ownerName");
+    if (itemIndex > -1) {
+      if (cart.items[itemIndex].quantity > 1) {
+        cart.items[itemIndex].quantity -= 1;
+      } else {
+        cart.items.splice(itemIndex, 1);
+      }
 
-    res.json({ message: "Product removed from cart", cart: populatedCart });
+      await cart.save();
+
+      const populatedCart = await Cart.findById(cart._id)
+        .populate({
+          path: "items.vendorProduct",
+          populate: {
+            path: "baseProduct",
+            select: "name category description images",
+          },
+        })
+        .populate("items.vendorProduct.vendor", "storeName ownerName");
+
+      res.json({ message: "Cart updated", cart: populatedCart });
+    } else {
+      res.status(404).json({ message: "Item not found in cart" });
+    }
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
