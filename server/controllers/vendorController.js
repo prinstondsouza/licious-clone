@@ -67,8 +67,8 @@ export const updateVendorStatus = async (req, res) => {
     }
     await vendor.save();
 
-    res.json({ 
-      message: `Vendor ${status} successfully`, 
+    res.json({
+      message: `Vendor ${status} successfully`,
       vendor: {
         id: vendor._id,
         storeName: vendor.storeName,
@@ -89,9 +89,9 @@ export const getVendorProfile = async (req, res) => {
     if (!vendor) return res.status(404).json({ message: "Vendor profile not found" });
 
     if (vendor.status !== "approved") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         message: "Your vendor account is pending approval",
-        status: vendor.status 
+        status: vendor.status
       });
     }
 
@@ -123,4 +123,46 @@ export const vendorDashboard = (req, res) => {
       ownerName: req.user.ownerName,
     }
   });
+};
+
+/**
+ * Get all approved vendors (Public)
+ */
+export const getPublicApprovedVendors = async (req, res) => {
+  try {
+    const vendors = await Vendor.find({ status: "approved" }).select("-password -documents -createdBy -email -phone");
+    res.json({ vendors });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Get nearest approved vendors within 5km (Public)
+ */
+export const getNearestApprovedVendors = async (req, res) => {
+  try {
+    const { latitude, longitude } = req.query;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ message: "latitude and longitude are required" });
+    }
+
+    const vendors = await Vendor.find({
+      status: "approved",
+      location: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: [parseFloat(longitude), parseFloat(latitude)],
+          },
+          $maxDistance: 5000, // 5km in meters
+        },
+      },
+    }).select("-password -documents -createdBy -email -phone");
+
+    res.json({ vendors });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
