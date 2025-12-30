@@ -8,6 +8,15 @@ const Navbar = () => {
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [cart, setCart] = useState({ items: [] });
+
+  const totalAmount =
+    cart && cart.items
+      ? cart.items.reduce(
+          (sum, item) => sum + (item.vendorProduct?.price || 0) * item.quantity,
+          0
+        )
+      : 0;
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -35,6 +44,36 @@ const Navbar = () => {
     const closeMenu = () => setShowProfileMenu(false);
     window.addEventListener("click", closeMenu);
     return () => window.removeEventListener("click", closeMenu);
+  }, []);
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setCart({ items: [] });
+        return;
+      }
+
+      try {
+        const res = await axios.get("/api/cart", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setCart(res.data.cart);
+      } catch (error) {
+        console.error(
+          "Fetch cart error:",
+          error.response?.data || error.message
+        );
+      }
+    };
+    fetchCart();
+    const handleCartUpdate = () => fetchCart();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
   const navStyle = {
@@ -156,7 +195,7 @@ const Navbar = () => {
                     </Link>
 
                     <Link
-                      to="/orders"
+                      to="/profile"
                       style={{
                         display: "block",
                         padding: "10px",
@@ -200,7 +239,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/cart" style={{ textDecoration: "none", color: "#333" }}>
-            Cart
+            {cart ? `${cart.items.length} items ₹${totalAmount}` : "Cart"}
           </Link>
         </div>
       </nav>

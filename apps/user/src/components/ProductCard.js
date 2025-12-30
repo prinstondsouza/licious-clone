@@ -25,6 +25,7 @@ const ProductCard = ({ product }) => {
         }
       );
       alert("Item added to cart!");
+      window.dispatchEvent(new Event('cartUpdated'));
     } catch (error) {
       console.error(
         "Add to cart error:",
