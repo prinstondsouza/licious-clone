@@ -90,11 +90,11 @@
 //     order.status = "paid";
 //     await order.save();
 
-    res.json({ message: "Payment verified successfully", order });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+//     res.json({ message: "Payment verified successfully", order });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 
 
