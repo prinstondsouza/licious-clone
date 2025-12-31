@@ -339,7 +339,7 @@ or
 }
 ```
 
-### 3. Remove from Cart (User)
+### 3. Remove 1 Product Quantity from Cart (User)
 **Method:** `POST`  
 **URL:** `http://localhost:5000/api/cart/remove`  
 **Headers:** `Authorization: Bearer <USER_TOKEN>`  
@@ -349,6 +349,16 @@ or
   "productId": "507f1f77bcf86cd799439011"
 }
 ```
+
+### 4. Remove the Whole Product from Cart (User)
+**Method:** `POST`  
+**URL:** `http://localhost:5000/api/cart/remove-product`  
+**Headers:** `Authorization: Bearer <USER_TOKEN>`  
+**Body:**
+```json
+{
+  "productId": "507f1f77bcf86cd799439011"
+}
 
 ---
 
