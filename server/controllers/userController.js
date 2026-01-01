@@ -37,15 +37,5 @@ export const updateUserLocation = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.location = {
-      type: "Point",
-      coordinates: [parseFloat(longitude), parseFloat(latitude)],
-    };
-
-    if (address) {
-      user.address = address;
-    }
-
-    await user.save();
 
 
