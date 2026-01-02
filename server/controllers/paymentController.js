@@ -8,39 +8,39 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// export const createPaymentOrder = async (req, res) => {
-//   try {
-//     const { orderId } = req.body;
+export const createPaymentOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
 
-//     const order = await Order.findById(orderId);
-//     if (!order) return res.status(404).json({ message: "Order not found" });
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
 
-//     const options = {
-//       amount: order.totalAmount * 100, // amount in paise
-//       currency: "INR",
-//       receipt: `receipt_${orderId}`,
-//     };
+    const options = {
+      amount: order.totalAmount * 100, // amount in paise
+      currency: "INR",
+      receipt: `receipt_${orderId}`,
+    };
 
-//     const razorpayOrder = await razorpay.orders.create(options);
+    const razorpayOrder = await razorpay.orders.create(options);
 
-//     // Create Payment record
-//     await Payment.create({
-//       razorpayOrderId: razorpayOrder.id,
-//       amount: order.totalAmount,
-//       user: req.user._id,
-//       order: orderId,
-//     });
+    // Create Payment record
+    await Payment.create({
+      razorpayOrderId: razorpayOrder.id,
+      amount: order.totalAmount,
+      user: req.user._id,
+      order: orderId,
+    });
 
-//     res.json({
-//       message: "Razorpay order created",
-//       orderId: razorpayOrder.id,
-//       amount: order.totalAmount,
-//       currency: "INR",
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    res.json({
+      message: "Razorpay order created",
+      orderId: razorpayOrder.id,
+      amount: order.totalAmount,
+      currency: "INR",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
 
