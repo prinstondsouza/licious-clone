@@ -1,12 +1,12 @@
-// import Razorpay from "razorpay";
+import Razorpay from "razorpay";
 // import crypto from "crypto";
 // import Payment from "../models/paymentModel.js";
 // import Order from "../models/orderModel.js";
 
-// const razorpay = new Razorpay({
-//   key_id: process.env.RAZORPAY_KEY_ID,
-//   key_secret: process.env.RAZORPAY_KEY_SECRET,
-// });
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 // export const createPaymentOrder = async (req, res) => {
 //   try {
