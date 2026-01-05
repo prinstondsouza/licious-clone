@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Categories from "../Categories/Categories";
 import ProductCard from "../Product/ProductCard";
+import { getProductQuantity } from "../../utils/cartUtils";
 
 const Home = () => {
   const token = localStorage.getItem("token");
@@ -11,16 +12,6 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
-
-  const getProductQuantity = (productId) => {
-    if (!cart?.items) return 0;
-
-    const cartItem = cart.items.find(
-      (item) => item.vendorProduct._id === productId
-    );
-
-    return cartItem ? cartItem.quantity : 0;
-  };
 
   const fetchCart = async () => {
     try {
@@ -96,7 +87,7 @@ const Home = () => {
           >
             <ProductCard
               product={item}
-              quantity={getProductQuantity(item._id)}
+              quantity={getProductQuantity(cart, item._id)}
             />
           </div>
         ))}

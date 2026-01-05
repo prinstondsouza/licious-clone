@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useState, useEffect } from "react";
 import ProductCard from "../Product/ProductCard";
+import { getProductQuantity } from "../../utils/cartUtils";
 
 // Category Button Component
 const CategoryButton = ({ category, isSelected, onClick }) => {
@@ -17,37 +17,58 @@ const CategoryButton = ({ category, isSelected, onClick }) => {
 
 // Main Component
 const Categories = () => {
+  const token = localStorage.getItem("token");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryItems, setCategoryItems] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
+  const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const addToCart = async (vendorProductId) => {
-    try {
-      const token = localStorage.getItem("token");
+  const fetchCart = async () => {
+    if(!token) return;
 
-      const res = await axios.post(
-        "/api/cart/add",
-        {
-          vendorProductId,
-          quantity: 1,
+    try {
+      const res = await axios.get("/api/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert("Item added to cart!");
+      });
+      setCart(res.data.cart);
     } catch (error) {
-      console.error(
-        "Add to cart error:",
-        error.response?.data || error.message
-      );
-      alert(error.response?.data?.message || "Failed to add item");
+      console.error("Fetch cart error:", error.response?.data || error.message);
     }
   };
+
+  const handleCategoryClick = (categoryName) => {
+    setSelectedCategory(categoryName);
+
+    if (categoryName === "all") {
+      setCategoryItems(allProducts);
+    } else {
+      // Filter products by selected category
+      const filteredItems = allProducts.filter(
+        (item) => item.category === categoryName
+      );
+      setCategoryItems(filteredItems);
+    }
+  };
+
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      fetchCart();
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -81,20 +102,6 @@ const Categories = () => {
 
     fetchCategories();
   }, []);
-
-  const handleCategoryClick = (categoryName) => {
-    setSelectedCategory(categoryName);
-
-    if (categoryName === "all") {
-      setCategoryItems(allProducts);
-    } else {
-      // Filter products by selected category
-      const filteredItems = allProducts.filter(
-        (item) => item.category === categoryName
-      );
-      setCategoryItems(filteredItems);
-    }
-  };
 
   if (loading) {
     return <div className="loading">Loading categories...</div>;
@@ -135,10 +142,12 @@ const Categories = () => {
         ) : (
           <div className="products-grid">
             {categoryItems.map((item) => (
-              <ProductCard
-                addToCart={() => addToCart(item._id)}
-                product={item}
-              />
+              <div key={item._id}>
+                <ProductCard
+                  product={item}
+                  quantity={getProductQuantity(cart, item._id)}
+                />
+              </div>
             ))}
           </div>
         )}

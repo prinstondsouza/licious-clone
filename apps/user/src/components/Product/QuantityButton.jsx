@@ -1,26 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import styles from "./QuantityButton.module.css";
 
 const QuantityButton = ({ qty, onAdd, onRemove }) => {
-  const [quantity, setQuantity] = useState(qty);
+  const [quantity, setQuantity] = useState(0);
 
   const handleAdd = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    onAdd(newQty);
-  };
+  onAdd(quantity + 1);
+};
 
-  const handleRemove = () => {
-    if (quantity === 1) {
-      setQuantity(0);
-      onRemove(0);
-    } else {
-      const newQty = quantity - 1;
-      setQuantity(newQty);
-      onRemove(newQty);
-    }
-  };
+const handleRemove = () => {
+  onRemove(quantity - 1);
+};
+
+  useEffect(() => {
+    setQuantity(qty ?? 0);
+  }, [qty]);
 
   // Default state → only plus
   if (quantity === 0) {
