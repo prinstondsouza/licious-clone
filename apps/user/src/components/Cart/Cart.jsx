@@ -32,7 +32,7 @@ const Cart = () => {
   const removeFromCart = async (vendorProductId) => {
     try {
       const res = await axios.post(
-        "/api/cart/remove",
+        "/api/cart/remove-product",
         { vendorProductId },
         {
           headers: {

@@ -7,14 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const ProductCard = ({ product, quantity }) => {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const [updating, setUpdating] = useState(false);
 
   const addToCart = async (vendorProductId) => {
     try {
-      const token = localStorage.getItem("token");
+      setUpdating(true);
 
       if (!token) {
-        toast.info("Please log in to add items to your cart.", {
+        toast.info("Please login to add items to your Cart!", {
           position: "top-center",
         });
         navigate("/login");
@@ -42,6 +44,45 @@ const ProductCard = ({ product, quantity }) => {
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add item");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const removeFromCart = async (vendorProductId) => {
+    try {
+      setUpdating(true);
+
+      if (!token) {
+        toast.error("Please login to remove items from your Cart!", {
+          position: "top-center",
+        });
+        navigate("/login");
+        return;
+      }
+
+      await axios.post(
+        "/api/cart/remove",
+        {
+          vendorProductId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.info("Item removed from cart!", {
+        position: "top-center",
+        closeOnClick: true,
+      });
+      
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add item");
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -63,11 +104,9 @@ const ProductCard = ({ product, quantity }) => {
       </Link>
       <QuantityButton
         qty={quantity}
+        loading={updating}
         onAdd={(qty) => addToCart(product._id)}
-        onRemove={(qty) => {
-          // later you can call remove-from-cart API
-          // for now, just keep UI correct
-        }}
+        onRemove={(qty) => removeFromCart(product._id)}
       />
 
       <div className={styles.content}>

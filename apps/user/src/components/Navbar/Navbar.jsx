@@ -239,7 +239,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/cart" style={{ textDecoration: "none", color: "#333" }}>
-            {cart ? `${cart.items.length} items ₹${totalAmount}` : "Cart"}
+            {cart.items.length !== 0 ? `${cart.items.length} items ₹${totalAmount}` : "Cart"}
           </Link>
         </div>
       </nav>
