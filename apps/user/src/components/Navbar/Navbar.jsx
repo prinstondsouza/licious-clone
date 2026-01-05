@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LocationModal from "../Location/LocationModal";
 import styles from "./Navbar.module.css";
-import { User2, Store, Layers, MapPin } from "lucide-react";
+import { User2, Store, Layers, MapPin, ShoppingCart } from "lucide-react";
 
 const Navbar = () => {
   const [address, setAddress] = useState("");
@@ -129,6 +129,7 @@ const Navbar = () => {
           </div>
 
           <Link to="/cart" className={`${styles.link} ${styles.cartLink}`}>
+            <ShoppingCart />
             {cart.items.length > 0 ? `${cart.items.length} Items ₹${totalAmount}` : "Cart"}
           </Link>
         </div>
