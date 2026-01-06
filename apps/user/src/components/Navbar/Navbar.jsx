@@ -18,6 +18,11 @@ const Navbar = () => {
     0
   ) || 0;
 
+  const totalQuantity = cart?.items?.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  ) || 0;
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -130,7 +135,7 @@ const Navbar = () => {
 
           <Link to="/cart" className={`${styles.link} ${styles.cartLink}`}>
             <ShoppingCart />
-            {cart.items.length > 0 ? `${cart.items.length} Items ₹${totalAmount}` : "Cart"}
+            {cart.items.length > 0 ? `${totalQuantity} Items ₹${totalAmount}` : "Cart"}
           </Link>
         </div>
       </nav>
