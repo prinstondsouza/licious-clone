@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import styles from './Register.module.css';
 
-const Register = () => {
+const Register = ({ onLoginClick }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -91,7 +91,7 @@ const Register = () => {
       </form>
 
       <p className={styles.footerText}>
-        Already have an account? <Link to="/login">Login here</Link>
+        Already have an account? <button onClick={onLoginClick}>Login here</button>
       </p>
     </div>
   );

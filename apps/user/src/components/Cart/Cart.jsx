@@ -48,7 +48,7 @@ const Cart = ({ isSidebar = false }) => {
   const handleCheckout = () => {
     if (!token) {
       toast.info("Please log in to continue", { position: "top-center" });
-      navigate("/login", { state: { from: "/cart" } });
+      navigate("/");
       return;
     }
 

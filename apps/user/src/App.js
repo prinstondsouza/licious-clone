@@ -35,7 +35,7 @@ function App() {
         <div style={{ padding: "20px" }}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Register onLoginClick={() => setLoginOpen(true)} />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/stores" element={<Stores />} />
             <Route path="/profile" element={<Profile/>} />

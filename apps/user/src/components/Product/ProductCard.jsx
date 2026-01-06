@@ -19,7 +19,7 @@ const ProductCard = ({ product, quantity }) => {
         toast.info("Please login to add items to your Cart!", {
           position: "top-center",
         });
-        navigate("/login");
+        navigate("/");
         return;
       }
 
@@ -57,7 +57,7 @@ const ProductCard = ({ product, quantity }) => {
         toast.error("Please login to remove items from your Cart!", {
           position: "top-center",
         });
-        navigate("/login");
+        navigate("/");
         return;
       }
 

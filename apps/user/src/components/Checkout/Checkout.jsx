@@ -14,7 +14,7 @@ const Checkout = () => {
   useEffect(() => {
     if (!token) {
       toast.warning("Please login again", { position: "top-center" });
-      navigate("/login");
+      navigate("/");
       return;
     }
 
