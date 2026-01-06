@@ -1,5 +1,5 @@
 import express from "express";
-import { protect, authorizeRoles } from "../middlewares/authMiddleware.js";
+import { protect, authorizeRoles, optionalProtect } from "../middlewares/authMiddleware.js";
 import {
   createBaseProduct,
   getAllBaseProducts,
@@ -61,7 +61,7 @@ router.delete(
 // ========== VENDOR PRODUCTS (Inventory) ==========
 // Public routes
 router.get("/nearby", getProductsNearby); // Requires latitude, longitude query params
-router.get("/vendor", getAllVendorProducts);
+router.get("/vendor", optionalProtect, getAllVendorProducts);
 
 router.get(
   "/vendor/inventory",
