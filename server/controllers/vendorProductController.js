@@ -292,22 +292,6 @@ export const getAllVendorProducts = async (req, res) => {
     const { vendorId, category, status } = req.query;
     const query = {};
 
-    // Check ownership: Authenticated + Vendor + Matches vendorId
-    const isOwner = req.user &&
-      req.userType === 'vendor' &&
-      vendorId &&
-      req.user._id.toString() === vendorId;
-
-    if (vendorId) query.vendor = vendorId;
-
-    if (isOwner) {
-      // Owner can filter explicitly, otherwise see all (no status filter)
-      if (status) query.status = status;
-    } else {
-      // Public (or other users) ONLY see active
-      query.status = "active";
-    }
-
     // Filter by category if provided
     if (category) {
       const baseProducts = await BaseProduct.find({ category, status: "active" });
