@@ -22,7 +22,6 @@ const QuantityButton = ({ qty, loading, onAdd, onRemove }) => {
     );
   }
 
-  // Quantity selector state
   return (
     <div className={styles.counter}>
       <button

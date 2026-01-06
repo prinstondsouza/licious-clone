@@ -3,13 +3,93 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styles from "./Cart.module.css";
+import QuantityButton from "../Product/QuantityButton";
+import { X } from "lucide-react";
 
 const Cart = ({ isSidebar = false }) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   let navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+
+  const addToCart = async (vendorProductId) => {
+    try {
+      setUpdating(true);
+
+      if (!token) {
+        toast.info("Please login to add items to your Cart!", {
+          position: "top-center",
+        });
+        navigate("/");
+        return;
+      }
+
+      const res = await axios.post(
+        "/api/cart/add",
+        {
+          vendorProductId,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCart(res.data.cart);
+
+      toast.info("Item added to cart!", {
+        position: "top-center",
+        closeOnClick: true,
+      });
+
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add item");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const removeOneFromCart = async (vendorProductId) => {
+    try {
+      setUpdating(true);
+
+      if (!token) {
+        toast.error("Please login to remove items from your Cart!", {
+          position: "top-center",
+        });
+        navigate("/");
+        return;
+      }
+
+      const res = await axios.post(
+        "/api/cart/remove",
+        {
+          vendorProductId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCart(res.data.cart);
+
+      toast.info("Item removed from cart!", {
+        position: "top-center",
+        closeOnClick: true,
+      });
+
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add item");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const fetchCart = async () => {
     try {
@@ -39,6 +119,7 @@ const Cart = ({ isSidebar = false }) => {
       );
       setCart(res.data.cart);
       toast.success("Item removed");
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       console.error("Remove error:", error.response?.data || error.message);
       toast.error("Failed to remove item");
@@ -89,13 +170,21 @@ const Cart = ({ isSidebar = false }) => {
             <p>Price: ₹{item.vendorProduct.price}</p>
             <p>Quantity: {item.quantity}</p>
           </div>
-
-          <button
-            onClick={() => removeFromCart(item.vendorProduct._id)}
-            className={styles.removeBtn}
-          >
-            Remove
-          </button>
+          <div>
+            <button
+              onClick={() => removeFromCart(item.vendorProduct._id)}
+              className={styles.removeBtn}
+            >
+              <X size={20} />
+            </button>
+            <div className={styles.buttons}>
+            <QuantityButton
+              qty={item.quantity}
+              loading={updating}
+              onAdd={(qty) => addToCart(item.vendorProduct._id)}
+              onRemove={(qty) => removeOneFromCart(item.vendorProduct._id)}
+            /></div>
+          </div>
         </div>
       ))}
 
