@@ -46,55 +46,55 @@ export const createPaymentOrder = async (req, res) => {
 
 
 
-// export const verifyPayment = async (req, res) => {
-//   try {
-//     const {
-//       razorpay_order_id,
-//       razorpay_payment_id,
-//       razorpay_signature,
-//       orderId,
-//     } = req.body;
+export const verifyPayment = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
 
-//     const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-//     const expectedSignature = crypto
-//       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-//       .update(body)
-//       .digest("hex");
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
 
-//     const isValid = expectedSignature === razorpay_signature;
+    const isValid = expectedSignature === razorpay_signature;
 
-//     if (!isValid) {
-//       return res.status(400).json({ message: "Payment verification failed" });
-//     }
+    if (!isValid) {
+      return res.status(400).json({ message: "Payment verification failed" });
+    }
 
-//     // Update payment
-//     await Payment.findOneAndUpdate(
-//       { razorpayOrderId: razorpay_order_id },
-//       {
-//         razorpayPaymentId: razorpay_payment_id,
-//         razorpaySignature: razorpay_signature,
-//         status: "paid",
-//       }
-//     );
+    // Update payment
+    await Payment.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id },
+      {
+        razorpayPaymentId: razorpay_payment_id,
+        razorpaySignature: razorpay_signature,
+        status: "paid",
+      }
+    );
 
-//     // Update original order
-//     const order = await Order.findById(orderId);
-//     order.paymentStatus = "paid";
-//     order.paymentMethod = "razorpay";
-//     order.paymentInfo = {
-//       id: razorpay_payment_id,
-//       orderId: razorpay_order_id,
-//       signature: razorpay_signature,
-//     };
-//     order.status = "paid";
-//     await order.save();
+    // Update original order
+    const order = await Order.findById(orderId);
+    order.paymentStatus = "paid";
+    order.paymentMethod = "razorpay";
+    order.paymentInfo = {
+      id: razorpay_payment_id,
+      orderId: razorpay_order_id,
+      signature: razorpay_signature,
+    };
+    order.status = "paid";
+    await order.save();
 
-//     res.json({ message: "Payment verified successfully", order });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    res.json({ message: "Payment verified successfully", order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
 
