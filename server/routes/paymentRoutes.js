@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.post("/create-order", protect, createPaymentOrder);
 
-// router.post("/verify", protect, verifyPayment);
+router.post("/verify", protect, verifyPayment);
 
-// export default router;
+export default router;
