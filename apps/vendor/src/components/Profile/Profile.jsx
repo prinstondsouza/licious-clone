@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "./Profile.module.css";
 const Profile = () => {
+  const token = localStorage.getItem("token");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [storeName, setStoreName] = useState("");
@@ -9,21 +11,27 @@ const Profile = () => {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const fetchUserProfile = async () => {
+    try {
+      const res = await axios.get("api/vendors/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const vendor = res.data.vendor;
+      
+      setAddress(vendor.address);
+      setEmail(vendor.email);
+      setPhone(vendor.phone);
+      setStatus(vendor.status);
+      setUsername(vendor.ownerName);
+      setStoreName(vendor.storeName);
+    } catch (error) {
+      console.error("Profile fetch error:", error);
+    }
+  };
+
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    const storedEmail = localStorage.getItem("email");
-    const storedStoreName = localStorage.getItem("storeName");
-    const storedPhone = localStorage.getItem("phone");
-    const storedAddress = localStorage.getItem("address");
-    const storedStatus = localStorage.getItem("status");
-
-    if (storedUsername) setUsername(storedUsername);
-    if (storedEmail) setEmail(storedEmail);
-    if (storedStoreName) setStoreName(storedStoreName);
-    if (storedPhone) setPhone(storedPhone);
-    if (storedAddress) setAddress(storedAddress);
-    if (storedStatus) setStatus(storedStatus);
-
+    fetchUserProfile();
     setLoading(false);
   }, []);
 

@@ -17,7 +17,7 @@ const Navbar = ({ onLoginClick }) => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        const res = await axios.get("/api/vendors/me", {
+        const res = await axios.get("/api/vendors/me", {  
           headers: { Authorization: `Bearer ${token}` },
         });
         setAddress(res.data.vendors.address || "");

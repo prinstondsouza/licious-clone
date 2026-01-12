@@ -25,14 +25,11 @@ const Login = ({ isSidebar = false, onSuccess}) => {
 
       const token = res.data.token || res.data.accessToken;
       const user = res.data.vendor;
-      console.log(user);
+      console.log(res.data);
 
       localStorage.setItem('token', token);
       localStorage.setItem('username', user.ownerName);
       localStorage.setItem('email', user.email);
-      localStorage.setItem("storeName", user.storeName);
-      localStorage.setItem("phone", user.phone);
-      localStorage.setItem("status", user.status);
 
       const userType = getUserTypeFromToken();
 
