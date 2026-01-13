@@ -87,6 +87,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["single", "married"],
     },
+    userImage: {
+      type: String,
+    },
+
   },
   { timestamps: true }
 );

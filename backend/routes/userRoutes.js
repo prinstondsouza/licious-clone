@@ -7,6 +7,8 @@ import {
     addUserAddresses,
     updateUserAddresses,
     deleteUserAddresses,
+    updateUserProfile,
+    uploadUserImage,
 } from "../controllers/userController.js";
 import { registerUser, loginUser } from "../controllers/authController.js";
 
@@ -15,6 +17,7 @@ const router = express.Router();
 // User profile routes
 router.get("/me", protect, authorizeRoles("user"), getCurrentUser);
 router.put("/location", protect, authorizeRoles("user"), updateUserLocation);
+router.put("/update-user-profile", protect, authorizeRoles("user"), uploadUserImage, updateUserProfile);
 router.post("/addresses", protect, authorizeRoles("user"), addUserAddresses);
 router.put("/addresses/:id", protect, authorizeRoles("user"), updateUserAddresses);
 router.delete("/addresses/:id", protect, authorizeRoles("user"), deleteUserAddresses);

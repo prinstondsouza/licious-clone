@@ -50,7 +50,27 @@ const vendorSchema = new mongoose.Schema(
       },
     },
     address: {
-      type: String,
+      addressString: {
+        type: String,
+        required: [true, "Address is required"],
+      },
+      city: {
+        type: String,
+        required: [true, "City is required"],
+      },
+      location: {
+        type: {
+          type: String,
+          enum: ["Point"],
+          default: "Point",
+          required: true,
+        },
+        coordinates: {
+          type: [Number], // [longitude, latitude]
+          default: [0, 0],
+          required: true,
+        },
+      },
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

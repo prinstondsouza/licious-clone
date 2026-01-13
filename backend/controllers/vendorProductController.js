@@ -1,16 +1,16 @@
 import VendorProduct from "../models/vendorProductModel.js";
 import BaseProduct from "../models/baseProductModel.js";
 import Vendor from "../models/vendorModel.js";
-import { uploadMultiple } from "../utils/upload.js";
+import { uploadVendorProductImages } from "../utils/upload.js";
 
 // Vendor adds base product to their inventory
 export const addToInventory = async (req, res) => {
   try {
-    const { baseProductId, price, stock } = req.body;
+    const { baseProductId, name, category, description, vendorBasePrice, price, stock, nextAvailableBy } = req.body;
     const vendorId = req.user._id;
 
-    if (!baseProductId || !price) {
-      return res.status(400).json({ message: "baseProductId and price are required" });
+    if (!baseProductId || !vendorBasePrice || !price) {
+      return res.status(400).json({ message: "baseProductId, vendorBasePrice, and price are required" });
     }
 
     // Check if base product exists
@@ -33,16 +33,21 @@ export const addToInventory = async (req, res) => {
     const images = [];
     if (req.files && req.files.length > 0) {
       req.files.forEach((file) => {
-        images.push(`/uploads/${file.filename}`);
+        images.push(`/uploads/vendorProducts/${file.filename}`);
       });
     }
 
     const vendorProduct = await VendorProduct.create({
       baseProduct: baseProductId,
       vendor: vendorId,
-      price: parseFloat(price),
+      name: name || baseProduct.name,
+      category: category || baseProduct.category,
+      description: description || baseProduct.description,
+      vendorBasePrice: parseFloat(vendorBasePrice) || parseFloat(baseProduct.basePrice),
+      price: parseFloat(price) || parseFloat(vendorBasePrice),
       stock: stock ? parseInt(stock) : 0,
-      images,
+      nextAvailableBy: nextAvailableBy,
+      images: images.length > 0 ? images : baseProduct.images,
       addedBy: vendorId,
       lastUpdatedBy: vendorId,
     });
@@ -63,7 +68,7 @@ export const addToInventory = async (req, res) => {
 // Vendor updates their product
 export const updateVendorProduct = async (req, res) => {
   try {
-    const { price, stock, status } = req.body;
+    const { name, category, description, price, stock, nextAvailableBy, status } = req.body;
     const vendorId = req.user._id;
     const productId = req.params.id;
 
@@ -78,17 +83,23 @@ export const updateVendorProduct = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this product" });
     }
 
-    if (price !== undefined) vendorProduct.price = parseFloat(price);
-    if (stock !== undefined) vendorProduct.stock = parseInt(stock);
-    if (status) vendorProduct.status = status;
-    vendorProduct.lastUpdatedBy = vendorId;
-
     // Handle new image uploads
+    const images = [];
     if (req.files && req.files.length > 0) {
       req.files.forEach((file) => {
-        vendorProduct.images.push(`/uploads/${file.filename}`);
+        vendorProduct.images.push(`/uploads/vendorProducts/${file.filename}`);
       });
     }
+
+    if (name) vendorProduct.name = name;
+    if (category) vendorProduct.category = category;
+    if (description) vendorProduct.description = description;
+    if (price !== undefined) vendorProduct.price = parseFloat(price);
+    if (stock !== undefined) vendorProduct.stock = parseInt(stock);
+    if (nextAvailableBy) vendorProduct.nextAvailableBy = nextAvailableBy;
+    if (status) vendorProduct.status = status;
+    if (images.length > 0) vendorProduct.images = images;
+    vendorProduct.lastUpdatedBy = vendorId;
 
     await vendorProduct.save();
 
@@ -118,43 +129,7 @@ export const getVendorInventory = async (req, res) => {
       .populate("lastUpdatedBy", "storeName")
       .sort({ createdAt: -1 });
 
-    // Normalize response
-    const normalizedProducts = vendorProducts.map((vp) => {
-      const productObj = vp.toObject();
-      const base = productObj.baseProduct;
-
-      return {
-        _id: productObj._id,
-        vendor: productObj.vendor,
-        // Prioritize vendor-specific fields, fallback to baseProduct fields
-        name: productObj.name || (base ? base.name : undefined),
-        category: productObj.category || (base ? base.category : undefined),
-        description: productObj.description || (base ? base.description : ""),
-        price: productObj.price,
-        stock: productObj.stock,
-        // Use vendor images if available, otherwise base images
-        images: (productObj.images && productObj.images.length > 0)
-          ? productObj.images
-          : (base ? base.images : []),
-        addedBy: productObj.addedBy,
-        lastUpdatedBy: productObj.lastUpdatedBy,
-        status: productObj.status,
-        createdAt: productObj.createdAt,
-        updatedAt: productObj.updatedAt,
-        __v: productObj.__v,
-        // Keep baseProduct
-        baseProduct: base ? base : {
-          _id: productObj._id,
-          name: productObj.name,
-          category: productObj.category,
-          description: productObj.description,
-          images: productObj.images,
-          basePrice: productObj.price
-        }
-      };
-    });
-
-    res.json({ vendorProducts: normalizedProducts });
+    res.json({ vendorProducts });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -286,76 +261,12 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c; // Distance in km
 }
 
-// Get all vendor products (public - for browsing)
-export const getAllVendorProducts = async (req, res) => {
-  try {
-    const { vendorId, category, status } = req.query;
-    const query = {};
 
-    // Filter by category if provided
-    if (category) {
-      const baseProducts = await BaseProduct.find({ category, status: "active" });
-      const baseProductIds = baseProducts.map((bp) => bp._id);
-
-      query.$or = [
-        { baseProduct: { $in: baseProductIds } },
-        { category: category, baseProduct: null }
-      ];
-    }
-
-    const vendorProducts = await VendorProduct.find(query)
-      .populate("baseProduct")
-      .populate("vendor", "storeName ownerName")
-      .populate("addedBy", "storeName")
-      .populate("lastUpdatedBy", "storeName")
-      .sort({ createdAt: -1 });
-
-    // Normalize response
-    const normalizedProducts = vendorProducts.map(vp => {
-      const productObj = vp.toObject();
-      const base = productObj.baseProduct;
-
-      return {
-        _id: productObj._id,
-        vendor: productObj.vendor,
-        // Prioritize vendor-specific fields, fallback to baseProduct fields
-        name: productObj.name || (base ? base.name : undefined),
-        category: productObj.category || (base ? base.category : undefined),
-        description: productObj.description || (base ? base.description : ""),
-        price: productObj.price,
-        stock: productObj.stock,
-        // Use vendor images if available, otherwise base images
-        images: (productObj.images && productObj.images.length > 0)
-          ? productObj.images
-          : (base ? base.images : []),
-        addedBy: productObj.addedBy,
-        lastUpdatedBy: productObj.lastUpdatedBy,
-        status: productObj.status,
-        createdAt: productObj.createdAt,
-        updatedAt: productObj.updatedAt,
-        __v: productObj.__v,
-        // Keep baseProduct if it exists, or create a virtual one to ensure consistency (matching the "wrong" but possibly desired structure from Step 0 if users rely on it, but user said "just like this" in step 82 which HAS it)
-        baseProduct: base ? base : {
-          _id: productObj._id,
-          name: productObj.name,
-          category: productObj.category,
-          description: productObj.description,
-          images: productObj.images,
-          basePrice: productObj.price
-        }
-      };
-    });
-
-    res.json({ vendorProducts: normalizedProducts });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 // Vendor creates their own product (Standalone VendorProduct)
 export const createVendorOwnProduct = async (req, res) => {
   try {
-    const { name, category, description, price, stock } = req.body;
+    const { name, category, description, price, stock, nextAvailableBy } = req.body;
     const vendorId = req.user._id;
 
     if (!name || !category || !price) {
@@ -366,7 +277,7 @@ export const createVendorOwnProduct = async (req, res) => {
     const images = [];
     if (req.files && req.files.length > 0) {
       req.files.forEach((file) => {
-        images.push(`/uploads/${file.filename}`);
+        images.push(`/uploads/vendorProducts/${file.filename}`);
       });
     }
 
@@ -380,6 +291,7 @@ export const createVendorOwnProduct = async (req, res) => {
       description,
       price: parseFloat(price),
       stock: stock ? parseInt(stock) : 0,
+      nextAvailableBy,
       images,
       addedBy: vendorId,
       lastUpdatedBy: vendorId,
@@ -397,59 +309,328 @@ export const createVendorOwnProduct = async (req, res) => {
   }
 };
 
-// Get single vendor product by ID
+
+
+// Get single vendor product by ID (public - for browsing)
 export const getVendorProductById = async (req, res) => {
   try {
     const productId = req.params.id;
-
-    const vendorProduct = await VendorProduct.findById(productId)
-      .populate("baseProduct")
+    const vendorProduct = await VendorProduct.findById(productId, { status: "active" })
       .populate("vendor", "storeName ownerName location address")
       .populate("addedBy", "storeName")
-      .populate("lastUpdatedBy", "storeName");
+      .select('-baseProduct -addedBy -lastUpdatedBy -status -createdAt -updatedAt -__v');
 
     if (!vendorProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    const productObj = vendorProduct.toObject();
-    const base = productObj.baseProduct;
-
-    const normalizedProduct = {
-      _id: productObj._id,
-      vendor: productObj.vendor,
-      // Prioritize vendor-specific fields, fallback to baseProduct fields
-      name: productObj.name || (base ? base.name : undefined),
-      category: productObj.category || (base ? base.category : undefined),
-      description: productObj.description || (base ? base.description : ""),
-      price: productObj.price,
-      stock: productObj.stock,
-      // Use vendor images if available, otherwise base images
-      images: (productObj.images && productObj.images.length > 0)
-        ? productObj.images
-        : (base ? base.images : []),
-      addedBy: productObj.addedBy,
-      lastUpdatedBy: productObj.lastUpdatedBy,
-      status: productObj.status,
-      createdAt: productObj.createdAt,
-      updatedAt: productObj.updatedAt,
-      __v: productObj.__v,
-      // Keep baseProduct
-      baseProduct: base ? base : {
-        _id: productObj._id,
-        name: productObj.name,
-        category: productObj.category,
-        description: productObj.description,
-        images: productObj.images,
-        basePrice: productObj.price
-      }
-    };
-
-    res.json({ vendorProduct: normalizedProduct });
+    res.json({ vendorProduct });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+
+// Get all vendor products (public - for browsing)
+export const getAllVendorProducts = async (req, res) => {
+  try {
+    const query = {};
+    const category = req.query.category;
+
+    // Filter by category if provided
+    if (category) {
+      query.category = category;
+      query.status = "active";
+    } else {
+      query.status = "active";
+    }
+
+    const vendorProducts = await VendorProduct.find(query)
+      .populate("vendor", "storeName ownerName")
+      .sort({ createdAt: -1 }).select('-baseProduct -addedBy -lastUpdatedBy -status -createdAt -updatedAt -__v');
+
+    res.json({ vendorProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+// Get all vendor products (for Admin and Vendor)
+export const getAllVendorProductsForAdminAndVendor = async (req, res) => {
+  try {
+    const query = { status: "active" };
+
+    const vendorProducts = await VendorProduct.find(query)
+      .populate("baseProduct")
+      .populate("vendor", "storeName ownerName")
+      .populate("addedBy", "storeName")
+      .populate("lastUpdatedBy", "storeName")
+      .sort({ createdAt: -1 });
+
+
+
+    res.json({ vendorProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 // Export upload middleware
-export { uploadMultiple as uploadVendorProductImages };
+export { uploadVendorProductImages };
+
+
+
+
+
+
+
+// // Get all vendor products (public - for browsing)
+// export const getAllVendorProducts = async (req, res) => {
+//   try {
+//     const { vendorId, category, status } = req.query;
+//     const query = {};
+
+//     // Filter by category if provided
+//     if (category) {
+//       const baseProducts = await BaseProduct.find({ category, status: "active" });
+//       const baseProductIds = baseProducts.map((bp) => bp._id);
+
+//       query.$or = [
+//         { baseProduct: { $in: baseProductIds } },
+//         { category: category, baseProduct: null }
+//       ];
+//     }
+
+//     const vendorProducts = await VendorProduct.find(query)
+//       .populate("baseProduct")
+//       .populate("vendor", "storeName ownerName")
+//       .populate("addedBy", "storeName")
+//       .populate("lastUpdatedBy", "storeName")
+//       .sort({ createdAt: -1 });
+
+//     // Normalize response
+//     const normalizedProducts = vendorProducts.map(vp => {
+//       const productObj = vp.toObject();
+//       const base = productObj.baseProduct;
+
+//       return {
+//         _id: productObj._id,
+//         vendor: productObj.vendor,
+//         // Prioritize vendor-specific fields, fallback to baseProduct fields
+//         name: productObj.name || (base ? base.name : undefined),
+//         category: productObj.category || (base ? base.category : undefined),
+//         description: productObj.description || (base ? base.description : ""),
+//         price: productObj.price,
+//         stock: productObj.stock,
+//         // Use vendor images if available, otherwise base images
+//         images: (productObj.images && productObj.images.length > 0)
+//           ? productObj.images
+//           : (base ? base.images : []),
+//         addedBy: productObj.addedBy,
+//         lastUpdatedBy: productObj.lastUpdatedBy,
+//         status: productObj.status,
+//         createdAt: productObj.createdAt,
+//         updatedAt: productObj.updatedAt,
+//         __v: productObj.__v,
+//         // Keep baseProduct if it exists, or create a virtual one to ensure consistency (matching the "wrong" but possibly desired structure from Step 0 if users rely on it, but user said "just like this" in step 82 which HAS it)
+//         baseProduct: base ? base : {
+//           _id: productObj._id,
+//           name: productObj.name,
+//           category: productObj.category,
+//           description: productObj.description,
+//           images: productObj.images,
+//           basePrice: productObj.price
+//         }
+//       };
+//     });
+
+//     res.json({ vendorProducts: normalizedProducts });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+// // Get single vendor product by ID
+// export const getVendorProductById = async (req, res) => {
+//   try {
+//     const productId = req.params.id;
+
+//     const vendorProduct = await VendorProduct.findById(productId)
+//       .populate("baseProduct")
+//       .populate("vendor", "storeName ownerName location address")
+//       .populate("addedBy", "storeName")
+//       .populate("lastUpdatedBy", "storeName");
+
+//     if (!vendorProduct) {
+//       return res.status(404).json({ message: "Product not found" });
+//     }
+
+//     const productObj = vendorProduct.toObject();
+//     const base = productObj.baseProduct;
+
+//     const normalizedProduct = {
+//       _id: productObj._id,
+//       vendor: productObj.vendor,
+//       // Prioritize vendor-specific fields, fallback to baseProduct fields
+//       name: productObj.name || (base ? base.name : undefined),
+//       category: productObj.category || (base ? base.category : undefined),
+//       description: productObj.description || (base ? base.description : ""),
+//       price: productObj.price,
+//       stock: productObj.stock,
+//       // Use vendor images if available, otherwise base images
+//       images: (productObj.images && productObj.images.length > 0)
+//         ? productObj.images
+//         : (base ? base.images : []),
+//       addedBy: productObj.addedBy,
+//       lastUpdatedBy: productObj.lastUpdatedBy,
+//       status: productObj.status,
+//       createdAt: productObj.createdAt,
+//       updatedAt: productObj.updatedAt,
+//       __v: productObj.__v,
+//       // Keep baseProduct
+//       baseProduct: base ? base : {
+//         _id: productObj._id,
+//         name: productObj.name,
+//         category: productObj.category,
+//         description: productObj.description,
+//         images: productObj.images,
+//         basePrice: productObj.price
+//       }
+//     };
+
+//     res.json({ vendorProduct: normalizedProduct });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+
+
+
+
+
+// // Get products from vendors within 5km radius (for users)
+// export const getProductsNearby = async (req, res) => {
+//   try {
+//     const { latitude, longitude, category, maxDistance = 5000 } = req.query; // maxDistance in meters (default 5km)
+
+//     if (!latitude || !longitude) {
+//       return res.status(400).json({ message: "Latitude and longitude are required" });
+//     }
+
+//     const userLocation = {
+//       type: "Point",
+//       coordinates: [parseFloat(longitude), parseFloat(latitude)],
+//     };
+
+//     // Find vendors within radius
+//     const vendors = await Vendor.find({
+//       location: {
+//         $near: {
+//           $geometry: userLocation,
+//           $maxDistance: parseInt(maxDistance), // in meters
+//         },
+//       },
+//       status: "approved",
+//     });
+
+//     const vendorIds = vendors.map((v) => v._id);
+
+//     // Build query for vendor products
+//     const query = {
+//       vendor: { $in: vendorIds },
+//       status: "active",
+//       stock: { $gt: 0 }, // Only products in stock
+//     };
+
+//     // Filter by category if provided
+//     if (category) {
+//       const baseProducts = await BaseProduct.find({ category, status: "active" });
+//       const baseProductIds = baseProducts.map((bp) => bp._id);
+
+//       query.$or = [
+//         { baseProduct: { $in: baseProductIds } },
+//         { category: category, baseProduct: null }
+//       ];
+//     }
+
+//     const vendorProducts = await VendorProduct.find(query)
+//       .populate("baseProduct")
+//       .populate("vendor", "storeName ownerName location address")
+//       .populate("addedBy", "storeName")
+//       .populate("lastUpdatedBy", "storeName");
+
+//     // Calculate distance and normalize for each vendor
+//     const productsWithDistance = vendorProducts.map((vp) => {
+//       const vendor = vp.vendor;
+//       const productObj = vp.toObject();
+//       const base = productObj.baseProduct;
+
+//       const normalizedProduct = {
+//         _id: productObj._id,
+//         vendor: productObj.vendor,
+//         name: productObj.name || (base ? base.name : undefined),
+//         category: productObj.category || (base ? base.category : undefined),
+//         description: productObj.description || (base ? base.description : ""),
+//         price: productObj.price,
+//         stock: productObj.stock,
+//         images: (productObj.images && productObj.images.length > 0)
+//           ? productObj.images
+//           : (base ? base.images : []),
+//         addedBy: productObj.addedBy,
+//         lastUpdatedBy: productObj.lastUpdatedBy,
+//         status: productObj.status,
+//         createdAt: productObj.createdAt,
+//         updatedAt: productObj.updatedAt,
+//         __v: productObj.__v,
+//         baseProduct: base ? base : {
+//           _id: productObj._id,
+//           name: productObj.name,
+//           category: productObj.category,
+//           description: productObj.description,
+//           images: productObj.images,
+//           basePrice: productObj.price
+//         }
+//       };
+
+//       if (vendor.location && vendor.location.coordinates) {
+//         const [lng, lat] = vendor.location.coordinates;
+//         const distance = calculateDistance(
+//           parseFloat(latitude),
+//           parseFloat(longitude),
+//           lat,
+//           lng
+//         );
+//         return {
+//           ...normalizedProduct,
+//           distance: Math.round(distance * 100) / 100, // Round to 2 decimal places (km)
+//         };
+//       }
+//       return normalizedProduct;
+//     });
+
+//     res.json({
+//       products: productsWithDistance,
+//       count: productsWithDistance.length,
+//       userLocation: { latitude, longitude },
+//       maxDistance: `${maxDistance / 1000}km`,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };

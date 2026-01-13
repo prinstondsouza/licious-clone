@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import { uploadUserImage } from "../utils/upload.js";
 
 // Get all users (Admin only - for management)
 export const getAllUsers = async (req, res) => {
@@ -52,10 +53,54 @@ export const updateUserLocation = async (req, res) => {
       message: "Location updated successfully",
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         location: user.location,
         address: user.address,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update user profile
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, phone, gender, maritalStatus } = req.body;
+
+    if (!firstName || !lastName || !phone || !gender || !maritalStatus) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (req.file) {
+      user.userImage = `/uploads/userImages/${req.file.filename}`;
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.phone = phone;
+    user.gender = gender;
+    user.maritalStatus = maritalStatus;
+
+    await user.save();
+
+    res.json({
+      message: "Profile updated successfully",
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        gender: user.gender,
+        maritalStatus: user.maritalStatus,
+        userImage: user.userImage,
       },
     });
   } catch (error) {
@@ -183,3 +228,6 @@ export const deleteUserAddresses = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Export upload middleware
+export { uploadUserImage };
