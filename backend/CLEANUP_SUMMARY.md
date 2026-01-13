@@ -44,4 +44,3 @@
 - No more User model dependencies in Vendor/DeliveryPartner controllers
 - Cart and Order models updated to use VendorProduct
 - All authentication consolidated in authController.js
-

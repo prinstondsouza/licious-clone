@@ -8,9 +8,11 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: [true, "Name is required"],
+    },
+    lastName: {
+      type: String,
     },
     email: {
       type: String,
@@ -77,6 +79,14 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+    },
+    maritalStatus: {
+      type: String,
+      enum: ["single", "married"],
+    },
   },
   { timestamps: true }
 );

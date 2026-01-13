@@ -14,11 +14,6 @@ import { registerVendor, loginVendor } from "../controllers/authController.js";
 const router = express.Router();
 
 /**
- * Public self-registration for vendors
- */
-router.post("/register", registerVendor);
-
-/**
  * Public Vendor Discovery
  */
 router.get("/public/list", getPublicApprovedVendors);
@@ -27,9 +22,10 @@ router.get("/public/nearest", getNearestApprovedVendors);
 /**
  * Admin routes
  */
-router.post("/", protect, authorizeRoles("admin"), createVendor);
-router.get("/", protect, authorizeRoles("admin"), getAllVendors);
-router.put("/status/:id", protect, authorizeRoles("admin"), updateVendorStatus);
+router.post("/create-vendor", protect, authorizeRoles("admin"), createVendor);
+router.get("/get-all-vendors", protect, authorizeRoles("admin"), getAllVendors);
+router.get("/get-vendor-by-id/:id", protect, authorizeRoles("admin"), getAllVendors);
+router.put("/update-status/:id", protect, authorizeRoles("admin"), updateVendorStatus);
 
 /**
  * Vendor routes

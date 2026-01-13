@@ -9,10 +9,10 @@ import Admin from "../models/adminModel.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone, address, latitude, longitude } = req.body;
+    const { email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -20,19 +20,17 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Set location if provided
-    const location = (latitude && longitude) ? {
-      type: "Point",
-      coordinates: [parseFloat(longitude), parseFloat(latitude)] // [lng, lat]
-    } : undefined;
+    // // Set location if provided
+    // const location = (latitude && longitude) ? {
+    //   type: "Point",
+    //   coordinates: [parseFloat(longitude), parseFloat(latitude)] // [lng, lat]
+    // } : undefined;
 
     const user = await User.create({
-      name,
+      firstName: "New",
+      lastName: "User",
       email,
       password,
-      phone,
-      address,
-      location,
     });
 
     const token = jwt.sign(
@@ -46,9 +44,9 @@ export const registerUser = async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-        phone: user.phone,
       },
     });
   } catch (error) {
@@ -85,9 +83,9 @@ export const loginUser = async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
-        phone: user.phone,
       },
     });
   } catch (error) {
@@ -111,7 +109,7 @@ export const registerVendor = async (req, res) => {
       documents,
     } = req.body;
 
-    if (!storeName || !ownerName || !email || !password || !phone) {
+    if (!storeName || !ownerName || !email || !password || !phone || !address) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 

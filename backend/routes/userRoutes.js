@@ -12,10 +12,6 @@ import { registerUser, loginUser } from "../controllers/authController.js";
 
 const router = express.Router();
 
-// Authentication routes (now in authController)
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-
 // User profile routes
 router.get("/me", protect, authorizeRoles("user"), getCurrentUser);
 router.put("/location", protect, authorizeRoles("user"), updateUserLocation);

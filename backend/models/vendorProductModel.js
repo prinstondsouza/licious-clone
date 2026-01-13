@@ -26,6 +26,10 @@ const vendorProductSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    vendorBasePrice: {
+      type: Number,
+      required: false,
+    },
     price: {
       type: Number,
       required: true,
@@ -34,6 +38,10 @@ const vendorProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
+    },
+    nextAvailableBy: {
+      type: String,
+      default: "out-of-stock",
     },
     images: [
       {
