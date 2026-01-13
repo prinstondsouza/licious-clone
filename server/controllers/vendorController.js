@@ -3,9 +3,9 @@ import Vendor from "../models/vendorModel.js";
 // Admin creates a new vendor (alternative method)
 export const createVendor = async (req, res) => {
   try {
-    const { storeName, ownerName, email, phone, password, address, latitude, longitude, documents } = req.body;
+    const { storeName, ownerName, email, phone, password, addressString, city, latitude, longitude, documents } = req.body;
 
-    if (!storeName || !ownerName || !email || !phone || !password) {
+    if (!storeName || !ownerName || !email || !phone || !password || !addressString || !city) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
@@ -19,6 +19,12 @@ export const createVendor = async (req, res) => {
       type: "Point",
       coordinates: [parseFloat(longitude), parseFloat(latitude)]
     } : undefined;
+    
+    const address = {
+      addressString,
+      city,
+      location,
+    };
 
     const vendor = await Vendor.create({
       storeName,
@@ -27,7 +33,6 @@ export const createVendor = async (req, res) => {
       password,
       phone,
       address,
-      location,
       documents,
       createdBy: req.user._id,
       status: "approved", // Admin-created vendors are auto-approved
@@ -91,7 +96,7 @@ export const getVendorProfile = async (req, res) => {
     if (vendor.status !== "approved") {
       return res.status(403).json({
         message: "Your vendor account is pending approval",
-        status: vendor.status
+        vendor
       });
     }
 
