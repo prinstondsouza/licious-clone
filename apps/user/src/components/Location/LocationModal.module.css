@@ -1,5 +1,5 @@
 .overlay {
-  position: fixed;
+  position: relative;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
@@ -16,7 +16,13 @@
   width: 90%;
   max-width: 400px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.3s ease-out;
+  position: absolute;
+  top: calc(100%);
+  left: 15px;
+  border: 1px solid #eee;
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .title {
