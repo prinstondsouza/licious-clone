@@ -13,15 +13,18 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
   const [cart, setCart] = useState({ items: [] });
   const navigate = useNavigate();
 
-  const totalAmount = cart?.items?.reduce(
-    (sum, item) => sum + (item.vendorProduct?.price || 0) * item.quantity,
-    0
-  ) || 0;
+  const items = cart?.items ?? [];
 
-  const totalQuantity = cart?.items?.reduce(
-    (sum, item) => sum + item.quantity,
+  const totalAmount = items.reduce(
+    (sum, item) =>
+      sum + (item.vendorProduct?.price ?? 0) * (item.quantity ?? 0),
     0
-  ) || 0;
+  );
+
+  const totalQuantity = items.reduce(
+    (sum, item) => sum + (item.quantity ?? 0),
+    0
+  );
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -42,7 +45,7 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
     const closeMenu = () => setShowProfileMenu(false);
     window.addEventListener("click", closeMenu);
     return () => window.removeEventListener("click", closeMenu);
-  }, []);
+  }, [isLoggedin]);
 
   const fetchCart = async () => {
     const token = localStorage.getItem("token");
@@ -54,9 +57,10 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
       const res = await axios.get("/api/cart", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setCart(res.data.cart);
+      setCart(res.data?.cart ?? { items: [] });
     } catch (error) {
       console.error("Cart fetch error:", error);
+      setCart({ items: [] });
     }
   };
 
@@ -64,11 +68,13 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
     fetchCart();
     window.addEventListener("cartUpdated", fetchCart);
     return () => window.removeEventListener("cartUpdated", fetchCart);
-  }, []);
+  }, [isLoggedin]);
 
   const handleLogout = () => {
     localStorage.clear(); // Clear all user data
     setShowProfileMenu(false);
+    setCart({ items: [] });
+    setAddress('');
     navigate("/");
   };
 
@@ -77,12 +83,14 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
       <nav className={styles.navContainer}>
         {/* Logo & Location */}
         <div className={styles.logoSection}>
-          <Link to="/" className={styles.logo}>Licious Clone</Link>
+          <Link to="/" className={styles.logo}>
+            Licious Clone
+          </Link>
           <button
             onClick={() => setShowLocationModal(true)}
             className={styles.locationBtn}
           >
-            <MapPin /> 
+            <MapPin />
             {address ? `${address}` : "Set Location"}
           </button>
         </div>
@@ -98,8 +106,12 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
 
         {/* Navigation Links */}
         <div className={styles.navLinks}>
-          <Link to="/categories" className={styles.link}><Layers /> Categories</Link>
-          <Link to="/stores" className={styles.link}><Store /> Stores</Link>
+          <Link to="/categories" className={styles.link}>
+            <Layers /> Categories
+          </Link>
+          <Link to="/stores" className={styles.link}>
+            <Store /> Stores
+          </Link>
 
           <div className={styles.profileWrapper}>
             {isLoggedin ? (
@@ -115,11 +127,22 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
                 </Link>
 
                 {showProfileMenu && (
-                  <div className={styles.dropdown} onClick={(e) => e.stopPropagation()}>
-                    <Link to="/profile" className={styles.dropdownItem} onClick={() => setShowProfileMenu(false)}>
+                  <div
+                    className={styles.dropdown}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Link
+                      to="/profile"
+                      className={styles.dropdownItem}
+                      onClick={() => setShowProfileMenu(false)}
+                    >
                       My Profile
                     </Link>
-                    <Link to="/profile" className={styles.dropdownItem} onClick={() => setShowProfileMenu(false)}>
+                    <Link
+                      to="/profile"
+                      className={styles.dropdownItem}
+                      onClick={() => setShowProfileMenu(false)}
+                    >
                       Orders
                     </Link>
                     <button onClick={handleLogout} className={styles.logoutBtn}>
@@ -129,13 +152,20 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
                 )}
               </>
             ) : (
-              <Link onClick={onLoginClick} className={styles.link}><User/> Login</Link>
+              <Link onClick={onLoginClick} className={styles.link}>
+                <User /> Login
+              </Link>
             )}
           </div>
 
-          <Link onClick={onCartClick} className={`${styles.link} ${styles.cartLink}`}>
+          <Link
+            onClick={onCartClick}
+            className={`${styles.link} ${styles.cartLink}`}
+          >
             <ShoppingCart />
-            {cart.items.length > 0 ? `${totalQuantity} Items ₹${totalAmount}` : "Cart"}
+            {items.length > 0
+              ? `${totalQuantity} Items ₹${totalAmount}`
+              : "Cart"}
           </Link>
         </div>
       </nav>
