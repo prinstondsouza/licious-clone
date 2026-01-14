@@ -1,0 +1,73 @@
+.container {
+  padding: 20px;
+  max-width: 600px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.form {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 16px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.field input,
+.field textarea {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 14px;
+}
+
+.field textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.fileText {
+  font-size: 13px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.submitBtn {
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

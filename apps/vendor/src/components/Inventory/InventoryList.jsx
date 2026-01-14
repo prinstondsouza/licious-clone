@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import EditProductModal from "./EditProductModal";
 import styles from "./InventoryList.module.css";
@@ -49,7 +50,10 @@ const InventoryList = () => {
 
   return (
     <div className={styles.container}>
+      <div>
       <h2 className={styles.title}>My Inventory</h2>
+      <Link to="/add-from-catalog">Add Products</Link>
+      </div>
 
       {items.length === 0 ? (
         <p className={styles.emptyText}>No products found</p>

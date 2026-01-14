@@ -11,6 +11,8 @@ import Profile from "./components/Profile/Profile";
 import ItemPage from "./components/ItemPage/ItemPage";
 import LoginSidebar from "./components/Login/LoginSidebar";
 import InventoryList from "./components/Inventory/InventoryList";
+import CreateProduct from "./components/CreateProduct/CreateProduct";
+import AddFromCatalog from "./components/CreateProduct/AddFromCatalog";
 
 function App() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -32,6 +34,8 @@ function App() {
             <Route path="/profile" element={<Profile/>} />
             <Route path="/product/:id" element={<ItemPage/>} />
             <Route path="/inventory" element={<InventoryList/>} />
+            <Route path="/create-product" element={<CreateProduct/>} />
+            <Route path="/add-form-catalog" element={<AddFromCatalog/>} />
           </Routes>
         </div>
       </div>
