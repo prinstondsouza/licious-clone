@@ -5,7 +5,7 @@ import styles from "./ProductCard.module.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const ProductCard = ({ product, quantity }) => {
+const ProductCard = ({ product }) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [updating, setUpdating] = useState(false);
