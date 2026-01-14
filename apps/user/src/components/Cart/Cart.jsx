@@ -164,7 +164,7 @@ const Cart = ({ isSidebar = false }) => {
         <div key={item.vendorProduct._id} className={styles.cartItem}>
           <div className={styles.itemInfo}>
             <h3>
-              {item.vendorProduct.baseProduct?.name || item.vendorProduct.name}
+              { item.vendorProduct.name}
             </h3>
             <p>Vendor: {item.vendorProduct.vendor?.storeName}</p>
             <p>Price: ₹{item.vendorProduct.price}</p>

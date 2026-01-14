@@ -115,7 +115,7 @@ const ProductCard = ({ product, quantity }) => {
         <h3 className={styles.name}>{product.name}</h3>
         <p className={styles.description}>{product.description}</p>
         <div className={styles.price}>
-          ₹{product.price || product.basePrice || "N/A"}
+          ₹{product.price || "N/A"}
         </div>
       </div>
     </div>

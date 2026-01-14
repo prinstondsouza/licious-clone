@@ -89,7 +89,7 @@ const Checkout = () => {
           <div key={item.vendorProduct._id} className={styles.itemRow}>
             <div>
               <h4 className={styles.itemTitle}>
-                {item.vendorProduct.baseProduct?.name || item.vendorProduct.name}
+                {item.vendorProduct.name}
               </h4>
               <p className={styles.vendorName}>{item.vendorProduct.vendor?.storeName}</p>
               <p>Qty: {item.quantity}</p>
