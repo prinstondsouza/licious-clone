@@ -10,6 +10,9 @@ const AdminDashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [deliveryPartners, setDeliveryPartners] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
 
@@ -45,10 +48,108 @@ const AdminDashboard = () => {
   }, [token]);
 
   useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await axios.get("/api/vendors/get-all-vendors/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const vendorsData = res.data?.vendors || [];
+        setVendors(vendorsData);
+      } catch (err) {
+        console.error(
+          "Admin Dashboard Error:",
+          err.response?.data || err.message
+        );
+        setError(
+          err.response?.data?.message || "Failed to load admin dashboard"
+        );
+        toast.error("Failed to load dashboard", { position: "top-center" });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVendors();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchDeliveryPartners = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await axios.get("/api/delivery", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const deliverPartnersData = res.data?.deliveryPartners || [];
+        setDeliveryPartners(deliverPartnersData);
+      } catch (err) {
+        console.error(
+          "Admin Dashboard Error:",
+          err.response?.data || err.message
+        );
+        setError(
+          err.response?.data?.message || "Failed to load admin dashboard"
+        );
+        toast.error("Failed to load dashboard", { position: "top-center" });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeliveryPartners();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await axios.get("/api/orders/all", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const ordersData = res.data?.orders || [];
+        setOrders(ordersData);
+      } catch (err) {
+        console.error(
+          "Admin Dashboard Error:",
+          err.response?.data || err.message
+        );
+        setError(
+          err.response?.data?.message || "Failed to load admin dashboard"
+        );
+        toast.error("Failed to load dashboard", { position: "top-center" });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [token]);
+
+  useEffect(() => {
     setStats({
       totalUsers: users.length,
-    });
-  }, [users]);
+      totalVendors: vendors.length,
+      totalDeliveryPartners: deliveryPartners.length,
+      pendingVendors: vendors.filter((v) => v.status === "pending").length,
+      approvedVendors: vendors.filter((v) => v.status === "approved").length,
+      totalOrders: orders.length,
+    })
+  }, [users, vendors, deliveryPartners]);
 
   if (loading) {
     return (
@@ -112,15 +213,6 @@ const AdminDashboard = () => {
             {stats?.totalDeliveryPartners ?? 0}
           </h3>
         </div>
-      </div>
-
-      <div className={styles.noteBox}>
-        <h4 className={styles.noteTitle}>Next Admin Actions</h4>
-        <ul className={styles.noteList}>
-          <li>Approve / Reject Vendors</li>
-          <li>Create Base Products</li>
-          <li>Assign Delivery Partners to Orders</li>
-        </ul>
       </div>
     </div>
   );
