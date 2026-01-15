@@ -1,0 +1,71 @@
+.container {
+  padding: 20px;
+}
+
+.loading {
+  padding: 20px;
+  font-size: 14px;
+}
+
+.title {
+  margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.emptyText {
+  font-size: 14px;
+  color: #555;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+}
+
+.productName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.meta {
+  margin: 6px 0 0 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.activeStatus {
+  font-weight: 700;
+  color: green;
+}
+
+.inactiveStatus {
+  font-weight: 700;
+  color: red;
+}
+
+.editBtn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: black;
+  color: white;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.editBtn:hover {
+  opacity: 0.85;
+}
