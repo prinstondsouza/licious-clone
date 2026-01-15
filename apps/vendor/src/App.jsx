@@ -34,7 +34,7 @@ function App() {
             <Route path="/product/:id" element={<ItemPage/>} />
             <Route path="/inventory" element={<InventoryList/>} />
             <Route path="/create-product" element={<CreateProduct/>} />
-            <Route path="/add-form-catalog" element={<AddFromCatalog/>} />
+            <Route path="/add-from-catalog" element={<AddFromCatalog/>} />
             <Route path="/orders" element={<VendorOrders/>} />
           </Routes>
         </div>
