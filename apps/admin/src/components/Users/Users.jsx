@@ -1,12 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Users.module.css";
 
 const Users = () => {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const location = useLocation();
+  const [loading, setLoading] = useState();
+  const [error, setError] = useState("");
+  const [users, setUsers] = useState([]);
 
-  const users = location.state?.users || [];
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await axios.get("/api/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const usersData = res.data || [];
+      setUsers(usersData);
+    } catch (err) {
+      console.error(
+        "Admin Dashboard Error:",
+        err.response?.data || err.message
+      );
+      setError(err.response?.data?.message || "Failed to load admin dashboard");
+      toast.error("Failed to load dashboard", { position: "top-center" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <p className={styles.loadingText}>Loading admin dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <p className={styles.errorText}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -18,9 +66,7 @@ const Users = () => {
       </div>
 
       {users.length === 0 ? (
-        <p className={styles.emptyText}>
-          No users found (or page refreshed).
-        </p>
+        <p className={styles.emptyText}>No users found.</p>
       ) : (
         <div className={styles.tableWrap}>
           <table className={styles.table}>

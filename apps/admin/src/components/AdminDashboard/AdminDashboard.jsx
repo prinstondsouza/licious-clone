@@ -180,7 +180,7 @@ const AdminDashboard = () => {
         <div
           className={styles.card}
           onClick={() => {
-            navigate("/users", { state: { users } });
+            navigate("/users");
           }}
         >
           <p className={styles.cardLabel}>Total Users</p>
