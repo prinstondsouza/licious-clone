@@ -148,7 +148,7 @@ const AdminDashboard = () => {
       pendingVendors: vendors.filter((v) => v.status === "pending").length,
       approvedVendors: vendors.filter((v) => v.status === "approved").length,
       totalOrders: orders.length,
-    })
+    });
   }, [users, vendors, deliveryPartners]);
 
   if (loading) {
@@ -187,17 +187,32 @@ const AdminDashboard = () => {
           <h3 className={styles.cardValue}>{stats?.totalUsers ?? 0}</h3>
         </div>
 
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          onClick={() => {
+            navigate("/vendors");
+          }}
+        >
           <p className={styles.cardLabel}>Total Vendors</p>
           <h3 className={styles.cardValue}>{stats?.totalVendors ?? 0}</h3>
         </div>
 
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          onClick={() => {
+            navigate("/vendors");
+          }}
+        >
           <p className={styles.cardLabel}>Approved Vendors</p>
           <h3 className={styles.cardValue}>{stats?.approvedVendors ?? 0}</h3>
         </div>
 
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          onClick={() => {
+            navigate("/vendors");
+          }}
+        >
           <p className={styles.cardLabel}>Pending Vendors</p>
           <h3 className={styles.cardValue}>{stats?.pendingVendors ?? 0}</h3>
         </div>
