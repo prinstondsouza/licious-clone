@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import styles from "./AddFromCatalog.module.css";
 
 const AddFromCatalog = () => {
@@ -17,11 +18,14 @@ const AddFromCatalog = () => {
     try {
       setLoading(true);
       const res = await axios.get("/api/products/base", {
-        headers: {Authorization: `Bearer ${token}`},
+        headers: { Authorization: `Bearer ${token}` },
       });
       setBaseProducts(res.data.baseProducts || res.data.products || []);
     } catch (error) {
-      console.log("Error fetchBaseProducts:", error.response?.data || error.message);
+      console.log(
+        "Error fetchBaseProducts:",
+        error.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }
@@ -33,21 +37,22 @@ const AddFromCatalog = () => {
 
   const handleSelect = (product) => {
     setSelectedProduct(product);
-    setPrice("");
+    setPrice(product.basePrice || "");
     setStock("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!selectedProduct) return alert("Select a product first");
-    if (!price || !stock) return alert("Enter price and stock");
+    if (!selectedProduct) return toast.error("Select a product first");
+    if (!price || !stock) return toast.error("Enter price and stock");
 
     try {
       setSaving(true);
 
       const payload = {
-        baseProduct: selectedProduct._id,
+        baseProductId: selectedProduct._id,
+        vendorBasePrice: Number(selectedProduct.basePrice),
         price: Number(price),
         stock: Number(stock),
       };
@@ -56,13 +61,16 @@ const AddFromCatalog = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("Product added to your inventory ✅");
+      toast.info("Product added to your inventory");
       setSelectedProduct(null);
       setPrice("");
       setStock("");
     } catch (error) {
-      console.log("Error addFromCatalog:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Failed to add product");
+      console.log(
+        "Error addFromCatalog:",
+        error.response?.data || error.message
+      );
+      toast.error(error.response?.data?.message || "Failed to add product");
     } finally {
       setSaving(false);
     }
@@ -105,7 +113,9 @@ const AddFromCatalog = () => {
             <h3 className={styles.subTitle}>Add Details</h3>
 
             {!selectedProduct ? (
-              <p className={styles.helperText}>Select a product from the left</p>
+              <p className={styles.helperText}>
+                Select a product from the left
+              </p>
             ) : (
               <>
                 <div className={styles.selectedInfo}>
