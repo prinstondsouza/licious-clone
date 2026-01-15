@@ -1,47 +1,164 @@
 .container {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+}
+
+.loading {
+  padding: 20px;
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
 }
 
 .welcomeText {
-  color: #333;
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 6px 0 0 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.quickActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  background: black;
+  color: white;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.actionBtn:hover {
+  opacity: 0.85;
+}
+
+.actionBtnOutline {
+  background: white;
+  color: black;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 14px;
+  border: 1px solid #ddd;
+}
+
+.actionBtnOutline:hover {
+  border-color: #bbb;
+}
+
+/* STATS */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.statCard {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  font-weight: 700;
+}
+
+.statValue {
+  margin: 8px 0 0 0;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.statSub {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+/* SECTIONS */
+.section {
+  margin-top: 22px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
-  margin: 20px 0;
-  color: #444;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
 }
 
+.viewAllLink {
+  text-decoration: none;
+  font-weight: 800;
+  color: black;
+  font-size: 14px;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+.emptyText {
+  font-size: 14px;
+  color: #555;
+}
+
+/* PRODUCTS */
 .productGrid {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding: 10px 0;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.productGrid::-webkit-scrollbar {
-  display: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
 
 .cardWrapper {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-  transition: transform 0.3s ease;
+  width: 100%;
 }
 
-.loading {
+/* ORDERS */
+.ordersList {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50vh;
-  font-size: 1.2rem;
-  color: #666;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .productGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+  }
 }
