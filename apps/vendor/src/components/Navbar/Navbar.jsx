@@ -34,9 +34,9 @@ const Navbar = ({ onLoginClick }) => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all user data
+    localStorage.clear();
     setShowProfileMenu(false);
-    navigate("/");
+    navigate("/register");
   };
 
   return (
