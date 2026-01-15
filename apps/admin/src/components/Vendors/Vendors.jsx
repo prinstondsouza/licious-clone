@@ -154,7 +154,7 @@ const Vendors = () => {
                     <div className={styles.actions}>
                       <button
                         className={styles.viewBtn}
-                        onClick={() => navigate(`/admin/vendors/${vendor._id}`)}
+                        onClick={() => navigate(`/vendors/${vendor._id}`)}
                       >
                         View
                       </button>

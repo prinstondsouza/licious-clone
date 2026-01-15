@@ -19,6 +19,7 @@ import AddFromCatalog from "./components/CreateProduct/AddFromCatalog";
 import AllOrders from "./components/Orders/AllOrders";
 import Users from "./components/Users/Users"
 import Vendors from "./components/Vendors/Vendors"
+import VendorDetailsPage from "./components/Vendors/VendorDetailsPage"
 
 const AdminProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -98,6 +99,8 @@ function App() {
             <Route path="/users" element={<Users />} />
 
             <Route path="/vendors" element={<Vendors />} />
+
+            <Route path="/vendors/:id" element={<VendorDetailsPage />} />
 
             <Route
               path="/register"
