@@ -17,9 +17,10 @@ import InventoryList from "./components/Inventory/InventoryList";
 import CreateProduct from "./components/CreateProduct/CreateProduct";
 import AddFromCatalog from "./components/CreateProduct/AddFromCatalog";
 import AllOrders from "./components/Orders/AllOrders";
-import Users from "./components/Users/Users"
-import Vendors from "./components/Vendors/Vendors"
-import VendorDetailsPage from "./components/Vendors/VendorDetailsPage"
+import Users from "./components/Users/Users";
+import Vendors from "./components/Vendors/Vendors";
+import VendorDetailsPage from "./components/Vendors/VendorDetailsPage";
+import CreateVendor from "./components/Vendors/CreateVendor";
 
 const AdminProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -101,6 +102,8 @@ function App() {
             <Route path="/vendors" element={<Vendors />} />
 
             <Route path="/vendors/:id" element={<VendorDetailsPage />} />
+
+            <Route path="/create-vendor" element={<CreateVendor />} />
 
             <Route
               path="/register"
