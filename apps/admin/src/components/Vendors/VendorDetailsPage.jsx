@@ -24,8 +24,7 @@ const VendorDetails = () => {
         },
       });
 
-      // supports: res.data.vendor OR res.data
-      const vendorData = res.data?.vendors || res.data;
+      const vendorData = res.data?.vendors.find(v => v._id === id);
       setVendor(vendorData);
     } catch (err) {
       console.error("Vendor Details Error:", err.response?.data || err.message);
@@ -43,7 +42,7 @@ const VendorDetails = () => {
       });
 
       await axios.put(
-        `/api/update-status/${id}`,
+        `/api/vendors/update-status/${id}`,
         { status },
         {
           headers: {
@@ -148,7 +147,7 @@ const VendorDetails = () => {
 
         <div className={styles.row}>
           <span className={styles.label}>Address</span>
-          <span className={styles.value}>{vendor.address || "-"}</span>
+          <span className={styles.value}>{vendor.address.addressString || "-"}</span>
         </div>
 
         <div className={styles.row}>

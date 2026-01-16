@@ -23,7 +23,7 @@ const Vendors = () => {
         },
       });
 
-      const vendorsData = res.data?.vendors || res.data || [];
+      const vendorsData = res.data?.vendors || [];
       setVendors(Array.isArray(vendorsData) ? vendorsData : []);
     } catch (err) {
       console.error("Get Vendors Error:", err.response?.data || err.message);
@@ -147,7 +147,7 @@ const Vendors = () => {
                   </td>
 
                   <td className={styles.addressCell}>
-                    {vendor.address || "-"}
+                    {vendor.address.addressString || "-"}
                   </td>
 
                   <td>
