@@ -189,6 +189,17 @@ const CreateVendor = () => {
             />
           </div>
 
+          <div className={styles.full}>
+            <label className={styles.label}>City</label>
+            <textarea
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              placeholder="Koramangala"
+              className={`${styles.inputField}`}
+            />
+          </div>
+
           <div className={styles.actions}>
             <button
               type="button"
