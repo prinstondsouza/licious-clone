@@ -11,7 +11,7 @@ import {
   getVendorById,
 } from "../controllers/vendorController.js";
 
-import { registerVendor, loginVendor } from "../controllers/authController.js";
+// import { registerVendor, loginVendor } from "../controllers/authController.js";
 
 const router = express.Router();
 
