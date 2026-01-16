@@ -304,10 +304,10 @@ export const loginDeliveryPartner = async (req, res) => {
 
 export const registerAdmin = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { firstName, lastName, email, password, phone } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+    if (!firstName || !email || !password) {
+      return res.status(400).json({ message: "First Name, email, and password are required" });
     }
 
     const existingAdmin = await Admin.findOne({ email });
@@ -316,7 +316,8 @@ export const registerAdmin = async (req, res) => {
     }
 
     const admin = await Admin.create({
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
@@ -333,7 +334,8 @@ export const registerAdmin = async (req, res) => {
       token,
       admin: {
         id: admin._id,
-        name: admin.name,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
         email: admin.email,
       },
     });
@@ -371,7 +373,8 @@ export const loginAdmin = async (req, res) => {
       token,
       admin: {
         id: admin._id,
-        name: admin.name,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
         email: admin.email,
       },
     });
