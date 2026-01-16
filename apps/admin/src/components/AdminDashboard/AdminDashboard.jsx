@@ -222,7 +222,12 @@ const AdminDashboard = () => {
           <h3 className={styles.cardValue}>{stats?.totalOrders ?? 0}</h3>
         </div>
 
-        <div className={styles.card}>
+        <div
+          className={styles.card}
+          onClick={() => {
+            navigate("/delivery");
+          }}
+        >
           <p className={styles.cardLabel}>Delivery Partners</p>
           <h3 className={styles.cardValue}>
             {stats?.totalDeliveryPartners ?? 0}
