@@ -1,0 +1,131 @@
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logoSection {
+  display: flex;
+}
+
+.logo {
+  text-decoration: none;
+  color: #d92662;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.locationBtn {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: left;
+  width: 150px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.searchBar {
+  width: 350px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.searchBar:focus {
+  background-color: #fff;
+  border-color: #d92662;
+  box-shadow: 0 0 0 2px rgba(217, 38, 98, 0.1);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #d92662;
+}
+
+.profileWrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 180px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: #f9f9f9;
+  color: #d92662;
+}
+
+.logoutBtn {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-top: 1px solid #eee;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: #d92662;
+  font-weight: 600;
+}
+
+.cartLink {
+  background-color: #d92662;
+  color: #fff !important;
+  padding: 8px 15px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
