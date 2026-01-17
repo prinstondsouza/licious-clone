@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import OrderDetailsModal from "./OrderDetailsModal";
 import styles from "./Profile.module.css";
+import EditProfileModal from "./EditProfileModal";
 
 const Profile = () => {
   const [username, setUsername] = useState("");
@@ -11,13 +12,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
 
   useEffect(() => {
-    const fullname = `${localStorage.getItem("fname")}  ${localStorage.getItem("lname")}`
-    setUsername(fullname);
-    setEmail(localStorage.getItem("email"));
-    setPhone(localStorage.getItem("phone"));
-
     const fetchOrders = async () => {
       try {
         setLoading(true);
@@ -39,15 +36,24 @@ const Profile = () => {
     fetchOrders();
   }, []);
 
+  useEffect(() => {
+    const fullname = `${localStorage.getItem("fname")}  ${localStorage.getItem("lname")}`;
+    setUsername(fullname);
+    setEmail(localStorage.getItem("email"));
+    setPhone(localStorage.getItem("phone"));
+  }, [editProfileModalOpen]);
+
   const formatDateAndTime = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
 
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} mins ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} mins ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+
     return date.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
@@ -57,12 +63,18 @@ const Profile = () => {
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case "delivered": return "darkgreen";
-      case "out-for-delivery": return "green";
-      case "confirmed": return "blue";
-      case "pending": return "orange";
-      case "cancelled": return "#ff4d4f";
-      default: return "#333";
+      case "delivered":
+        return "darkgreen";
+      case "out-for-delivery":
+        return "green";
+      case "confirmed":
+        return "blue";
+      case "pending":
+        return "orange";
+      case "cancelled":
+        return "#ff4d4f";
+      default:
+        return "#333";
     }
   };
 
@@ -70,7 +82,15 @@ const Profile = () => {
     <div className={styles.container}>
       <div className={styles.userInfo}>
         <h2>{username || "Guest User"}</h2>
-        <p>{phone} | {email}</p>
+        <p>
+          {phone} | {email}
+        </p>
+        <button
+          className={styles.editLink}
+          onClick={() => setEditProfileModalOpen(true)}
+        >
+          Edit Profile
+        </button>
       </div>
 
       <h3 className={styles.historyTitle}>Order History</h3>
@@ -80,7 +100,9 @@ const Profile = () => {
       ) : error ? (
         <p className={styles.errorText}>{error}</p>
       ) : orders.length === 0 ? (
-        <p className={styles.loadingText}>No orders found yet. Time to go shopping! 🛒</p>
+        <p className={styles.loadingText}>
+          No orders found yet. Time to go shopping! 🛒
+        </p>
       ) : (
         <ul className={styles.orderList}>
           {orders.map((order, index) => {
@@ -94,13 +116,15 @@ const Profile = () => {
                 onClick={() => setSelectedOrder(order)}
               >
                 <div>
-                  <h4 className={styles.orderHeader}>Order #{orderId.slice(-6)}</h4>
+                  <h4 className={styles.orderHeader}>
+                    Order #{orderId.slice(-6)}
+                  </h4>
                   <p className={styles.orderMeta}>
                     <strong>Date:</strong> {formatDateAndTime(dateString)}
                   </p>
                   <p className={styles.orderMeta}>
                     <strong>Status:</strong>{" "}
-                    <span 
+                    <span
                       className={styles.statusLabel}
                       style={{ color: getStatusColor(order.status) }}
                     >
@@ -111,9 +135,13 @@ const Profile = () => {
                   {order.items && order.items.length > 0 && (
                     <ul className={styles.itemList}>
                       {order.items.slice(0, 2).map((item, idx) => (
-                        <li key={idx}>{item.name || item.productName} × {item.quantity}</li>
+                        <li key={idx}>
+                          {item.name || item.productName} × {item.quantity}
+                        </li>
                       ))}
-                      {order.items.length > 2 && <li>+ {order.items.length - 2} more items</li>}
+                      {order.items.length > 2 && (
+                        <li>+ {order.items.length - 2} more items</li>
+                      )}
                     </ul>
                   )}
                 </div>
@@ -127,11 +155,17 @@ const Profile = () => {
         </ul>
       )}
 
-      {/* Render Modal outside the list loop */}
       {selectedOrder && (
         <OrderDetailsModal
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
+        />
+      )}
+
+      {editProfileModalOpen && (
+        <EditProfileModal
+          isOpen={editProfileModalOpen}
+          onClose={() => setEditProfileModalOpen(false)}
         />
       )}
     </div>
