@@ -176,6 +176,22 @@ export const getAllDeliveryPartners = async (req, res) => {
 };
 
 /**
+ * Get delivery partner by ID (Admin)
+ */
+export const getDeliveryPartnerById = async (req, res) => {
+  try {
+    const deliveryPartnerId = req.params.id;
+    const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId).select("-password");
+    if (!deliveryPartner) {
+      return res.status(404).json({ message: "Delivery Partner not found" });
+    }
+    res.json({ deliveryPartner });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
  * View all orders assigned to a delivery partner
  */
 export const getAssignedOrders = async (req, res) => {
