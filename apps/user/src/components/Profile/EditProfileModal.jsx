@@ -4,6 +4,7 @@ import styles from "./EditProfileModal.module.css";
 
 const EditProfileModal = ({ isOpen, onClose }) => {
   const token = localStorage.getItem("token");
+
   const [previewImage, setPreviewImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
 
@@ -37,28 +38,55 @@ const EditProfileModal = ({ isOpen, onClose }) => {
     const storedUserImage = localStorage.getItem("userImage");
     if (storedUserImage) {
       setPreviewImage(storedUserImage);
+    } else {
+      setPreviewImage(null);
     }
+
+    setProfileImage(null);
   }, [isOpen]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const payload = editForm;
-    
-    localStorage.setItem("email", editForm.email);
-    localStorage.setItem("phone", editForm.phone);
-    localStorage.setItem("fname", editForm.firstName);
-    localStorage.setItem("lname", editForm.lastName);
-
     try {
-      await axios.put("/api/users/update-user-profile", payload, {
-        headers: { Authorization: `Bearer ${token}` },
+      const formData = new FormData();
+      formData.append("firstName", editForm.firstName);
+      formData.append("lastName", editForm.lastName);
+      formData.append("phone", editForm.phone);
+      formData.append("gender", editForm.gender);
+      formData.append("maritalStatus", editForm.maritalStatus);
+
+      if (profileImage) {
+        formData.append("userImage", profileImage);
+      }
+
+      const res = await axios.put("/api/users/update-user-profile", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      const updatedUser = res?.data?.user;
+
+      if (updatedUser) {
+        localStorage.setItem("fname", updatedUser.firstName || "");
+        localStorage.setItem("lname", updatedUser.lastName || "");
+        localStorage.setItem("phone", updatedUser.phone || "");
+        localStorage.setItem("gender", updatedUser.gender || "");
+        localStorage.setItem("maritalStatus", updatedUser.maritalStatus || "");
+
+        if (updatedUser.userImage) {
+          localStorage.setItem("userImage", updatedUser.userImage);
+        }
+      }
 
       onClose();
     } catch (error) {
-      console.log("Update Profile Error:", error);
+      console.log(
+        "Update Profile Error:",
+        error.response?.data || error.message,
+      );
     } finally {
       setLoading(false);
     }
@@ -81,7 +109,14 @@ const EditProfileModal = ({ isOpen, onClose }) => {
           <div className={styles.imageSection}>
             <div className={styles.imagePreview}>
               {previewImage ? (
-                <img src={previewImage} alt="Preview" />
+                <img
+                  src={
+                    previewImage.startsWith("blob:")
+                      ? previewImage
+                      : `http://localhost:5000${previewImage}`
+                  }
+                  alt="Preview"
+                />
               ) : (
                 <div className={styles.placeholderImg}>No Image</div>
               )}
@@ -114,7 +149,6 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 onChange={(e) =>
                   setEditForm({ ...editForm, firstName: e.target.value })
                 }
-                placeholder="Enter first name"
                 required
               />
             </div>
@@ -128,7 +162,6 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                 onChange={(e) =>
                   setEditForm({ ...editForm, lastName: e.target.value })
                 }
-                placeholder="Enter last name"
                 required
               />
             </div>
@@ -143,7 +176,6 @@ const EditProfileModal = ({ isOpen, onClose }) => {
               onChange={(e) =>
                 setEditForm({ ...editForm, phone: e.target.value })
               }
-              placeholder="Enter phone number"
               required
             />
           </div>

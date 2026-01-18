@@ -5,43 +5,73 @@ import styles from "./Profile.module.css";
 import EditProfileModal from "./EditProfileModal";
 
 const Profile = () => {
-  const [username, setUsername] = useState("");
+  const token = localStorage.getItem("token");
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [userImage, setUserImage] = useState("");
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        setLoading(true);
         const response = await axios.get("/api/orders/my-orders", {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
+
         const ordersData = response.data.orders || response.data || [];
         setOrders(Array.isArray(ordersData) ? ordersData : []);
       } catch (error) {
         console.error("Error fetching orders:", error);
         setError("Failed to load orders. Please try again later.");
+      }
+    };
+
+    fetchOrders();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
+
+        const res = await axios.get("/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const user = res?.data?.user;
+
+        localStorage.setItem("fname", user.firstName || "");
+        localStorage.setItem("lname", user.lastName || "");
+        localStorage.setItem("email", user.email || "");
+        localStorage.setItem("phone", user.phone || "");
+        localStorage.setItem("maritalStatus", user.maritalStatus || "");
+        localStorage.setItem("gender", user.gender || "");
+        if (user.userImage) localStorage.setItem("userImage", user.userImage);
+
+        setFullName(`${user.firstName || ""} ${user.lastName || ""}`.trim());
+        setEmail(user.email || "");
+        setPhone(user.phone || "");
+        setUserImage(user.userImage || "");
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setError("Failed to load profile. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrders();
-  }, []);
-
-  useEffect(() => {
-    const fullname = `${localStorage.getItem("fname")}  ${localStorage.getItem("lname")}`;
-    setUsername(fullname);
-    setEmail(localStorage.getItem("email"));
-    setPhone(localStorage.getItem("phone"));
-  }, [editProfileModalOpen]);
+    fetchUserProfile();
+  }, [token, editProfileModalOpen]);
 
   const formatDateAndTime = (dateString) => {
     if (!dateString) return "N/A";
@@ -81,10 +111,27 @@ const Profile = () => {
   return (
     <div className={styles.container}>
       <div className={styles.userInfo}>
-        <h2>{username || "Guest User"}</h2>
-        <p>
-          {phone} | {email}
-        </p>
+        <div className={styles.profileTop}>
+          <div className={styles.avatar}>
+            {userImage ? (
+              <img
+                src={`http://localhost:5000${userImage}`}
+                alt="User"
+                className={styles.avatarImg}
+              />
+            ) : (
+              <div className={styles.avatarFallback}>👤</div>
+            )}
+          </div>
+
+          <div>
+            <h2>{fullName || "Guest User"}</h2>
+            <p>
+              {phone} | {email}
+            </p>
+          </div>
+        </div>
+
         <button
           className={styles.editLink}
           onClick={() => setEditProfileModalOpen(true)}
@@ -96,7 +143,7 @@ const Profile = () => {
       <h3 className={styles.historyTitle}>Order History</h3>
 
       {loading ? (
-        <p className={styles.loadingText}>Loading orders...</p>
+        <p className={styles.loadingText}>Loading...</p>
       ) : error ? (
         <p className={styles.errorText}>{error}</p>
       ) : orders.length === 0 ? (
@@ -119,9 +166,11 @@ const Profile = () => {
                   <h4 className={styles.orderHeader}>
                     Order #{orderId.slice(-6)}
                   </h4>
+
                   <p className={styles.orderMeta}>
                     <strong>Date:</strong> {formatDateAndTime(dateString)}
                   </p>
+
                   <p className={styles.orderMeta}>
                     <strong>Status:</strong>{" "}
                     <span
