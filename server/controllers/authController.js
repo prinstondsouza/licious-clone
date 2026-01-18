@@ -337,6 +337,7 @@ export const registerAdmin = async (req, res) => {
         firstName: admin.firstName,
         lastName: admin.lastName,
         email: admin.email,
+        phone: admin.phone,
       },
     });
   } catch (error) {
