@@ -6,9 +6,9 @@ import Order from "../models/orderModel.js";
  */
 export const createDeliveryPartner = async (req, res) => {
   try {
-    const { name, phone, vehicleType, vehicleNumber, email, password, latitude, longitude } = req.body;
+    const { firstName, lastName, phone, vehicleType, vehicleNumber, email, password, latitude, longitude } = req.body;
 
-    if (!name || !phone || !vehicleType || !email || !password || !vehicleNumber) {
+    if (!firstName || !phone || !vehicleType || !email || !password || !vehicleNumber) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
@@ -22,7 +22,8 @@ export const createDeliveryPartner = async (req, res) => {
     } : undefined;
 
     const deliveryPartner = await DeliveryPartner.create({
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
