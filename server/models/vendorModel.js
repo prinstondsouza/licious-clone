@@ -35,7 +35,7 @@ const vendorSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["paddending", "approved", "rejected", "banned"],
+      enum: ["pending", "approved", "rejected", "suspended", "blacklisted"],
       default: "pending",
     },
     address: {
