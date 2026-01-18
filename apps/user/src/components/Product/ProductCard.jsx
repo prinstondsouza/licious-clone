@@ -1,98 +1,18 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
 import styles from "./ProductCard.module.css";
 import QuantityButton from "./QuantityButton";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCart } from "../../context/CartContext";
 
 const ProductCard = ({ product, quantity }) => {
-  const token = localStorage.getItem("token");
-  const navigate = useNavigate();
-  const [updating, setUpdating] = useState(false);
-
-  const addToCart = async (vendorProductId) => {
-    try {
-      setUpdating(true);
-
-      if (!token) {
-        toast.info("Please login to add items to your Cart!", {
-          position: "top-center",
-        });
-        navigate("/");
-        return;
-      }
-
-      await axios.post(
-        "/api/cart/add",
-        {
-          vendorProductId,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      toast.info("Item added to cart!", {
-        position: "top-center",
-        closeOnClick: true,
-      });
-
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add item");
-    } finally {
-      setUpdating(false);
-    }
-  };
-
-  const removeFromCart = async (vendorProductId) => {
-    try {
-      setUpdating(true);
-
-      if (!token) {
-        toast.error("Please login to remove items from your Cart!", {
-          position: "top-center",
-        });
-        navigate("/");
-        return;
-      }
-
-      await axios.post(
-        "/api/cart/remove",
-        {
-          vendorProductId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      toast.info("Item removed from cart!", {
-        position: "top-center",
-        closeOnClick: true,
-      });
-
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add item");
-    } finally {
-      setUpdating(false);
-    }
-  };
+  const { addToCart, removeFromCart, loading } = useCart();
 
   return (
     <div className={styles.card}>
-        <div className={styles.imageWrapper}>
-          <Link
-            to={`/product/${product._id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
-          >
+      <div className={styles.imageWrapper}>
+        <Link
+          to={`/product/${product._id}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           {product.images?.[0] && (
             <img
               src={product.images[0]}
@@ -100,23 +20,21 @@ const ProductCard = ({ product, quantity }) => {
               className={styles.image}
             />
           )}
-            </Link>
-          <div className={styles.quantityBtn}>
-            <QuantityButton
-              qty={quantity}
-              loading={updating}
-              onAdd={(qty) => addToCart(product._id)}
-              onRemove={(qty) => removeFromCart(product._id)}
-            />
-          </div>
+        </Link>
+        <div className={styles.quantityBtn}>
+          <QuantityButton
+            qty={quantity}
+            loading={loading}
+            onAdd={(qty) => addToCart(product._id)}
+            onRemove={(qty) => removeFromCart(product._id)}
+          />
         </div>
+      </div>
 
       <div className={styles.content}>
         <h3 className={styles.name}>{product.name}</h3>
         <p className={styles.description}>{product.description}</p>
-        <div className={styles.price}>
-          ₹{product.price || "N/A"}
-        </div>
+        <div className={styles.price}>₹{product.price || "N/A"}</div>
       </div>
     </div>
   );

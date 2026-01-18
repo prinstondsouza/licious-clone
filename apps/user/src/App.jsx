@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
 
 // Import your components
 import Navbar from "./components/Navbar/Navbar";
@@ -20,31 +21,36 @@ function App() {
   const [loginOpen, setLoginOpen] = useState(false);
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar onCartClick={() => setCartOpen(true)} onLoginClick={() => setLoginOpen(true)}/>
-        <CartSidebar
-          isOpen={cartOpen}
-          onClose={() => setCartOpen(false)}
-        />
-        <LoginSidebar
-          isOpen={loginOpen}
-          onClose={() => setLoginOpen(false)}
-        />
-        <ToastContainer />
-        <div style={{ padding: "20px" }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register onLoginClick={() => setLoginOpen(true)} />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/stores" element={<Stores />} />
-            <Route path="/profile" element={<Profile/>} />
-            <Route path="/product/:id" element={<ItemPage/>} />
-            <Route path="/checkout" element={<Checkout/>} />
-          </Routes>
+    <CartProvider>
+      <Router>
+        <div className="App">
+          <Navbar
+            onCartClick={() => setCartOpen(true)}
+            onLoginClick={() => setLoginOpen(true)}
+          />
+          <CartSidebar isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+          <LoginSidebar
+            isOpen={loginOpen}
+            onClose={() => setLoginOpen(false)}
+          />
+          <ToastContainer />
+          <div style={{ padding: "20px" }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route
+                path="/register"
+                element={<Register onLoginClick={() => setLoginOpen(true)} />}
+              />
+              <Route path="/categories" element={<Categories />} />
+              <Route path="/stores" element={<Stores />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/product/:id" element={<ItemPage />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </CartProvider>
   );
 }
 

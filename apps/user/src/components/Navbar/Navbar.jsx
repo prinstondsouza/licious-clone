@@ -73,11 +73,13 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
   }, [isLoggedin]);
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all user data
+    localStorage.clear();
     setShowProfileMenu(false);
     setCart({ items: [] });
     setAddress("");
-    navigate("/");
+    fetchCart();
+    window.addEventListener("cartUpdated", fetchCart);
+    return () => window.removeEventListener("cartUpdated", fetchCart);
   };
 
   return (
