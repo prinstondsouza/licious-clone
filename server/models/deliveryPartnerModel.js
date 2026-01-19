@@ -39,6 +39,11 @@ const deliveryPartnerSchema = new mongoose.Schema(
       enum: ["pending", "approved", "rejected", "suspended", "blacklisted"],
       default: "pending",
     },
+    availabilityStatus: {
+      type: String,
+      enum: ["online", "offline", "busy", "not-available"],
+      default: "not-available",
+    },
     location: {
       type: {
         type: String,
