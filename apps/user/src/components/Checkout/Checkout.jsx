@@ -3,10 +3,10 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Checkout.module.css";
+import { useCart } from "../../context/CartContext";
 
 const Checkout = () => {
-  const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { cart, fetchCart, loading } = useCart();
   const [address, setAddress] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -25,28 +25,18 @@ const Checkout = () => {
         });
         setAddress(res.data.user.address || "");
       } catch (error) {
-        console.error("Profile fetch error:", error.response?.data || error.message);
+        console.error(
+          "Profile fetch error:",
+          error.response?.data || error.message,
+        );
       }
     };
 
-    const fetchCart = async () => {
-      try {
-        const res = await axios.get("/api/cart", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.data.cart || res.data.cart.items.length === 0) {
-          toast.warning("Your Cart is Empty", { position: "top-center" });
-          navigate("/cart");
-          return;
-        }
-        setCart(res.data.cart);
-      } catch (err) {
-        toast.error("Failed to load Checkout", { position: "top-center" });
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!cart || cart.items.length === 0) {
+      toast.warning("Your Cart is Empty", { position: "top-center" });
+      navigate("/cart");
+      return;
+    }
 
     fetchUserProfile();
     fetchCart();
@@ -59,9 +49,13 @@ const Checkout = () => {
     }
 
     try {
-      await axios.post("/api/orders/place", {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(
+        "/api/orders/place",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       toast.success("Order placed successfully!", { position: "top-center" });
       navigate("/profile");
@@ -72,11 +66,12 @@ const Checkout = () => {
     }
   };
 
-  if (loading) return <h2 className={styles.container}>Loading checkout details...</h2>;
+  if (loading)
+    return <h2 className={styles.container}>Loading checkout details...</h2>;
 
   const totalAmount = cart.items.reduce(
     (sum, item) => sum + item.vendorProduct.price * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -88,10 +83,10 @@ const Checkout = () => {
         {cart.items.map((item) => (
           <div key={item.vendorProduct._id} className={styles.itemRow}>
             <div>
-              <h4 className={styles.itemTitle}>
-                {item.vendorProduct.name}
-              </h4>
-              <p className={styles.vendorName}>{item.vendorProduct.vendor?.storeName}</p>
+              <h4 className={styles.itemTitle}>{item.vendorProduct.name}</h4>
+              <p className={styles.vendorName}>
+                {item.vendorProduct.vendor?.storeName}
+              </p>
               <p>Qty: {item.quantity}</p>
             </div>
             <div className={styles.itemPrice}>
@@ -108,15 +103,24 @@ const Checkout = () => {
       <div className={styles.addressBox}>
         <h3>Delivery Details</h3>
         <p>{address ? `📍 ${address}` : "📍 No delivery address found."}</p>
-        <button 
-          onClick={() => navigate("/profile")} 
-          style={{ background: "none", border: "none", color: "#d92662", cursor: "pointer", padding: 0, textDecoration: "underline" }}
+        <button
+          onClick={() => navigate("/profile")}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#d92662",
+            cursor: "pointer",
+            padding: 0,
+            textDecoration: "underline",
+          }}
         >
           {address ? "Change Address" : "Add Address in Profile"}
         </button>
       </div>
 
-      <p><strong>Payment Method:</strong> Cash on Delivery (COD)</p>
+      <p>
+        <strong>Payment Method:</strong> Cash on Delivery (COD)
+      </p>
 
       <button
         onClick={placeOrder}

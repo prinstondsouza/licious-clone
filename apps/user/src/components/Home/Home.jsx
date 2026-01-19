@@ -7,7 +7,7 @@ import styles from "./Home.module.css";
 import { useCart } from "../../context/CartContext";
 
 const Home = () => {
-  const { cart, fetchCart } = useCart();
+  const { cart } = useCart();
   const [items, setItems] = useState([]);
   const [username, setUsername] = useState("");
 
@@ -21,8 +21,6 @@ const Home = () => {
 
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) setUsername(storedUsername);
-
-    fetchCart();
   }, []);
 
   return (

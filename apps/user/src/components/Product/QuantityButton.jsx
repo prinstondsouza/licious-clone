@@ -3,7 +3,8 @@ import { Plus, Minus, LoaderCircle } from "lucide-react";
 import styles from "./QuantityButton.module.css";
 import { useCart } from "../../context/CartContext";
 
-const QuantityButton = ({ qty, loading, onAdd, onRemove }) => {
+const QuantityButton = ({ qty, onAdd, onRemove }) => {
+  const { loading } = useCart();
   const [quantity, setQuantity] = useState(0);
 
   useEffect(() => {

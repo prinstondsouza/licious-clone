@@ -88,6 +88,26 @@ export const CartProvider = ({ children }) => {
       fetchCart();
     } catch (err) {
       console.log("Remove from cart error:", err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Failed to add item");
+    }
+  };
+
+  const removeProductFromCart = async (vendorProductId) => {
+    try {
+      const res = await axios.post(
+        "/api/cart/remove-product",
+        { vendorProductId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      fetchCart();
+      toast.success("Item removed");
+    } catch (error) {
+      console.error("Remove error:", error.response?.data || error.message);
+      toast.error("Failed to remove item");
     }
   };
 
@@ -103,6 +123,7 @@ export const CartProvider = ({ children }) => {
         fetchCart,
         addToCart,
         removeFromCart,
+        removeProductFromCart,
         setCart,
       }}
     >

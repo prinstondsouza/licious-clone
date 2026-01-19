@@ -3,6 +3,7 @@ import axios from "axios";
 import ProductCard from "../Product/ProductCard";
 import { getProductQuantity } from "../../utils/cartUtils";
 import styles from "./Categories.module.css";
+import { useCart } from "../../context/CartContext"
 
 // Category Button Component
 const CategoryButton = ({ category, isSelected, onClick }) => {
@@ -18,25 +19,12 @@ const CategoryButton = ({ category, isSelected, onClick }) => {
 
 // Main Component
 const Categories = () => {
-  const token = localStorage.getItem("token");
+  const { cart } = useCart();
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categoryItems, setCategoryItems] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
-  const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchCart = async () => {
-    if (!token) return;
-    try {
-      const res = await axios.get("/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCart(res.data.cart);
-    } catch (error) {
-      console.error("Fetch cart error:", error.response?.data || error.message);
-    }
-  };
 
   const handleCategoryClick = (categoryName) => {
     setSelectedCategory(categoryName);
@@ -49,16 +37,6 @@ const Categories = () => {
       setCategoryItems(filteredItems);
     }
   };
-
-  useEffect(() => {
-    const handleCartUpdate = () => fetchCart();
-    window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, []);
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {

@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import LocationModal from "../Location/LocationModal";
 import styles from "./Navbar.module.css";
 import { Store, Layers, MapPin, ShoppingCart, User } from "lucide-react";
+import { useCart } from "../../context/CartContext";
 
 const Navbar = ({ onCartClick, onLoginClick }) => {
+  const { cart, setCart, fetchCart } = useCart();
   const [address, setAddress] = useState("");
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [cart, setCart] = useState({ items: [] });
   const [profileImage, setProfileImage] = useState();
-  const navigate = useNavigate();
 
   const items = cart?.items ?? [];
 
@@ -49,37 +49,15 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
     return () => window.removeEventListener("click", closeMenu);
   }, [isLoggedin]);
 
-  const fetchCart = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setCart({ items: [] });
-      return;
-    }
-    try {
-      const res = await axios.get("/api/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCart(res.data?.cart ?? { items: [] });
-    } catch (error) {
-      console.error("Cart fetch error:", error);
-      setCart({ items: [] });
-    }
-  };
-
   useEffect(() => {
     fetchCart();
-    window.addEventListener("cartUpdated", fetchCart);
-    return () => window.removeEventListener("cartUpdated", fetchCart);
   }, [isLoggedin]);
 
   const handleLogout = () => {
     localStorage.clear();
     setShowProfileMenu(false);
-    setCart({ items: [] });
+    setCart(null);
     setAddress("");
-    fetchCart();
-    window.addEventListener("cartUpdated", fetchCart);
-    return () => window.removeEventListener("cartUpdated", fetchCart);
   };
 
   return (

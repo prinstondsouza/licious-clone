@@ -4,7 +4,7 @@ import QuantityButton from "./QuantityButton";
 import { useCart } from "../../context/CartContext";
 
 const ProductCard = ({ product, quantity }) => {
-  const { addToCart, removeFromCart, loading } = useCart();
+  const { addToCart, removeFromCart } = useCart();
 
   return (
     <div className={styles.card}>
@@ -24,7 +24,6 @@ const ProductCard = ({ product, quantity }) => {
         <div className={styles.quantityBtn}>
           <QuantityButton
             qty={quantity}
-            loading={loading}
             onAdd={(qty) => addToCart(product._id)}
             onRemove={(qty) => removeFromCart(product._id)}
           />
