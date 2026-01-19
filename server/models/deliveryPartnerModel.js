@@ -44,6 +44,10 @@ const deliveryPartnerSchema = new mongoose.Schema(
       enum: ["online", "offline", "busy", "not-available"],
       default: "not-available",
     },
+    deliveryStatus: {
+      type: String,
+      enum: ["waiting", "assigned", "accepted", "rejected", "arrived-at-store", "picked-up", "on-route", "reached-customer", "delivered"]
+    },
     location: {
       type: {
         type: String,
