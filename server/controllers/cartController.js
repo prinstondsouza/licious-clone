@@ -81,7 +81,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// Remove product from cart (decrement quantity)
+// Decrease product quantity from cart (decrement quantity)
 export const removeFromCart = async (req, res) => {
   try {
     const { vendorProductId } = req.body;
