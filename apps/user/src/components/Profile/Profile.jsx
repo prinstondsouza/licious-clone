@@ -4,17 +4,13 @@ import OrderDetailsModal from "./OrderDetailsModal";
 import styles from "./Profile.module.css";
 import EditProfileModal from "./EditProfileModal";
 import AddressPage from "./AddressPage";
+import { useUser } from "../../context/UserContext";
 
 const Profile = () => {
   const token = localStorage.getItem("token");
-
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [userImage, setUserImage] = useState("");
+  const { user, loading } = useUser();
 
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -37,42 +33,8 @@ const Profile = () => {
       }
     };
 
-    fetchOrders();
+    if (token) fetchOrders();
   }, [token]);
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-
-        const res = await axios.get("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const user = res?.data?.user;
-
-        localStorage.setItem("fname", user.firstName || "");
-        localStorage.setItem("lname", user.lastName || "");
-        localStorage.setItem("email", user.email || "");
-        localStorage.setItem("phone", user.phone || "");
-        localStorage.setItem("maritalStatus", user.maritalStatus || "");
-        localStorage.setItem("gender", user.gender || "");
-        if (user.userImage) localStorage.setItem("userImage", user.userImage);
-
-        setFullName(`${user.firstName || ""} ${user.lastName || ""}`.trim());
-        setEmail(user.email || "");
-        setPhone(user.phone || "");
-        setUserImage(user.userImage || "");
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setError("Failed to load profile. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [token, editProfileModalOpen]);
 
   const formatDateAndTime = (dateString) => {
     if (!dateString) return "N/A";
@@ -109,6 +71,11 @@ const Profile = () => {
     }
   };
 
+  const fullName = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
+  const email = user?.email || "";
+  const phone = user?.phone || "";
+  const userImage = user?.userImage || "";
+
   return (
     <div className={styles.container}>
       <div className={styles.userInfo}>
@@ -128,7 +95,7 @@ const Profile = () => {
           <div>
             <h2>{fullName || "Guest User"}</h2>
             <p>
-              {phone} | {email}
+              {phone} {phone && email ? "|" : ""} {email}
             </p>
           </div>
         </div>
@@ -140,7 +107,9 @@ const Profile = () => {
           Edit Profile
         </button>
       </div>
+
       <AddressPage />
+
       <h3 className={styles.historyTitle}>Order History</h3>
 
       {loading ? (

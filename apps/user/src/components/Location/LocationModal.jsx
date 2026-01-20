@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import LocationSearchInput from "./LocationSearchInput";
 import styles from "./LocationModal.module.css";
+import { useUser } from "../../context/UserContext";
 
-const LocationModal = ({ onClose, onSave }) => {
+const LocationModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
+  const { fetchUser } = useUser();
   const token = localStorage.getItem("token");
 
   const useCurrentLocation = () => {
@@ -31,10 +33,10 @@ const LocationModal = ({ onClose, onSave }) => {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           );
 
-          onSave(res.data.user.address);
+          await fetchUser();
           onClose();
         } catch (err) {
           console.error(err);
@@ -46,7 +48,7 @@ const LocationModal = ({ onClose, onSave }) => {
       (error) => {
         alert("Location permission denied or unavailable");
         setLoading(false);
-      }
+      },
     );
   };
 
@@ -59,10 +61,10 @@ const LocationModal = ({ onClose, onSave }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      onSave(res.data.user.address);
+      await fetchUser();
       onClose();
     } catch (error) {
       console.error(error);
@@ -76,9 +78,9 @@ const LocationModal = ({ onClose, onSave }) => {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h3 className={styles.title}>Select Delivery Location</h3>
 
-        <button 
-          className={styles.gpsButton} 
-          onClick={useCurrentLocation} 
+        <button
+          className={styles.gpsButton}
+          onClick={useCurrentLocation}
           disabled={loading}
         >
           {loading ? "Finding you..." : "📍 Use current location"}

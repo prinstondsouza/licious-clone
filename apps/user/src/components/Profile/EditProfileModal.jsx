@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styles from "./EditProfileModal.module.css";
+import { useUser } from "../../context/UserContext";
 
 const EditProfileModal = ({ isOpen, onClose }) => {
   const token = localStorage.getItem("token");
+  const { user, fetchUser } = useUser();
 
   const [previewImage, setPreviewImage] = useState(null);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
 
   const [editForm, setEditForm] = useState({
     firstName: "",
@@ -21,29 +23,22 @@ const EditProfileModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (!isOpen) return;
 
-    const storedFirstName = localStorage.getItem("fname") || "";
-    const storedLastName = localStorage.getItem("lname") || "";
-    const storedPhone = localStorage.getItem("phone") || "";
-    const storedGender = localStorage.getItem("gender") || "";
-    const storedMaritalStatus = localStorage.getItem("maritalStatus") || "";
-
     setEditForm({
-      firstName: storedFirstName,
-      lastName: storedLastName,
-      phone: storedPhone,
-      gender: storedGender,
-      maritalStatus: storedMaritalStatus,
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      phone: user?.phone || "",
+      gender: user?.gender || "",
+      maritalStatus: user?.maritalStatus || "",
     });
 
-    const storedUserImage = localStorage.getItem("userImage");
-    if (storedUserImage) {
-      setPreviewImage(storedUserImage);
+    if (user?.userImage) {
+      setPreviewImage(`http://localhost:5000${user.userImage}`);
     } else {
       setPreviewImage(null);
     }
 
-    setProfileImage(null);
-  }, [isOpen]);
+    setProfileImageFile(null);
+  }, [isOpen, user]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -57,30 +52,18 @@ const EditProfileModal = ({ isOpen, onClose }) => {
       formData.append("gender", editForm.gender);
       formData.append("maritalStatus", editForm.maritalStatus);
 
-      if (profileImage) {
-        formData.append("userImage", profileImage);
+      if (profileImageFile) {
+        formData.append("userImage", profileImageFile);
       }
 
-      const res = await axios.put("/api/users/update-user-profile", formData, {
+      await axios.put("/api/users/update-user-profile", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
 
-      const updatedUser = res?.data?.user;
-
-      if (updatedUser) {
-        localStorage.setItem("fname", updatedUser.firstName || "");
-        localStorage.setItem("lname", updatedUser.lastName || "");
-        localStorage.setItem("phone", updatedUser.phone || "");
-        localStorage.setItem("gender", updatedUser.gender || "");
-        localStorage.setItem("maritalStatus", updatedUser.maritalStatus || "");
-
-        if (updatedUser.userImage) {
-          localStorage.setItem("userImage", updatedUser.userImage);
-        }
-      }
-
+      await fetchUser();
       onClose();
     } catch (error) {
       console.log(
@@ -105,18 +88,10 @@ const EditProfileModal = ({ isOpen, onClose }) => {
         </div>
 
         <form onSubmit={handleUpdateProfile} className={styles.modalForm}>
-          {/* ✅ Profile Image */}
           <div className={styles.imageSection}>
             <div className={styles.imagePreview}>
               {previewImage ? (
-                <img
-                  src={
-                    previewImage.startsWith("blob:")
-                      ? previewImage
-                      : `http://localhost:5000${previewImage}`
-                  }
-                  alt="Preview"
-                />
+                <img src={previewImage} alt="Preview" />
               ) : (
                 <div className={styles.placeholderImg}>No Image</div>
               )}
@@ -131,7 +106,7 @@ const EditProfileModal = ({ isOpen, onClose }) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
 
-                  setProfileImage(file);
+                  setProfileImageFile(file);
                   setPreviewImage(URL.createObjectURL(file));
                 }}
                 hidden

@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import styles from "./AddressPage.module.css";
 import AddressModal from "./AddressModal.jsx";
+import { useUser } from "../../context/UserContext.jsx";
 
 const AddressPage = () => {
   const token = localStorage.getItem("token");
 
-  const [addresses, setAddresses] = useState([]);
-  const [selectedAddressId, setSelectedAddressId] = useState(
-    localStorage.getItem("selectedAddressId") || "",
-  );
+  const {
+    addresses,
+    setAddresses,
+    fetchUser,
+    selectedAddressId,
+    setSelectedAddressId,
+  } = useUser();
 
   const [newAddressForm, setNewAddressForm] = useState({
     address: "",
@@ -39,48 +43,10 @@ const AddressPage = () => {
 
   const [addAddress, setAddAddress] = useState(false);
 
-  useEffect(() => {
-    const fetchUserAddresses = async () => {
-      try {
-        setAddrLoading(true);
-
-        const res = await axios.get("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const user = res?.data?.user;
-        const userAddresses = user?.addresses || [];
-
-        setAddresses(userAddresses);
-
-        if (!selectedAddressId && userAddresses.length > 0) {
-          const firstId = userAddresses[0]._id;
-          setSelectedAddressId(firstId);
-          localStorage.setItem("selectedAddressId", firstId);
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching addresses:",
-          error.response?.data || error.message,
-        );
-      } finally {
-        setAddrLoading(false);
-      }
-    };
-
-    fetchUserAddresses();
-  }, [token]);
-
   const handleSelectAddress = async (addr) => {
     try {
       setAddrLoading(true);
-
       setSelectedAddressId(addr._id);
-      localStorage.setItem("selectedAddressId", addr._id);
-
-      localStorage.setItem("selectedAddress", addr.address);
-      localStorage.setItem("selectedCity", addr.city);
-      localStorage.setItem("selectedFlatNo", addr.flatNo);
 
       const latitude = addr.location?.coordinates?.[1];
       const longitude = addr.location?.coordinates?.[0];
@@ -88,14 +54,8 @@ const AddressPage = () => {
       if (latitude && longitude) {
         await axios.put(
           "/api/users/location",
-          {
-            latitude,
-            longitude,
-            address: addr.address,
-          },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+          { latitude, longitude, address: addr.address },
+          { headers: { Authorization: `Bearer ${token}` } },
         );
       }
     } catch (error) {
@@ -132,13 +92,9 @@ const AddressPage = () => {
       });
 
       const createdAddress = res.data?.address;
+
       if (createdAddress) {
         setAddresses((prev) => [createdAddress, ...prev]);
-      } else {
-        const refreshed = await axios.get("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAddresses(refreshed.data?.user?.addresses || []);
       }
 
       setNewAddressForm({
@@ -147,11 +103,16 @@ const AddressPage = () => {
         landmark: "",
         city: "",
         label: "Home",
+        customLabel: "",
         latitude: "",
         longitude: "",
       });
+
+      await fetchUser();
+      return true;
     } catch (error) {
       console.log("Add address error:", error.response?.data || error.message);
+      return false;
     } finally {
       setAddrLoading(false);
     }
@@ -169,8 +130,9 @@ const AddressPage = () => {
 
       if (selectedAddressId === addressId) {
         setSelectedAddressId("");
-        localStorage.removeItem("selectedAddressId");
       }
+
+      await fetchUser();
     } catch (error) {
       console.log(
         "Delete address error:",
@@ -234,10 +196,15 @@ const AddressPage = () => {
         ),
       );
 
+      await fetchUser();
+
       setEditModalOpen(false);
       setEditingAddressId(null);
+
+      return true;
     } catch (error) {
       console.log("Edit address error:", error.response?.data || error.message);
+      return false;
     } finally {
       setAddrLoading(false);
     }
@@ -250,6 +217,7 @@ const AddressPage = () => {
       ) : (
         <h3 className={styles.sectionTitle}>My Addresses</h3>
       )}
+
       {addresses.length === 0 ? (
         <p className={styles.loadingText}>No addresses saved yet.</p>
       ) : (
@@ -309,10 +277,8 @@ const AddressPage = () => {
           })}
         </div>
       )}
-      <button
-        className={styles.editBtn}
-        onClick={() => setAddAddress(!addAddress)}
-      >
+
+      <button className={styles.editBtn} onClick={() => setAddAddress(true)}>
         Add New Address
       </button>
 
@@ -324,12 +290,12 @@ const AddressPage = () => {
         setFormData={setNewAddressForm}
         loading={addrLoading}
         onClose={() => setAddAddress(false)}
-        onSubmit={(e) => {
-          handleAddAddress(e);
-          setAddAddress(false);
+        onSubmit={async (e) => {
+          const ok = await handleAddAddress(e);
+          if (ok) setAddAddress(false);
         }}
       />
-      
+
       <AddressModal
         isOpen={editModalOpen}
         title="Edit Address"
@@ -338,7 +304,10 @@ const AddressPage = () => {
         setFormData={setEditAddressForm}
         loading={addrLoading}
         onClose={() => setEditModalOpen(false)}
-        onSubmit={() => handleEditAddress(editingAddressId)}
+        onSubmit={async () => {
+          const ok = await handleEditAddress(editingAddressId);
+          if (ok) setEditModalOpen(false);
+        }}
       />
     </div>
   );

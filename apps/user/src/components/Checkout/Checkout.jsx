@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Checkout.module.css";
 import { useCart } from "../../context/CartContext";
+import { useUser } from "../../context/UserContext";
 
 const Checkout = () => {
   const { cart, fetchCart, loading } = useCart();
-  const [address, setAddress] = useState("");
+  const { address } = useUser();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -18,27 +19,12 @@ const Checkout = () => {
       return;
     }
 
-    const fetchUserProfile = async () => {
-      try {
-        const res = await axios.get("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAddress(res.data.user.address || "");
-      } catch (error) {
-        console.error(
-          "Profile fetch error:",
-          error.response?.data || error.message,
-        );
-      }
-    };
-
     if (!cart || cart.items.length === 0) {
       toast.warning("Your Cart is Empty", { position: "top-center" });
       navigate("/cart");
       return;
     }
 
-    fetchUserProfile();
     fetchCart();
   }, [navigate, token]);
 

@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import LocationModal from "../Location/LocationModal";
 import styles from "./Navbar.module.css";
 import { Store, Layers, MapPin, ShoppingCart, User } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import { useUser } from "../../context/UserContext";
 
 const Navbar = ({ onCartClick, onLoginClick }) => {
   const { cart, setCart, fetchCart } = useCart();
-  const [address, setAddress] = useState("");
+  const { user, addresses, selectedAddressId, logout } = useUser();
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [profileImage, setProfileImage] = useState();
 
   const items = cart?.items ?? [];
+
+  const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
+
+  const addressText = selectedAddress
+    ? `${selectedAddress.flatNo}, ${selectedAddress.address}`
+    : "Set Location";
 
   const totalAmount = items.reduce(
     (sum, item) =>
@@ -27,37 +32,16 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
     0,
   );
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const res = await axios.get("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setAddress(res.data.user.address || "");
-        setProfileImage(res.data.user.userImage || "");
-      } catch (error) {
-        console.error("Profile fetch error:", error);
-      }
-    };
-
-    fetchUserProfile();
-
-    const closeMenu = () => setShowProfileMenu(false);
-    window.addEventListener("click", closeMenu);
-    return () => window.removeEventListener("click", closeMenu);
-  }, [isLoggedin]);
+  const profileImage = user?.userImage;
 
   useEffect(() => {
     fetchCart();
   }, [isLoggedin]);
 
   const handleLogout = () => {
-    localStorage.clear();
     setShowProfileMenu(false);
     setCart(null);
-    setAddress("");
+    logout();
   };
 
   return (
@@ -73,7 +57,7 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
             className={styles.locationBtn}
           >
             <MapPin />
-            {address ? `${address}` : "Set Location"}
+            {addressText}
           </button>
         </div>
 
@@ -164,10 +148,7 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
       </nav>
 
       {showLocationModal && (
-        <LocationModal
-          onClose={() => setShowLocationModal(false)}
-          onSave={(newAddress) => setAddress(newAddress)}
-        />
+        <LocationModal onClose={() => setShowLocationModal(false)} />
       )}
     </>
   );
