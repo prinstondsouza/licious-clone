@@ -65,6 +65,9 @@ const deliveryPartnerSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    deliveryPartnerImage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
