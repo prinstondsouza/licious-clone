@@ -5,12 +5,14 @@ import axios from "axios";
 import styles from "./Checkout.module.css";
 import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
+import AddressPage from "../Profile/AddressPage";
 
 const Checkout = () => {
   const { cart, fetchCart, loading } = useCart();
   const { user } = useUser();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const [showAddressPage, setShowAddressPage] = useState(false);
 
   const address = user?.address;
 
@@ -93,7 +95,7 @@ const Checkout = () => {
         <h3>Delivery Details</h3>
         <p>{address ? `📍 ${address}` : "📍 No delivery address found."}</p>
         <button
-          onClick={() => navigate("/profile")}
+          onClick={() => setShowAddressPage(true)}
           style={{
             background: "none",
             border: "none",
@@ -106,6 +108,7 @@ const Checkout = () => {
           {address ? "Change Address" : "Add Address in Profile"}
         </button>
       </div>
+      {showAddressPage && <AddressPage />}
 
       <p>
         <strong>Payment Method:</strong> Cash on Delivery (COD)
