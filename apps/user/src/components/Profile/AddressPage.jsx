@@ -20,7 +20,7 @@ const AddressPage = () => {
     flatNo: "",
     landmark: "",
     city: "",
-    label: "Home",
+    label: "",
     customLabel: "",
     latitude: "",
     longitude: "",
@@ -31,7 +31,7 @@ const AddressPage = () => {
     flatNo: "",
     landmark: "",
     city: "",
-    label: "Home",
+    label: "",
     latitude: "",
     longitude: "",
   });
@@ -81,7 +81,7 @@ const AddressPage = () => {
         city: newAddressForm.city,
         label:
           newAddressForm.label === "Other"
-            ? newAddressForm.customLabel
+            ? newAddressForm.customLabel.trim()
             : newAddressForm.label,
         latitude: Number(newAddressForm.latitude),
         longitude: Number(newAddressForm.longitude),

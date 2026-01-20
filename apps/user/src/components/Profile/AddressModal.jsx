@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./AddressModal.module.css";
+import { useUser } from "../../context/UserContext";
 
 const AddressModal = ({
   isOpen,
@@ -11,7 +12,42 @@ const AddressModal = ({
   onClose,
   onSubmit,
 }) => {
+  const { addresses } = useUser();
+
+  const homeExists = addresses?.some((a) => a.label === "Home");
+  const workExists = addresses?.some((a) => a.label === "Work");
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (mode !== "add") return;
+
+    if (homeExists && workExists && formData.label !== "Other") {
+      setFormData((prev) => ({
+        ...prev,
+        label: "Other",
+        customLabel: prev.customLabel || "",
+      }));
+    }
+  }, [isOpen, mode, homeExists, workExists, formData.label]);
+
   if (!isOpen) return null;
+
+  const handleAutoLocation = () => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setFormData((prev) => ({
+          ...prev,
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        }));
+      },
+      (err) => console.log("Location error:", err.message),
+    );
+  };
+
+  const showCustomLabel = mode === "add" && formData.label === "Other";
 
   return (
     <div className={styles.modalOverlay}>
@@ -73,34 +109,49 @@ const AddressModal = ({
           />
 
           <div className={styles.twoCol}>
-            <select
-              className={styles.input}
-              value={formData.label}
-              onChange={(e) => {
-                const value = e.target.value;
-
-                // ✅ For Add mode, support custom label input when Other
-                if (mode === "add") {
+            {mode === "edit" ? (
+              <input
+                className={styles.input}
+                value={formData.label}
+                onChange={(e) => {
+                  const value = e.target.value;
                   setFormData((prev) => ({
                     ...prev,
                     label: value,
                     customLabel: value === "Other" ? "" : prev.customLabel,
                   }));
-                  return;
-                }
+                }}
+              />
+            ) : (
+              <select
+                className={styles.input}
+                value={formData.label}
+                onChange={(e) => {
+                  const value = e.target.value;
 
-                // ✅ For Edit mode (simple)
-                setFormData({ ...formData, label: value });
-              }}
-              required
-            >
-              <option value="Home">Home</option>
-              <option value="Work">Work</option>
-              <option value="Other">Other</option>
-            </select>
+                  if (mode === "add") {
+                    setFormData((prev) => ({
+                      ...prev,
+                      label: value,
+                      customLabel: value === "Other" ? "" : prev.customLabel,
+                    }));
+                  } else {
+                    setFormData({ ...formData, label: value });
+                  }
+                }}
+                required
+              >
+                <option value="Home" disabled={homeExists}>
+                  Home
+                </option>
+                <option value="Work" disabled={workExists}>
+                  Work
+                </option>
+                <option value="Other">Other</option>
+              </select>
+            )}
 
-            {/* ✅ Only in ADD mode show custom label input */}
-            {mode === "add" && formData.label === "Other" ? (
+            {showCustomLabel ? (
               <input
                 className={styles.input}
                 placeholder="Custom label"
@@ -114,45 +165,18 @@ const AddressModal = ({
               <button
                 className={styles.addBtn}
                 type="button"
-                onClick={() => {
-                  if (!navigator.geolocation) return;
-
-                  navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude,
-                      }));
-                    },
-                    (err) => console.log("Location error:", err.message),
-                  );
-                }}
+                onClick={handleAutoLocation}
               >
                 Auto Location
               </button>
             )}
           </div>
 
-          {/* ✅ If add mode and custom label is visible, we still need auto location button */}
-          {mode === "add" && formData.label === "Other" && (
+          {showCustomLabel && (
             <button
               className={styles.addBtnFull}
               type="button"
-              onClick={() => {
-                if (!navigator.geolocation) return;
-
-                navigator.geolocation.getCurrentPosition(
-                  (pos) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      latitude: pos.coords.latitude,
-                      longitude: pos.coords.longitude,
-                    }));
-                  },
-                  (err) => console.log("Location error:", err.message),
-                );
-              }}
+              onClick={handleAutoLocation}
             >
               Auto Location
             </button>

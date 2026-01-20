@@ -4,6 +4,7 @@ import axios from "axios";
 const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
+  const token = localStorage.getItem("token");
   const [user, setUser] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (selectedAddressId) {
