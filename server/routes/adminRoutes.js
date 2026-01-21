@@ -4,8 +4,8 @@ import { adminDashboard, getVendors, getDeliveryPartners } from "../controllers/
 
 const router = express.Router();
 
-// router.get("/dashboard", protect, authorizeRoles("admin"), adminDashboard);
-// router.get("/vendors", protect, authorizeRoles("admin"), getVendors);
-// router.get("/delivery", protect, authorizeRoles("admin"), getDeliveryPartners);
+router.get("/dashboard", protect, authorizeRoles("admin"), adminDashboard);
+router.get("/vendors", protect, authorizeRoles("admin"), getVendors);
+router.get("/delivery", protect, authorizeRoles("admin"), getDeliveryPartners);
 
 export default router;
