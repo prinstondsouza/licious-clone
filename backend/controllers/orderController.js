@@ -79,11 +79,11 @@ export const placeOrder = async (req, res) => {
     }
 
     for (const vendor of vendorMap.values()) {
-      if (!vendor.location || !vendor.location.coordinates) {
+      if (!vendor.address.location || !vendor.address.location.coordinates) {
         return res.status(400).json({ message: `Vendor ${vendor.storeName} has no location set.` });
       }
-      const vendorLng = vendor.location.coordinates[0];
-      const vendorLat = vendor.location.coordinates[1];
+      const vendorLng = vendor.address.location.coordinates[0];
+      const vendorLat = vendor.address.location.coordinates[1];
 
       const distance = calculateDistance(userLat, userLng, vendorLat, vendorLng);
       if (distance > 5 ) { // 5km radius
