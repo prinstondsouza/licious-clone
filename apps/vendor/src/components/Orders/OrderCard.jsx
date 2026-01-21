@@ -1,16 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styles from "./OrderCard.module.css";
 
 const OrderCard = ({ order }) => {
-  const {
-    _id,
-    user,
-    products,
-    totalPrice,
-    status,
-    deliveryAddress,
-    createdAt,
-  } = order;
+  const { _id, user, products, totalPrice, status, createdAt } = order;
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -18,47 +11,33 @@ const OrderCard = ({ order }) => {
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.topRow}>
-        <h3 className={styles.orderId}>Order #{_id.slice(-6)}</h3>
+    <Link to={`/orders/${_id}`} className={styles.link}>
+      <div className={styles.card}>
+        <div className={styles.topRow}>
+          <h3 className={styles.orderId}>Order #{_id.slice(-6)}</h3>
 
-        <span className={`${styles.status} ${styles[status]}`}>
-          {status.toUpperCase()}
-        </span>
+          <span className={`${styles.status} ${styles[status]}`}>
+            {status?.toUpperCase() || "PENDING"}
+          </span>
+        </div>
+
+        <div className={styles.middleRow}>
+          <p className={styles.meta}>
+            <b>Customer:</b> {user?.name || "Unknown"}
+          </p>
+
+          <p className={styles.meta}>
+            <b>Items:</b> {products?.length || 0}
+          </p>
+        </div>
+
+        <div className={styles.bottomRow}>
+          <p className={styles.date}>{formatDate(createdAt)}</p>
+          <h3 className={styles.total}>₹{totalPrice}</h3>
+          <p className={styles.viewText}>View →</p>
+        </div>
       </div>
-
-      <p className={styles.meta}>
-        <b>Customer:</b> {user?.name} ({user?.email})
-      </p>
-
-      <p className={styles.meta}>
-        <b>Address:</b> {deliveryAddress}
-      </p>
-
-      <p className={styles.meta}>
-        <b>Date:</b> {formatDate(createdAt)}
-      </p>
-
-      <div className={styles.itemsSection}>
-        <h4 className={styles.itemsTitle}>Items</h4>
-
-        {products.map((p) => (
-          <div key={p._id} className={styles.itemRow}>
-            <span className={styles.itemName}>
-              {p.vendorProduct?.name || "Unnamed Product"}
-            </span>
-            <span className={styles.itemQty}>x {p.quantity}</span>
-            <span className={styles.itemPrice}>
-              ₹{p.vendorProduct?.price || 0}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.bottomRow}>
-        <h3 className={styles.total}>Total: ₹{totalPrice}</h3>
-      </div>
-    </div>
+    </Link>
   );
 };
 

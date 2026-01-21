@@ -18,6 +18,7 @@ import InventoryList from "./components/Inventory/InventoryList";
 import CreateProduct from "./components/CreateProduct/CreateProduct";
 import AddFromCatalog from "./components/CreateProduct/AddFromCatalog";
 import VendorOrders from "./components/Orders/VendorOrders";
+import OrderDetails from "./components/Orders/OrderDetails";
 
 const VendorProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -106,6 +107,8 @@ function App() {
                 </VendorProtectedRoute>
               }
             />
+
+            <Route path="/orders/:id" element={<OrderDetails />} />
 
             <Route
               path="/register"

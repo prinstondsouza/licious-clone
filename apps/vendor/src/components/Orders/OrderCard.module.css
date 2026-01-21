@@ -1,10 +1,21 @@
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+
 .card {
   background: white;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.05);
+  transition: 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 0, 0, 0.14);
+  box-shadow: 0px 18px 35px rgba(0, 0, 0, 0.08);
 }
 
 .topRow {
@@ -14,18 +25,20 @@
 }
 
 .orderId {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 900;
   margin: 0;
+  color: #111;
 }
 
 .status {
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
 }
 
+/* status colors */
 .delivered {
   background: #d1fae5;
   color: #065f46;
@@ -41,51 +54,47 @@
   color: #991b1b;
 }
 
-.meta {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.itemsSection {
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #eee;
-}
-
-.itemsTitle {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.itemRow {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
+.middleRow {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
   gap: 10px;
-  padding: 6px 0;
-  font-size: 14px;
 }
 
-.itemName {
-  font-weight: 500;
-}
-
-.itemQty {
-  font-weight: 600;
-}
-
-.itemPrice {
+.meta {
+  margin: 0;
+  font-size: 13px;
+  color: #444;
   font-weight: 600;
 }
 
 .bottomRow {
-  margin-top: 12px;
+  margin-top: 14px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.date {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #777;
 }
 
 .total {
-  font-size: 16px;
-  font-weight: 700;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+  color: #111;
+}
+
+.viewText {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 900;
+  color: #111;
 }

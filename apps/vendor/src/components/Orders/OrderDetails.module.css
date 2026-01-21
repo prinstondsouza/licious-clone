@@ -1,0 +1,160 @@
+.pageWrap {
+  min-height: 100vh;
+  background: #f6f7fb;
+  padding: 24px 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  font-weight: 700;
+  color: #444;
+}
+
+.backBtn {
+  display: inline-block;
+  margin-bottom: 14px;
+  text-decoration: none;
+  font-weight: 800;
+  color: #111;
+}
+
+.headerCard {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #111;
+}
+
+.subTitle {
+  margin: 6px 0 10px 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 700;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #f0f0f0;
+  color: #111;
+}
+
+.metaText {
+  margin: 0;
+  font-size: 14px;
+  color: #444;
+}
+
+.section {
+  margin-top: 16px;
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sectionTitle {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #111;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 14px;
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.itemName {
+  margin: 0;
+  font-weight: 900;
+  color: #111;
+  font-size: 14px;
+}
+
+.itemSmall {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.itemPrice {
+  margin: 0;
+  font-weight: 900;
+  color: #111;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.infoBox {
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.infoLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: #666;
+}
+
+.infoValue {
+  margin: 6px 0 0 0;
+  font-weight: 800;
+  color: #111;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .headerMeta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
