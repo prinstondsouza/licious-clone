@@ -1,149 +1,244 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import styles from "./ItemPage.module.css"
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ArrowLeft, RefreshCw, Pencil, Tag, Box, Layers } from "lucide-react";
+import EditProductModal from "../Inventory/EditProductModal";
+import styles from "./ItemPage.module.css";
 
 const ItemPage = () => {
-  const token = localStorage.getItem("token");
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { id: productId } = useParams();
-  const [productDetails, setProductDetails] = useState(null);
+  const token = localStorage.getItem("token");
+
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
-  const [cart, setCart] = useState();
+  const [error, setError] = useState("");
+  const [product, setProduct] = useState(null);
 
-  const addToCart = async (vendorProductId) => {
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const fetchProduct = async () => {
     try {
-      setUpdating(true);
+      setLoading(true);
+      setError("");
 
-      if (!token) {
-        toast.info("Please login to add items to your Cart!", {
-          position: "top-center",
-        });
-        navigate("/");
-        return;
-      }
-
-      const res = await axios.post(
-        "/api/cart/add",
-        {
-          vendorProductId,
-          quantity: 1,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCart(res.data.cart);
-
-      toast.info("Item added to cart!", {
-        position: "top-center",
-        closeOnClick: true,
+      const res = await axios.get(`/api/products/base/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add item");
+      const productData =
+        res.data?.product || res.data?.baseProduct || res.data || null;
+      setProduct(productData);
+    } catch (err) {
+      console.error("ItemPage Error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Failed to load product");
+      toast.error("Failed to load product", { position: "top-center" });
     } finally {
-      setUpdating(false);
-    }
-  };
-
-  const removeOneFromCart = async (vendorProductId) => {
-    try {
-      setUpdating(true);
-
-      if (!token) {
-        toast.error("Please login to remove items from your Cart!", {
-          position: "top-center",
-        });
-        navigate("/");
-        return;
-      }
-
-      const res = await axios.post(
-        "/api/cart/remove",
-        {
-          vendorProductId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCart(res.data.cart);
-
-      toast.info("Item removed from cart!", {
-        position: "top-center",
-        closeOnClick: true,
-      });
-
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add item");
-    } finally {
-      setUpdating(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await axios.get(`/api/products/vendor/${productId}`);
-        setProductDetails(response.data.vendorProduct || response.data);
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProductDetails();
-  }, [productId]);
+    fetchProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const productImage = useMemo(() => {
+    return product?.image || product?.images?.[0] || "";
+  }, [product]);
+
+  const displayPrice = useMemo(() => {
+    if (!product?.price) return "—";
+    return `₹${product.price}`;
+  }, [product]);
+
+  const displayCreated = useMemo(() => {
+    if (!product?.createdAt) return "-";
+    return new Date(product.createdAt).toLocaleString();
+  }, [product]);
+
+  const onProductUpdated = (updatedProduct) => {
+    // ✅ if your modal returns updated product
+    if (updatedProduct) setProduct(updatedProduct);
+    else fetchProduct(); // fallback
+    setOpenEdit(false);
+    toast.success("Product updated!", { position: "top-center" });
+  };
 
   if (loading) {
-    return <div className={styles.loading}>Loading product details...</div>;
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.skeletonHeader} />
+          <div className={styles.skeletonMain} />
+        </div>
+      </div>
+    );
   }
 
-  if (!productDetails) {
+  if (error) {
     return (
-      <div className={styles.container}>
-        <h2>Product not found.</h2>
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.errorBox}>
+            <p className={styles.errorTitle}>Couldn’t load product</p>
+            <p className={styles.errorText}>{error}</p>
+
+            <div className={styles.actions}>
+              <button className={styles.backBtn} onClick={() => navigate(-1)}>
+                <ArrowLeft size={16} />
+                Back
+              </button>
+
+              <button className={styles.primaryBtn} onClick={fetchProduct}>
+                <RefreshCw size={16} />
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.emptyBox}>
+            <p className={styles.emptyTitle}>Product not found</p>
+            <p className={styles.emptyText}>
+              This product may have been removed.
+            </p>
+
+            <button className={styles.backBtn} onClick={() => navigate(-1)}>
+              <ArrowLeft size={16} />
+              Go Back
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.productWrapper}>
-        <div className={styles.imageSection}>
-          <img
-            src={productDetails.images[0]}
-            alt={productDetails.name}
-            className={styles.productImage}
-          />
+    <div className={styles.page}>
+      <div className={styles.container}>
+        {/* Top bar */}
+        <div className={styles.topBar}>
+          <div className={styles.leftTop}>
+            <button className={styles.backBtn} onClick={() => navigate(-1)}>
+              <ArrowLeft size={16} />
+              Back
+            </button>
+
+            <div>
+              <h2 className={styles.title}>Item</h2>
+              <p className={styles.subtitle}>View & edit product details</p>
+            </div>
+          </div>
+
+          <div className={styles.rightTop}>
+            <button
+              className={styles.secondaryBtn}
+              onClick={() => setOpenEdit(true)}
+            >
+              <Pencil size={16} />
+              Edit
+            </button>
+
+            <button className={styles.primaryBtn} onClick={fetchProduct}>
+              <RefreshCw size={16} />
+              Refresh
+            </button>
+          </div>
         </div>
-        <div className={styles.infoSection}>
-          <h2 className={styles.title}>{productDetails.name}</h2>
-          <div className={styles.description}>
-            <p>
-              {productDetails.description ||
-                "No description provided for this product."}
+
+        {/* Main Card */}
+        <div className={styles.mainCard}>
+          <div className={styles.left}>
+            <div className={styles.imageBox}>
+              {productImage ? (
+                <img
+                  src={productImage}
+                  alt={product?.name}
+                  className={styles.image}
+                />
+              ) : (
+                <div className={styles.fallback}>
+                  {(product?.name?.[0] || "P").toUpperCase()}
+                </div>
+              )}
+            </div>
+
+            <div className={styles.pills}>
+              <span className={styles.pill}>
+                <Tag size={14} />
+                {product?.category || "Category"}
+              </span>
+
+              <span className={styles.pillMuted}>
+                <Layers size={14} />
+                {product?.brand || "Brand"}
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.right}>
+            <p className={styles.name}>{product?.name || "Unnamed Product"}</p>
+            <p className={styles.desc}>
+              {product?.description ||
+                "No description available for this product."}
             </p>
-          </div>
-          <div className={styles.priceAndAddBtn}>
-            <p className={styles.price}>₹{productDetails.price}</p>
-            {/* <QuantityButton
-              // qty={getProductQuantity(cart, productDetails._id)}
-              loading={updating}
-              onAdd={(qty) => addToCart(productDetails._id)}
-              onRemove={(qty) => removeOneFromCart(productDetails._id)}
-            /> */}
+
+            <div className={styles.infoGrid}>
+              <div className={styles.infoBox}>
+                <p className={styles.infoLabel}>Price</p>
+                <p className={styles.infoValue}>{displayPrice}</p>
+              </div>
+
+              <div className={styles.infoBox}>
+                <p className={styles.infoLabel}>Unit</p>
+                <p className={styles.infoValue}>{product?.unit || "—"}</p>
+              </div>
+
+              <div className={styles.infoBox}>
+                <p className={styles.infoLabel}>SKU</p>
+                <p className={styles.infoValue}>{product?.sku || "—"}</p>
+              </div>
+
+              <div className={styles.infoBox}>
+                <p className={styles.infoLabel}>Created</p>
+                <p className={styles.infoValue}>{displayCreated}</p>
+              </div>
+            </div>
+
+            <div className={styles.note}>
+              <div className={styles.noteIcon}>
+                <Box size={16} />
+              </div>
+              <div>
+                <p className={styles.noteTitle}>Editable</p>
+                <p className={styles.noteText}>
+                  Click <b>Edit</b> to update this base product using your
+                  modal.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* ✅ EDIT MODAL */}
+        {openEdit && (
+          <EditProductModal
+            open={openEdit}
+            onClose={() => setOpenEdit(false)}
+            product={product}
+            onUpdated={onProductUpdated}
+          />
+        )}
+
+        <div className={styles.bottomSpace} />
       </div>
     </div>
   );
