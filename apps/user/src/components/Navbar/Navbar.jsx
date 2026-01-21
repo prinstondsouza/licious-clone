@@ -8,7 +8,14 @@ import { useUser } from "../../context/UserContext";
 
 const Navbar = ({ onCartClick, onLoginClick }) => {
   const { cart, setCart, fetchCart } = useCart();
-  const { user, addresses, selectedAddressId, logout } = useUser();
+  const {
+    user,
+    fetchUser,
+    addresses,
+    selectedAddressId,
+    currentAddress,
+    logout,
+  } = useUser();
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -17,11 +24,14 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
 
   const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
 
-  const addressLabel = selectedAddress ? `${selectedAddress.label}` : "";
+  const addressLabel = currentAddress
+    ? "Current Location"
+    : selectedAddress
+      ? `${selectedAddress.label}`
+      : "";
 
-  const addressText = selectedAddress
-    ? `${selectedAddress.address}`
-    : "Set Location";
+  const addressText =
+    currentAddress || selectedAddress?.address || "Set Location";
 
   const totalAmount = items.reduce(
     (sum, item) =>
@@ -38,7 +48,8 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
 
   useEffect(() => {
     fetchCart();
-  }, [isLoggedin]);
+    fetchUser();
+  }, []);
 
   const handleLogout = () => {
     setShowProfileMenu(false);

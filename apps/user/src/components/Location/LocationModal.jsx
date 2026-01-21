@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LocationSearchInput from "./LocationSearchInput";
 import styles from "./LocationModal.module.css";
@@ -6,7 +6,7 @@ import { useUser } from "../../context/UserContext";
 
 const LocationModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
-  const { fetchUser } = useUser();
+  const { fetchUser, setCurrentAddress } = useUser();
   const token = localStorage.getItem("token");
 
   const useCurrentLocation = () => {
@@ -63,8 +63,7 @@ const LocationModal = ({ onClose }) => {
           },
         },
       );
-
-      await fetchUser();
+      setCurrentAddress(res?.data?.user?.address || "");
       onClose();
     } catch (error) {
       console.error(error);

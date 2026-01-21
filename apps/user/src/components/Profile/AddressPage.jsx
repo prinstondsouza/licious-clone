@@ -13,6 +13,7 @@ const AddressPage = () => {
     fetchUser,
     selectedAddressId,
     setSelectedAddressId,
+    setCurrentAddress,
   } = useUser();
 
   const [newAddressForm, setNewAddressForm] = useState({
@@ -47,6 +48,7 @@ const AddressPage = () => {
     try {
       setAddrLoading(true);
       setSelectedAddressId(addr._id);
+      setCurrentAddress(null);
 
       const latitude = addr.location?.coordinates?.[1];
       const longitude = addr.location?.coordinates?.[0];
