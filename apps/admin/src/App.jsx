@@ -21,7 +21,8 @@ import Users from "./components/Users/Users";
 import Vendors from "./components/Vendors/Vendors";
 import VendorDetailsPage from "./components/Vendors/VendorDetailsPage";
 import CreateVendor from "./components/Vendors/CreateVendor";
-import DeliveryPartners from "./components/DeliveryPartners/DeliveryPartners"
+import DeliveryPartners from "./components/DeliveryPartners/DeliveryPartners";
+import UserProfile from "./components/Users/UserProfile";
 
 const AdminProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -113,6 +114,8 @@ function App() {
             />
 
             <Route path="/product/:id" element={<ItemPage />} />
+
+            <Route path="/users/:id" element={<UserProfile />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -292,10 +292,10 @@ const Users = () => {
 
                       <td>
                         <button
-                          className={styles.copyBtn}
-                          onClick={() => copyToClipboard(user._id)}
+                          className={styles.viewBtn}
+                          onClick={() => navigate(`/users/${user._id}`)}
                         >
-                          {copiedId === user._id ? "Copied" : "Copy ID"}
+                          View
                         </button>
                       </td>
                     </tr>
