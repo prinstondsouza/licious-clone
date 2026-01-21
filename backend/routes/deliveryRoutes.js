@@ -5,7 +5,8 @@ import {
     updateDeliveryStatus,
     getAssignedOrders,
     updateDeliveryPartnerStatus,
-    getAllDeliveryPartners
+    getAllDeliveryPartners,
+    getDeliveryPartnerById,
 } from "../controllers/deliveryController.js";
 
 import { protect, authorizeRoles, optionalProtect } from "../middlewares/authMiddleware.js";
@@ -27,6 +28,13 @@ router.get(
     protect,
     authorizeRoles("admin"),
     getAllDeliveryPartners
+);
+
+router.get(
+    "/delivery-partner-by-id/:id",
+    protect,
+    authorizeRoles("admin"),
+    getDeliveryPartnerById
 );
 
 router.put(

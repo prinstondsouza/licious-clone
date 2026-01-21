@@ -118,6 +118,20 @@ export const getAllVendors = async (req, res) => {
   }
 };
 
+// Get vendor by ID (Admin)
+export const getVendorById = async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+    const vendor = await Vendor.findById(vendorId).select("-password");
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found" });
+    }
+    res.json({ vendor });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Vendor dashboard
 export const vendorDashboard = (req, res) => {
   res.json({

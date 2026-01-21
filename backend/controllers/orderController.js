@@ -1,6 +1,7 @@
 import Order from "../models/orderModel.js";
 import Cart from "../models/cartModel.js";
 import User from "../models/userModel.js";
+import VendorProduct from "../models/vendorProductModel.js";
 // import Product from "../models/productModel.js";
 // import Vendor from "../models/vendorModel.js";
 import { clearCart } from "./cartController.js";
@@ -94,6 +95,23 @@ export const placeOrder = async (req, res) => {
       }
     }
 
+    // 5. Stock Validation
+    for (const item of cart.items) {
+      if (!item.vendorProduct) continue;
+
+      const product = await VendorProduct.findById(item.vendorProduct._id);
+
+      if (!product) {
+        return res.status(404).json({ message: `Product not found` });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Insufficient stock for ${product.name || 'product'}. Available: ${product.stock}, Requested: ${item.quantity}`
+        });
+      }
+    }
+
     // 5. Prepare order items
     const orderItems = cart.items.map((item) => ({
       vendorProduct: item.vendorProduct._id,
@@ -115,6 +133,31 @@ export const placeOrder = async (req, res) => {
       deliveryAddress: user.address,
       deliveryLocation: user.location,
     });
+
+    // 7. Update Stock
+    for (const item of cart.items) {
+      if (!item.vendorProduct) continue;
+
+      const product = await VendorProduct.findById(item.vendorProduct._id);
+      if (product) {
+        product.stock -= item.quantity;
+
+        if (product.stock <= 0) {
+          product.stock = 0;
+          product.nextAvailableBy = "out-of-stock";
+          // // Also updating status to keep it consistent
+          // product.status = "out-of-stock";
+        } 
+        // else {
+        //   product.nextAvailableBy = "available";
+        //   // If product was out-of-stock but stock is somehow positive (shouldn't happen here but good for safety), set active
+        //   if (product.status === "out-of-stock") {
+        //     product.status = "active";
+        //   }
+        // }
+        await product.save();
+      }
+    }
 
     // Clear cart after successful order
     await clearCart(userId);

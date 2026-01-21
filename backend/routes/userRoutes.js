@@ -9,8 +9,10 @@ import {
     deleteUserAddresses,
     updateUserProfile,
     uploadUserImage,
+    getUserById,
 } from "../controllers/userController.js";
-import { registerUser, loginUser } from "../controllers/authController.js";
+
+// import { registerUser, loginUser } from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -23,6 +25,7 @@ router.put("/addresses/:id", protect, authorizeRoles("user"), updateUserAddresse
 router.delete("/addresses/:id", protect, authorizeRoles("user"), deleteUserAddresses);
 
 // Admin routes
-router.get("/", protect, authorizeRoles("admin"), getAllUsers);
+router.get("/all-users", protect, authorizeRoles("admin"), getAllUsers);
+router.get("/user-by-Id/:id", protect, authorizeRoles("admin"), getUserById);
 
 export default router;

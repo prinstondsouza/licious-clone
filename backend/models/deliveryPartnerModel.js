@@ -3,10 +3,15 @@ import bcrypt from "bcryptjs";
 
 const deliveryPartnerSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "First Name is required"],
+      trim: true,
     },
+    lastName: {
+      type: String,
+      trim: true,
+    },    
     email: {
       type: String,
       required: true,
@@ -31,8 +36,17 @@ const deliveryPartnerSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "rejected"],
+      enum: ["pending", "approved", "rejected", "suspended", "blacklisted"],
       default: "pending",
+    },
+    availabilityStatus: {
+      type: String,
+      enum: ["online", "offline", "busy", "not-available"],
+      default: "not-available",
+    },
+    deliveryStatus: {
+      type: String,
+      enum: ["waiting", "assigned", "accepted", "rejected", "arrived-at-store", "picked-up", "on-route", "reached-customer", "delivered"]
     },
     location: {
       type: {
@@ -51,6 +65,9 @@ const deliveryPartnerSchema = new mongoose.Schema(
         ref: "Order",
       },
     ],
+    deliveryPartnerImage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -36,7 +36,7 @@ export const registerUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, userType: "user" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.status(201).json({
@@ -75,7 +75,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, userType: "user" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.json({
@@ -179,7 +179,7 @@ export const loginVendor = async (req, res) => {
     const token = jwt.sign(
       { id: vendor._id, userType: "vendor" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.json({
@@ -202,7 +202,8 @@ export const loginVendor = async (req, res) => {
 export const registerDeliveryPartner = async (req, res) => {
   try {
     const {
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
@@ -212,7 +213,7 @@ export const registerDeliveryPartner = async (req, res) => {
       longitude,
     } = req.body;
 
-    if (!name || !email || !password || !phone || !vehicleType) {
+    if (!firstName || !email || !password || !phone || !vehicleType || !vehicleNumber) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
@@ -228,7 +229,8 @@ export const registerDeliveryPartner = async (req, res) => {
     } : undefined;
 
     const deliveryPartner = await DeliveryPartner.create({
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
@@ -243,9 +245,11 @@ export const registerDeliveryPartner = async (req, res) => {
       message: "Delivery partner registration submitted. Waiting for admin approval.",
       deliveryPartner: {
         id: deliveryPartner._id,
-        name: deliveryPartner.name,
+        firstName: deliveryPartner.firstName,
+        lastName: deliveryPartner.lastName,
         phone: deliveryPartner.phone,
         vehicleType: deliveryPartner.vehicleType,
+        vehicleNumber: deliveryPartner.vehicleNumber,
         status: deliveryPartner.status,
       },
     });
@@ -282,7 +286,7 @@ export const loginDeliveryPartner = async (req, res) => {
     const token = jwt.sign(
       { id: deliveryPartner._id, userType: "delivery" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.json({
@@ -290,9 +294,12 @@ export const loginDeliveryPartner = async (req, res) => {
       token,
       deliveryPartner: {
         id: deliveryPartner._id,
-        name: deliveryPartner.name,
+        firstName: deliveryPartner.firstName,
+        lastName: deliveryPartner.lastName,
         phone: deliveryPartner.phone,
         vehicleType: deliveryPartner.vehicleType,
+        vehicleNumber: deliveryPartner.vehicleNumber,
+        status: deliveryPartner.status,
       },
     });
   } catch (error) {
@@ -304,10 +311,10 @@ export const loginDeliveryPartner = async (req, res) => {
 
 export const registerAdmin = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { firstName, lastName, email, password, phone } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+    if (!firstName || !email || !password) {
+      return res.status(400).json({ message: "First Name, email, and password are required" });
     }
 
     const existingAdmin = await Admin.findOne({ email });
@@ -316,7 +323,8 @@ export const registerAdmin = async (req, res) => {
     }
 
     const admin = await Admin.create({
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
@@ -325,7 +333,7 @@ export const registerAdmin = async (req, res) => {
     const token = jwt.sign(
       { id: admin._id, userType: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.status(201).json({
@@ -333,8 +341,10 @@ export const registerAdmin = async (req, res) => {
       token,
       admin: {
         id: admin._id,
-        name: admin.name,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
         email: admin.email,
+        phone: admin.phone,
       },
     });
   } catch (error) {
@@ -363,7 +373,7 @@ export const loginAdmin = async (req, res) => {
     const token = jwt.sign(
       { id: admin._id, userType: "admin" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "100d" }
     );
 
     res.json({
@@ -371,7 +381,8 @@ export const loginAdmin = async (req, res) => {
       token,
       admin: {
         id: admin._id,
-        name: admin.name,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
         email: admin.email,
       },
     });

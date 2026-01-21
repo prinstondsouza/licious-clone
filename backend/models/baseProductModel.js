@@ -3,16 +3,33 @@ import mongoose from "mongoose";
 // Base products created by admin - catalog items
 const baseProductSchema = new mongoose.Schema(
   {
+    // hubId: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
+    // cityId: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
+
     name: {
       type: String,
       required: true,
       trim: true,
     },
+    // longName: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
     category: {
       type: String,
       required: true,
       trim: true,
     },
+
     description: {
       type: String,
       default: "",

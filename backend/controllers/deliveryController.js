@@ -6,9 +6,9 @@ import Order from "../models/orderModel.js";
  */
 export const createDeliveryPartner = async (req, res) => {
   try {
-    const { name, phone, vehicleType, vehicleNumber, email, password, latitude, longitude } = req.body;
+    const { firstName, lastName, phone, vehicleType, vehicleNumber, email, password, latitude, longitude } = req.body;
 
-    if (!name || !phone || !vehicleType || !email || !password || !vehicleNumber) {
+    if (!firstName || !phone || !vehicleType || !email || !password || !vehicleNumber) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
@@ -22,7 +22,8 @@ export const createDeliveryPartner = async (req, res) => {
     } : undefined;
 
     const deliveryPartner = await DeliveryPartner.create({
-      name,
+      firstName,
+      lastName,
       email,
       password,
       phone,
@@ -170,6 +171,22 @@ export const getAllDeliveryPartners = async (req, res) => {
     const query = status ? { status } : {};
     const deliveryPartners = await DeliveryPartner.find(query).select("-password");
     res.json({ deliveryPartners });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Get delivery partner by ID (Admin)
+ */
+export const getDeliveryPartnerById = async (req, res) => {
+  try {
+    const deliveryPartnerId = req.params.id;
+    const deliveryPartner = await DeliveryPartner.findById(deliveryPartnerId).select("-password");
+    if (!deliveryPartner) {
+      return res.status(404).json({ message: "Delivery Partner not found" });
+    }
+    res.json({ deliveryPartner });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

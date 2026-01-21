@@ -41,7 +41,6 @@ const vendorProductSchema = new mongoose.Schema(
     },
     nextAvailableBy: {
       type: String,
-      default: "out-of-stock",
     },
     images: [
       {

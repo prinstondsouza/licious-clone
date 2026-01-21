@@ -8,8 +8,10 @@ import {
   vendorDashboard,
   getPublicApprovedVendors,
   getNearestApprovedVendors,
+  getVendorById,
 } from "../controllers/vendorController.js";
-import { registerVendor, loginVendor } from "../controllers/authController.js";
+
+// import { registerVendor, loginVendor } from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -24,7 +26,7 @@ router.get("/public/nearest", getNearestApprovedVendors);
  */
 router.post("/create-vendor", protect, authorizeRoles("admin"), createVendor);
 router.get("/get-all-vendors", protect, authorizeRoles("admin"), getAllVendors);
-router.get("/get-vendor-by-id/:id", protect, authorizeRoles("admin"), getAllVendors);
+router.get("/get-vendor-by-id/:id", protect, authorizeRoles("admin"), getVendorById);
 router.put("/update-status/:id", protect, authorizeRoles("admin"), updateVendorStatus);
 
 /**
