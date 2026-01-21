@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res) => {
 // Get user by ID (Admin only - for management)
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.params.id).select("-password");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
