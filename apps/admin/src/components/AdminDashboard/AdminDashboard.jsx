@@ -22,7 +22,7 @@ const AdminDashboard = () => {
         setLoading(true);
         setError("");
 
-        const res = await axios.get("/api/users/", {
+        const res = await axios.get("/api/users/all-users/", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -33,10 +33,10 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error(
           "Admin Dashboard Error:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
         setError(
-          err.response?.data?.message || "Failed to load admin dashboard"
+          err.response?.data?.message || "Failed to load admin dashboard",
         );
         toast.error("Failed to load dashboard", { position: "top-center" });
       } finally {
@@ -64,10 +64,10 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error(
           "Admin Dashboard Error:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
         setError(
-          err.response?.data?.message || "Failed to load admin dashboard"
+          err.response?.data?.message || "Failed to load admin dashboard",
         );
         toast.error("Failed to load dashboard", { position: "top-center" });
       } finally {
@@ -95,10 +95,10 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error(
           "Admin Dashboard Error:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
         setError(
-          err.response?.data?.message || "Failed to load admin dashboard"
+          err.response?.data?.message || "Failed to load admin dashboard",
         );
         toast.error("Failed to load dashboard", { position: "top-center" });
       } finally {
@@ -126,10 +126,10 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error(
           "Admin Dashboard Error:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
         setError(
-          err.response?.data?.message || "Failed to load admin dashboard"
+          err.response?.data?.message || "Failed to load admin dashboard",
         );
         toast.error("Failed to load dashboard", { position: "top-center" });
       } finally {
