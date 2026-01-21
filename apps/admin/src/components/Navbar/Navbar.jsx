@@ -55,7 +55,7 @@ const Navbar = ({ onLoginClick }) => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Link
-                      to="/inventory"
+                      to="/products"
                       className={styles.dropdownItem}
                       onClick={() => setShowProfileMenu(false)}
                     >
