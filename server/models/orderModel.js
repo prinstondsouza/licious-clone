@@ -35,7 +35,7 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
 
     // FINAL ENUM (Merged & Standardized)
-    deliveryStatus: {
+    status: {
       type: String,
       enum: [
         "pending",
