@@ -103,13 +103,14 @@ export const registerVendor = async (req, res) => {
       email,
       password,
       phone,
-      address,
+      addressString,
+      city,
       latitude,
       longitude,
       documents,
     } = req.body;
 
-    if (!storeName || !ownerName || !email || !password || !phone || !address) {
+    if (!storeName || !ownerName || !email || !password || !phone || !addressString) {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
@@ -124,6 +125,11 @@ export const registerVendor = async (req, res) => {
       coordinates: [parseFloat(longitude), parseFloat(latitude)]
     } : undefined;
 
+    const address = location && addressString ? {
+      addressString: addressString,
+      location: location,
+    } : undefined;
+
     const vendor = await Vendor.create({
       storeName,
       ownerName,
@@ -131,7 +137,6 @@ export const registerVendor = async (req, res) => {
       password,
       phone,
       address,
-      location,
       documents,
       status: "pending",
     });

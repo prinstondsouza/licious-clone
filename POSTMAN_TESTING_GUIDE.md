@@ -176,7 +176,9 @@
     - `images`: [Select Files]
 - **Update Base Product**
   - **PUT** `http://localhost:5000/api/products/base/:id`
-  - **Params**: Form-Data or JSON (if no images)
+  - **Params**: Form-Data (recommended for images) or JSON
+    - `images`: [Select Files] (Appends to existing images)
+    - `deletedImages`: `["/uploads/baseProducts/image1.jpg"]` (JSON string or array of image paths to remove)
 - **Delete Base Product**
   - **DELETE** `http://localhost:5000/api/products/base/:id`
 
@@ -223,14 +225,12 @@
   - **GET** `http://localhost:5000/api/products/vendor/inventory`
 - **Update Vendor Product**
   - **PUT** `http://localhost:5000/api/products/vendor/:id` (Vendor Product ID)
-  - **Body (JSON)**:
-    ```json
-    {
-      "price": 190.5,
-      "stock": 45,
-      "status": "active"
-    }
-    ```
+  - **Params**: Form-Data (if updating images) or JSON
+    - `price`: 190.5
+    - `stock`: 45
+    - `status`: "active"
+    - `images`: [Select Files] (Appends to existing images)
+    - `deletedImages`: `["/uploads/vendorProducts/image1.jpg"]` (JSON string or array of image paths to remove)
 
 ---
 

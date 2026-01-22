@@ -83,13 +83,32 @@ export const updateVendorProduct = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this product" });
     }
 
-    // Handle new image uploads
-    const images = [];
+    // Handle image updates
+    let updatedImages = [...vendorProduct.images];
+
+    // 1. Remove deleted images
+    if (req.body.deletedImages) {
+      let deletedImages = req.body.deletedImages;
+      if (typeof deletedImages === 'string') {
+        try {
+          deletedImages = JSON.parse(deletedImages);
+        } catch (e) {
+          deletedImages = [deletedImages];
+        }
+      }
+      if (Array.isArray(deletedImages)) {
+        updatedImages = updatedImages.filter(img => !deletedImages.includes(img));
+      }
+    }
+
+    // 2. Append new images
     if (req.files && req.files.length > 0) {
       req.files.forEach((file) => {
-        vendorProduct.images.push(`/uploads/vendorProducts/${file.filename}`);
+        updatedImages.push(`/uploads/vendorProducts/${file.filename}`);
       });
     }
+
+    vendorProduct.images = updatedImages;
 
     if (name) vendorProduct.name = name;
     if (category) vendorProduct.category = category;
@@ -98,7 +117,6 @@ export const updateVendorProduct = async (req, res) => {
     if (stock !== undefined) vendorProduct.stock = parseInt(stock);
     if (nextAvailableBy) vendorProduct.nextAvailableBy = nextAvailableBy;
     if (status) vendorProduct.status = status;
-    if (images.length > 0) vendorProduct.images = images;
     vendorProduct.lastUpdatedBy = vendorId;
 
     await vendorProduct.save();
@@ -315,7 +333,7 @@ export const createVendorOwnProduct = async (req, res) => {
 export const getVendorProductById = async (req, res) => {
   try {
     const productId = req.params.id;
-    const vendorProduct = await VendorProduct.findById(productId, { status: "active" })
+    const vendorProduct = await VendorProduct.findById(productId)
       .populate("vendor", "storeName ownerName location address")
       .populate("addedBy", "storeName")
       .select('-baseProduct -addedBy -lastUpdatedBy -status -createdAt -updatedAt -__v');
