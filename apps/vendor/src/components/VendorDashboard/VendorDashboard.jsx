@@ -3,6 +3,15 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "../Product/ProductCard";
 import OrderCard from "../Orders/OrderCard";
+import {
+  ShoppingBag,
+  ClipboardList,
+  Wallet,
+  PlusCircle,
+  RefreshCw,
+  ArrowRight,
+  Package,
+} from "lucide-react";
 import styles from "./VendorDashboard.module.css";
 
 const VendorDashboard = () => {
@@ -15,29 +24,32 @@ const VendorDashboard = () => {
   const [username, setUsername] = useState("");
 
   const fetchMyProducts = async () => {
-    try {
-      const res = await axios.get("/api/products/vendor/inventory", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const res = await axios.get("/api/products/vendor/inventory", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      setItems(res.data.vendorProducts || []);
-    } catch (error) {
-      console.log(
-        "Error fetchMyProducts:",
-        error.response?.data || error.message,
-      );
-    }
+    setItems(res.data.vendorProducts || []);
   };
 
   const fetchOrders = async () => {
-    try {
-      const res = await axios.get("/api/orders/vendor", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const res = await axios.get("/api/orders/vendor", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-      setOrders(res.data.orders || []);
+    setOrders(res.data.orders || []);
+  };
+
+  const loadDashboard = async () => {
+    try {
+      setLoading(true);
+      await Promise.all([fetchMyProducts(), fetchOrders()]);
     } catch (error) {
-      console.log("Error fetchOrders:", error.response?.data || error.message);
+      console.log(
+        "VendorDashboard Error:",
+        error.response?.data || error.message,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,13 +57,8 @@ const VendorDashboard = () => {
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) setUsername(storedUsername);
 
-    const loadDashboard = async () => {
-      setLoading(true);
-      await Promise.all([fetchMyProducts(), fetchOrders()]);
-      setLoading(false);
-    };
-
     loadDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stats = useMemo(() => {
@@ -63,10 +70,15 @@ const VendorDashboard = () => {
     const deliveredOrders = orders.filter(
       (o) => o.status === "delivered",
     ).length;
-    const pendingOrders = totalOrders - deliveredOrders;
+
+    const pendingOrders = orders.filter((o) =>
+      ["pending", "placed", "processing", "accepted", "confirmed"].includes(
+        String(o.status || "").toLowerCase(),
+      ),
+    ).length;
 
     const revenue = orders
-      .filter((o) => o.status === "delivered")
+      .filter((o) => String(o.status).toLowerCase() === "delivered")
       .reduce((sum, o) => sum + (Number(o.totalPrice) || 0), 0);
 
     return {
@@ -84,96 +96,171 @@ const VendorDashboard = () => {
   const ordersPreview = orders.slice(0, 3);
 
   if (loading) {
-    return <div className={styles.loading}>Loading your dashboard...</div>;
+    return (
+      <div className={styles.page}>
+        <div className={styles.container}>
+          <div className={styles.skeletonHeader} />
+          <div className={styles.skeletonStats} />
+          <div className={styles.skeletonCard} />
+          <div className={styles.skeletonCard} />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.welcomeText}>
-            Hi, {username ? username : "Guest Vendor"} 👋
-          </h1>
-          <p className={styles.subtitle}>
-            Here’s your store overview and latest updates.
-          </p>
-        </div>
-
-        <div className={styles.quickActions}>
-          <Link className={styles.actionBtn} to="/add-from-catalog">
-            + Add from Catalog
-          </Link>
-          <Link className={styles.actionBtnOutline} to="/create-product">
-            + Create Product
-          </Link>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <p className={styles.statLabel}>Revenue (Delivered)</p>
-          <h2 className={styles.statValue}>₹{stats.revenue}</h2>
-        </div>
-
-        <div className={styles.statCard} onClick={() => navigate("/orders")}>
-          <p className={styles.statLabel}>Total Orders</p>
-          <h2 className={styles.statValue}>{stats.totalOrders}</h2>
-          <p className={styles.statSub}>
-            {stats.deliveredOrders} delivered • {stats.pendingOrders} pending
-          </p>
-        </div>
-
-        <div className={styles.statCard} onClick={() => navigate("/inventory")}>
-          <p className={styles.statLabel}>Products</p>
-          <h2 className={styles.statValue}>{stats.totalProducts}</h2>
-          <p className={styles.statSub}>
-            {stats.activeProducts} active • {stats.outOfStock} out of stock
-          </p>
-        </div>
-      </div>
-
-      {/* Products Preview */}
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>My Products</h2>
-          <Link className={styles.viewAllLink} to="/inventory">
-            View All →
-          </Link>
-        </div>
-
-        {productsPreview.length === 0 ? (
-          <p className={styles.emptyText}>No products found.</p>
-        ) : (
-          <div className={styles.productGrid}>
-            {productsPreview.map((item) => (
-              <div key={item._id} className={styles.cardWrapper}>
-                <ProductCard product={item} />
-              </div>
-            ))}
+    <div className={styles.page}>
+      <div className={styles.container}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <h1 className={styles.welcomeText}>
+              Hi, {username ? username : "Vendor"} 👋
+            </h1>
+            <p className={styles.subtitle}>
+              Here’s your store overview and latest updates.
+            </p>
           </div>
-        )}
-      </div>
 
-      {/* Orders Preview */}
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Recent Orders</h2>
-          <Link className={styles.viewAllLink} to="/orders">
-            View All →
-          </Link>
+          <div className={styles.quickActions}>
+            <Link className={styles.actionBtn} to="/add-from-catalog">
+              <PlusCircle size={16} />
+              Add from Catalog
+            </Link>
+
+            <Link className={styles.actionBtnOutline} to="/create-product">
+              <Package size={16} />
+              Create Product
+            </Link>
+
+            <button className={styles.refreshBtn} onClick={loadDashboard}>
+              <RefreshCw size={16} />
+              Refresh
+            </button>
+          </div>
         </div>
 
-        {ordersPreview.length === 0 ? (
-          <p className={styles.emptyText}>No orders found.</p>
-        ) : (
-          <div className={styles.ordersList}>
-            {ordersPreview.map((order) => (
-              <OrderCard key={order._id} order={order} />
-            ))}
+        {/* Stats */}
+        <div className={styles.statsGrid}>
+          <button className={styles.statCard}>
+            <div className={styles.statTop}>
+              <span className={styles.statIcon}>
+                <Wallet size={18} />
+              </span>
+              <span className={styles.statPill}>Delivered</span>
+            </div>
+
+            <p className={styles.statLabel}>Revenue</p>
+            <h2 className={styles.statValue}>₹{stats.revenue}</h2>
+            <p className={styles.statSub}>Total earned from delivered orders</p>
+          </button>
+
+          <button
+            className={styles.statCard}
+            onClick={() => navigate("/orders")}
+          >
+            <div className={styles.statTop}>
+              <span className={styles.statIcon}>
+                <ClipboardList size={18} />
+              </span>
+              <span className={`${styles.statPill} ${styles.pillWarn}`}>
+                {stats.pendingOrders} pending
+              </span>
+            </div>
+
+            <p className={styles.statLabel}>Orders</p>
+            <h2 className={styles.statValue}>{stats.totalOrders}</h2>
+            <p className={styles.statSub}>
+              {stats.deliveredOrders} delivered • {stats.pendingOrders} pending
+            </p>
+          </button>
+
+          <button
+            className={styles.statCard}
+            onClick={() => navigate("/inventory")}
+          >
+            <div className={styles.statTop}>
+              <span className={styles.statIcon}>
+                <ShoppingBag size={18} />
+              </span>
+              <span className={`${styles.statPill} ${styles.pillDanger}`}>
+                {stats.outOfStock} out
+              </span>
+            </div>
+
+            <p className={styles.statLabel}>Products</p>
+            <h2 className={styles.statValue}>{stats.totalProducts}</h2>
+            <p className={styles.statSub}>
+              {stats.activeProducts} active • {stats.outOfStock} out of stock
+            </p>
+          </button>
+        </div>
+
+        {/* Products Preview */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2 className={styles.sectionTitle}>My Products</h2>
+              <p className={styles.sectionSub}>
+                Recently added to your inventory
+              </p>
+            </div>
+
+            <Link className={styles.viewAllLink} to="/inventory">
+              View All <ArrowRight size={16} />
+            </Link>
           </div>
-        )}
+
+          {productsPreview.length === 0 ? (
+            <div className={styles.emptyBox}>
+              <p className={styles.emptyTitle}>No products found</p>
+              <p className={styles.emptyText}>
+                Add products from catalog or create new ones.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.productGrid}>
+              {productsPreview.map((item) => (
+                <div key={item._id} className={styles.cardWrapper}>
+                  <ProductCard product={item} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Orders Preview */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h2 className={styles.sectionTitle}>Recent Orders</h2>
+              <p className={styles.sectionSub}>
+                Latest activity from customers
+              </p>
+            </div>
+
+            <Link className={styles.viewAllLink} to="/orders">
+              View All <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          {ordersPreview.length === 0 ? (
+            <div className={styles.emptyBox}>
+              <p className={styles.emptyTitle}>No recent orders</p>
+              <p className={styles.emptyText}>
+                Orders will show up here when customers purchase.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.ordersList}>
+              {ordersPreview.map((order) => (
+                <OrderCard key={order._id} order={order} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className={styles.footerSpace} />
       </div>
     </div>
   );
