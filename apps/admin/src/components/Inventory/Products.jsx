@@ -106,6 +106,13 @@ const Products = () => {
             </div>
           </div>
 
+          <button
+            className={styles.createBtn}
+            onClick={() => navigate("/create-product")}
+          >
+            + Create Product
+          </button>
+
           <button className={styles.primaryBtn} onClick={fetchProducts}>
             <RefreshCw size={16} />
             Refresh
