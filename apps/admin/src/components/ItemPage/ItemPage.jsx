@@ -228,13 +228,14 @@ const ItemPage = () => {
           </div>
         </div>
 
-        {/* ✅ EDIT MODAL */}
         {openEdit && (
           <EditProductModal
-            open={openEdit}
-            onClose={() => setOpenEdit(false)}
             product={product}
-            onUpdated={onProductUpdated}
+            onClose={() => setOpenEdit(false)}
+            onUpdated={(updatedProduct) => {
+              if (updatedProduct) setProduct(updatedProduct);
+              else fetchProduct();
+            }}
           />
         )}
 
