@@ -1,7 +1,7 @@
 import VendorProduct from "../models/vendorProductModel.js";
 import BaseProduct from "../models/baseProductModel.js";
 import Vendor from "../models/vendorModel.js";
-import { uploadVendorProductImages } from "../utils/upload.js";
+import { uploadVendorProductImages, deleteFile } from "../utils/upload.js";
 
 // Vendor adds base product to their inventory
 export const addToInventory = async (req, res) => {
@@ -97,6 +97,12 @@ export const updateVendorProduct = async (req, res) => {
         }
       }
       if (Array.isArray(deletedImages)) {
+        // Delete files from filesystem
+        deletedImages.forEach(img => {
+          if (updatedImages.includes(img)) {
+            deleteFile(img);
+          }
+        });
         updatedImages = updatedImages.filter(img => !deletedImages.includes(img));
       }
     }
