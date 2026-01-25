@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Categories from "../Categories/Categories";
+import CategoryIconsGrid from "../Categories/CategoryIconsGrid";
 import ProductCard from "../Product/ProductCard";
 import { getProductQuantity } from "../../utils/cartUtils";
 import styles from "./Home.module.css";
@@ -8,6 +9,7 @@ import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 
 const Home = () => {
+  const navigate = useNavigate();
   const { cart } = useCart();
 
   const { user } = useUser();
@@ -47,7 +49,13 @@ const Home = () => {
         style={{ border: "0", borderTop: "1px solid #eee", margin: "40px 0" }}
       />
 
-      <Categories />
+      <CategoryIconsGrid
+        selectedCategory="all"
+        onSelectCategory={(category) => {
+          if (category === "all") navigate("/categories");
+          else navigate(`/categories?category=${encodeURIComponent(category)}`);
+        }}
+      />
     </div>
   );
 };

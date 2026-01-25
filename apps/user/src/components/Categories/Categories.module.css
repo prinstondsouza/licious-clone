@@ -1,90 +1,85 @@
-.categoriesContainer {
+.page {
+  padding: 16px;
+}
+
+.productsSection {
+  margin-top: 18px;
+}
+
+.productsHeader {
   display: flex;
-  gap: 2rem;
-  padding: 1rem;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
-.categoriesSidebar {
-  min-width: 200px;
-}
-
-.categoriesList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.categoryButton {
-  text-align: left;
-  padding: 0.75rem 1rem;
-  background-color: #f8f9fa;
-  color: #212529;
-  border: 1px solid #dee2e6;
+.backBtn {
+  border: none;
+  background: white;
+  border: 1px solid #eee;
+  padding: 8px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s;
-  font-size: 1rem;
+  font-weight: 800;
+  transition: 0.2s;
 }
 
-.categoryButton:hover {
-  background-color: #e9ecef;
-  transform: translateY(-1px);
+.backBtn:hover {
+  border-color: #d92662;
+  color: #d92662;
 }
 
-.categoryButtonSelected {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.productsDisplay {
-  flex: 1;
+.productsTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: #111;
 }
 
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 14px;
 }
 
 .noProducts {
-  color: #6c757d;
-  font-style: italic;
-  padding: 2rem;
+  color: #777;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 18px;
+  border-radius: 14px;
   text-align: center;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+  font-weight: 700;
 }
 
 .loading {
-  padding: 2rem;
-  text-align: center;
-  color: #6c757d;
+  padding: 18px;
+  color: #777;
+  font-weight: 800;
 }
 
+/* existing out-of-stock logic */
 .unavailable {
   filter: grayscale(100%);
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 .outOfStock {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center content vertically and horizontally */
-
+  position: relative;
   height: 100%;
 }
 
 .outOfStockTxt {
   position: absolute;
-  top: 0;
-  z-index: 2;
-  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
-  color: #ffffff;
-  padding: 8px;
-  border-radius: 8px;
-  font-weight: bold;
-  text-align: center;
-  width: 95%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.82);
+  color: white;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 12px;
+  width: fit-content;
 }
