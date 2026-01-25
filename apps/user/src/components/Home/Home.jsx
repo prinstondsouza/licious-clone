@@ -49,6 +49,11 @@ const Home = () => {
         style={{ border: "0", borderTop: "1px solid #eee", margin: "40px 0" }}
       />
 
+      <h2 className={styles.heading}>Shop by categories</h2>
+      <p className={styles.para}>Freshest meats just for you</p>
+
+      <hr className={styles.hr} />
+
       <CategoryIconsGrid
         selectedCategory="all"
         onSelectCategory={(category) => {

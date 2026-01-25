@@ -75,11 +75,6 @@ const CategoryIconsGrid = ({ selectedCategory = "all", onSelectCategory }) => {
   return (
     <div className={styles.secondMainbox}>
       <div className={styles.firstDiv}>
-        <h2 className={styles.heading}>Shop by categories</h2>
-        <p className={styles.para}>Freshest meats just for you</p>
-
-        <hr className={styles.hr} />
-
         <div className={styles.inner}>
           {/* ✅ All products */}
           <button

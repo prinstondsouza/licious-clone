@@ -45,3 +45,23 @@
   font-size: 1.2rem;
   color: #666;
 }
+
+.heading {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 400;
+  color: #111;
+}
+
+.para {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.hr {
+  margin: 14px 0 18px 0;
+  border: none;
+  height: 1px;
+  background: #f0f0f0;
+}
