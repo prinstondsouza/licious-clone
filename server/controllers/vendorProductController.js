@@ -547,113 +547,113 @@ export const getVendorProductById = async (req, res) => {
 
 
 
-// // Get products from vendors within 5km radius (for users)
-// export const getProductsNearby = async (req, res) => {
-//   try {
-//     const { latitude, longitude, category, maxDistance = 5000 } = req.query; // maxDistance in meters (default 5km)
+// Get products from vendors within 5km radius (for users)
+export const getProductsNearby = async (req, res) => {
+  try {
+    const { latitude, longitude, category, maxDistance = 5000 } = req.query; // maxDistance in meters (default 5km)
 
-//     if (!latitude || !longitude) {
-//       return res.status(400).json({ message: "Latitude and longitude are required" });
-//     }
+    if (!latitude || !longitude) {
+      return res.status(400).json({ message: "Latitude and longitude are required" });
+    }
 
-//     const userLocation = {
-//       type: "Point",
-//       coordinates: [parseFloat(longitude), parseFloat(latitude)],
-//     };
+    const userLocation = {
+      type: "Point",
+      coordinates: [parseFloat(longitude), parseFloat(latitude)],
+    };
 
-//     // Find vendors within radius
-//     const vendors = await Vendor.find({
-//       location: {
-//         $near: {
-//           $geometry: userLocation,
-//           $maxDistance: parseInt(maxDistance), // in meters
-//         },
-//       },
-//       status: "approved",
-//     });
+    // Find vendors within radius
+    const vendors = await Vendor.find({
+      location: {
+        $near: {
+          $geometry: userLocation,
+          $maxDistance: parseInt(maxDistance), // in meters
+        },
+      },
+      status: "approved",
+    });
 
-//     const vendorIds = vendors.map((v) => v._id);
+    const vendorIds = vendors.map((v) => v._id);
 
-//     // Build query for vendor products
-//     const query = {
-//       vendor: { $in: vendorIds },
-//       status: "active",
-//       stock: { $gt: 0 }, // Only products in stock
-//     };
+    // Build query for vendor products
+    const query = {
+      vendor: { $in: vendorIds },
+      status: "active",
+      stock: { $gt: 0 }, // Only products in stock
+    };
 
-//     // Filter by category if provided
-//     if (category) {
-//       const baseProducts = await BaseProduct.find({ category, status: "active" });
-//       const baseProductIds = baseProducts.map((bp) => bp._id);
+    // Filter by category if provided
+    if (category) {
+      const baseProducts = await BaseProduct.find({ category, status: "active" });
+      const baseProductIds = baseProducts.map((bp) => bp._id);
 
-//       query.$or = [
-//         { baseProduct: { $in: baseProductIds } },
-//         { category: category, baseProduct: null }
-//       ];
-//     }
+      query.$or = [
+        { baseProduct: { $in: baseProductIds } },
+        { category: category, baseProduct: null }
+      ];
+    }
 
-//     const vendorProducts = await VendorProduct.find(query)
-//       .populate("baseProduct")
-//       .populate("vendor", "storeName ownerName location address")
-//       .populate("addedBy", "storeName")
-//       .populate("lastUpdatedBy", "storeName");
+    const vendorProducts = await VendorProduct.find(query)
+      .populate("baseProduct")
+      .populate("vendor", "storeName ownerName location address")
+      .populate("addedBy", "storeName")
+      .populate("lastUpdatedBy", "storeName");
 
-//     // Calculate distance and normalize for each vendor
-//     const productsWithDistance = vendorProducts.map((vp) => {
-//       const vendor = vp.vendor;
-//       const productObj = vp.toObject();
-//       const base = productObj.baseProduct;
+    // Calculate distance and normalize for each vendor
+    const productsWithDistance = vendorProducts.map((vp) => {
+      const vendor = vp.vendor;
+      const productObj = vp.toObject();
+      const base = productObj.baseProduct;
 
-//       const normalizedProduct = {
-//         _id: productObj._id,
-//         vendor: productObj.vendor,
-//         name: productObj.name || (base ? base.name : undefined),
-//         category: productObj.category || (base ? base.category : undefined),
-//         description: productObj.description || (base ? base.description : ""),
-//         price: productObj.price,
-//         stock: productObj.stock,
-//         images: (productObj.images && productObj.images.length > 0)
-//           ? productObj.images
-//           : (base ? base.images : []),
-//         addedBy: productObj.addedBy,
-//         lastUpdatedBy: productObj.lastUpdatedBy,
-//         status: productObj.status,
-//         createdAt: productObj.createdAt,
-//         updatedAt: productObj.updatedAt,
-//         __v: productObj.__v,
-//         baseProduct: base ? base : {
-//           _id: productObj._id,
-//           name: productObj.name,
-//           category: productObj.category,
-//           description: productObj.description,
-//           images: productObj.images,
-//           basePrice: productObj.price
-//         }
-//       };
+      const normalizedProduct = {
+        _id: productObj._id,
+        vendor: productObj.vendor,
+        name: productObj.name || (base ? base.name : undefined),
+        category: productObj.category || (base ? base.category : undefined),
+        description: productObj.description || (base ? base.description : ""),
+        price: productObj.price,
+        stock: productObj.stock,
+        images: (productObj.images && productObj.images.length > 0)
+          ? productObj.images
+          : (base ? base.images : []),
+        addedBy: productObj.addedBy,
+        lastUpdatedBy: productObj.lastUpdatedBy,
+        status: productObj.status,
+        createdAt: productObj.createdAt,
+        updatedAt: productObj.updatedAt,
+        __v: productObj.__v,
+        baseProduct: base ? base : {
+          _id: productObj._id,
+          name: productObj.name,
+          category: productObj.category,
+          description: productObj.description,
+          images: productObj.images,
+          basePrice: productObj.price
+        }
+      };
 
-//       if (vendor.location && vendor.location.coordinates) {
-//         const [lng, lat] = vendor.location.coordinates;
-//         const distance = calculateDistance(
-//           parseFloat(latitude),
-//           parseFloat(longitude),
-//           lat,
-//           lng
-//         );
-//         return {
-//           ...normalizedProduct,
-//           distance: Math.round(distance * 100) / 100, // Round to 2 decimal places (km)
-//         };
-//       }
-//       return normalizedProduct;
-//     });
+      if (vendor.location && vendor.location.coordinates) {
+        const [lng, lat] = vendor.location.coordinates;
+        const distance = calculateDistance(
+          parseFloat(latitude),
+          parseFloat(longitude),
+          lat,
+          lng
+        );
+        return {
+          ...normalizedProduct,
+          distance: Math.round(distance * 100) / 100, // Round to 2 decimal places (km)
+        };
+      }
+      return normalizedProduct;
+    });
 
-//     res.json({
-//       products: productsWithDistance,
-//       count: productsWithDistance.length,
-//       userLocation: { latitude, longitude },
-//       maxDistance: `${maxDistance / 1000}km`,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    res.json({
+      products: productsWithDistance,
+      count: productsWithDistance.length,
+      userLocation: { latitude, longitude },
+      maxDistance: `${maxDistance / 1000}km`,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
