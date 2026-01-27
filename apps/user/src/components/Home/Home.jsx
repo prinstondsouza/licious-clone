@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CategoryIconsGrid from "../Categories/CategoryIconsGrid";
@@ -7,6 +7,7 @@ import { getProductQuantity } from "../../utils/cartUtils";
 import styles from "./Home.module.css";
 import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -16,6 +17,18 @@ const Home = () => {
   const fname = user?.firstName;
 
   const [items, setItems] = useState([]);
+
+  const gridRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const updateScrollButtons = () => {
+    const el = gridRef.current;
+    if (!el) return;
+
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 5);
+  };
 
   useEffect(() => {
     axios
@@ -34,15 +47,43 @@ const Home = () => {
 
       <h2 className={styles.sectionTitle}>Products</h2>
 
-      <div className={styles.productGrid}>
-        {availableItems.map((item) => (
-          <div key={item._id} className={styles.cardWrapper}>
-            <ProductCard
-              product={item}
-              quantity={getProductQuantity(cart, item._id)}
-            />
-          </div>
-        ))}
+      <div className={styles.carouselWrapper}>
+        {canScrollLeft && (
+          <button
+            className={`${styles.carouselArrow} ${styles.leftArrow}`}
+            onClick={() => {
+              gridRef.current.scrollBy({ left: -320, behavior: "smooth" });
+            }}
+          >
+            <ChevronLeft size={22} />
+          </button>
+        )}
+
+        {canScrollRight && (
+          <button
+            className={`${styles.carouselArrow} ${styles.rightArrow}`}
+            onClick={() => {
+              gridRef.current.scrollBy({ left: 320, behavior: "smooth" });
+            }}
+          >
+            <ChevronRight size={22} />
+          </button>
+        )}
+
+        <div
+          className={styles.productGrid}
+          ref={gridRef}
+          onScroll={updateScrollButtons}
+        >
+          {availableItems.map((item) => (
+            <div key={item._id} className={styles.cardWrapper}>
+              <ProductCard
+                product={item}
+                quantity={getProductQuantity(cart, item._id)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
       <hr

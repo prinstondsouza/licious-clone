@@ -1,6 +1,7 @@
 .container {
-  padding: 20px;
-  max-width: 1200px;
+  font-family: "Lato", sans-serif;
+  max-width: 1080px;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -64,4 +65,43 @@
   border: none;
   height: 1px;
   background: #f0f0f0;
+}
+
+.carouselWrapper {
+  position: relative;
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  z-index: 10;
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+  border: 1px solid #eee;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+.carouselArrow:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.leftArrow {
+  left: -18px;
+}
+
+.rightArrow {
+  right: -18px;
 }
