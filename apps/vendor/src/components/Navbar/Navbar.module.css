@@ -1,24 +1,42 @@
 .navContainer {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.75rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  align-items: center;
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 100;
+
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+
+  font-family: "Lato", sans-serif;
+
+  max-width: 1080px;
+  width: 100%;
+  margin: 0 auto;
+
+  height: 80px;
+  padding: 14px 0;
+
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+  gap: 20px;
 }
 
 .logoSection {
   display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  max-width: fit-content;
 }
 
 .logo {
   text-decoration: none;
   color: #d92662;
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.45rem;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 .locationBtn {
@@ -34,16 +52,26 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #111;
+  line-height: 1.1;
 }
 
 .searchBar {
-  width: 350px;
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
+  width: 100%;
+  max-width: 500px;
+
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  border: 1px solid #e6e6e6;
+  background: #f6f6f6;
+
   outline: none;
-  transition: all 0.2s;
+  font-size: 0.95rem;
+
+  transition: all 0.2s ease;
 }
 
 .searchBar:focus {
