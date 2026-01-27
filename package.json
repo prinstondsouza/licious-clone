@@ -29,6 +29,7 @@
     "turbo": "^2.0.0"
   },
   "dependencies": {
+    "ajv-formats": "^3.0.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.562.0",
     "react-toastify": "^11.0.5"
