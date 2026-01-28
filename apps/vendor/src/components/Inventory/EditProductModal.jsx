@@ -18,6 +18,7 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
   const [newImages, setNewImages] = useState([]); // files
   const [previewUrls, setPreviewUrls] = useState([]); // preview for files
   const [saving, setSaving] = useState(false);
+  const [deletedImages, setDeletedImages] = useState([]);
 
   useEffect(() => {
     setForm({
@@ -77,6 +78,9 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
       fd.append("stock", form.stock);
       fd.append("nextAvailableBy", form.nextAvailableBy);
       fd.append("status", form.status);
+      if (deletedImages.length > 0) {
+        fd.append("deletedImages", JSON.stringify(deletedImages));
+      }
 
       // images (multer expects "images")
       newImages.forEach((img) => fd.append("images", img));
@@ -98,6 +102,10 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleRemoveExistingImage = (img) => {
+    setDeletedImages((prev) => [...prev, img]);
   };
 
   return (
@@ -217,16 +225,28 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
           </div>
         )}
 
-        {/* ✅ Existing images */}
         {product.images?.length > 0 && (
           <div className={styles.existingWrap}>
             <p className={styles.smallLabel}>Existing Images:</p>
             <div className={styles.previewWrap}>
-              {product.images.map((img, idx) => (
-                <div key={idx} className={styles.previewItem}>
-                  <img src={img} alt="existing" className={styles.previewImg} />
-                </div>
-              ))}
+              {product.images
+                .filter((img) => !deletedImages.includes(img))
+                .map((img, idx) => (
+                  <div key={idx} className={styles.previewItem}>
+                    <img
+                      src={img}
+                      alt="existing"
+                      className={styles.previewImg}
+                    />
+                    <button
+                      type="button"
+                      className={styles.removeImgBtn}
+                      onClick={() => handleRemoveExistingImage(img)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
             </div>
           </div>
         )}
