@@ -1,0 +1,448 @@
+.page {
+  min-height: 100vh;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 34px 16px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.leftTop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.titleWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  color: #1a1a1a;
+  letter-spacing: 0.3px;
+}
+
+.subTitle {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: rgba(26, 26, 26, 0.66);
+}
+
+.backBtn {
+  border: 1px solid rgba(26, 26, 26, 0.14);
+  background: rgba(26, 26, 26, 0.06);
+  color: #1a1a1a;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border 0.18s ease;
+}
+
+.backBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(26, 26, 26, 0.08);
+  border-color: rgba(26, 26, 26, 0.22);
+}
+
+.primaryBtn {
+  border: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #d92662, #7c3aed);
+  box-shadow: 0 12px 28px rgba(217, 38, 98, 0.18);
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(217, 38, 98, 0.22);
+}
+
+/* Stats */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.statCard {
+  grid-column: span 4;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(26, 26, 26, 0.09);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 900px) {
+  .statCard {
+    grid-column: span 12;
+  }
+}
+
+.statIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(26, 26, 26, 0.08);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+  color: #1a1a1a;
+}
+
+.statText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statLabel {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.65);
+}
+
+.statValue {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #1a1a1a;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+
+.searchBox {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  color: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.searchInput::placeholder {
+  color: rgba(26, 26, 26, 0.45);
+  font-weight: 600;
+}
+
+.select {
+  min-width: 180px;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(26, 26, 26, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a1a1a;
+  outline: none;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.select option {
+  background: #f8f9fa;
+}
+
+/* Table */
+.tableWrap {
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 18px;
+  border: 1px solid rgba(26, 26, 26, 0.09);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 14px 14px;
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.7);
+  background: rgba(26, 26, 26, 0.04);
+  border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+.table td {
+  padding: 14px;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.07);
+  color: rgba(26, 26, 26, 0.88);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.table tr:hover td {
+  background: rgba(26, 26, 26, 0.04);
+}
+
+/* user cell */
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    rgba(217, 38, 98, 0.9),
+    rgba(124, 58, 237, 0.9)
+  );
+  box-shadow: 0 12px 28px rgba(217, 38, 98, 0.18);
+  flex-shrink: 0;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.userName {
+  margin: 0;
+  font-weight: 900;
+  color: #1a1a1a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.userMeta {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(26, 26, 26, 0.62);
+}
+
+.mono {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}
+
+/* contact */
+.contactStack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contactLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(26, 26, 26, 0.85);
+}
+
+.contactText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 340px;
+}
+
+/* created pill */
+.createdPill {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(26, 26, 26, 0.88);
+  background: rgba(26, 26, 26, 0.06);
+  border: 1px solid rgba(26, 26, 26, 0.12);
+}
+
+/* copy button */
+.copyBtn {
+  width: 100%;
+  border: 1px solid rgba(26, 26, 26, 0.14);
+  background: rgba(26, 26, 26, 0.06);
+  color: #1a1a1a;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border 0.18s ease;
+}
+
+.copyBtn:hover {
+  transform: translateY(-1px);
+  background: rgba(26, 26, 26, 0.08);
+  border-color: rgba(26, 26, 26, 0.22);
+}
+
+/* empty */
+.emptyBox {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(26, 26, 26, 0.09);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+  color: #1a1a1a;
+  backdrop-filter: blur(12px);
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.emptyText {
+  margin: 8px 0 0 0;
+  color: rgba(26, 26, 26, 0.7);
+  font-size: 13px;
+}
+
+/* skeletons */
+.skeletonHeader,
+.skeletonCard,
+.skeletonTable {
+  background: rgba(26, 26, 26, 0.06);
+  border: 1px solid rgba(26, 26, 26, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+}
+
+.skeletonHeader {
+  height: 70px;
+  margin-bottom: 14px;
+}
+
+.skeletonCard {
+  height: 90px;
+  margin-bottom: 12px;
+}
+
+.skeletonTable {
+  height: 300px;
+}
+
+/* error */
+.errorBox {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 77, 79, 0.35);
+  border-radius: 18px;
+  padding: 18px;
+  color: #1a1a1a;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.1);
+}
+
+.errorTitle {
+  margin: 0;
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.errorText {
+  margin: 10px 0 0 0;
+  color: rgba(26, 26, 26, 0.72);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.errorActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.bottomSpace {
+  height: 18px;
+}
+
+.viewBtn {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 900;
+  background: linear-gradient(135deg, #d92662, #7c3aed);
+  box-shadow: 0 12px 26px rgba(217, 38, 98, 0.18);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.viewBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(217, 38, 98, 0.22);
+}

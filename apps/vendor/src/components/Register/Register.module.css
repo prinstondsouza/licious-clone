@@ -1,0 +1,74 @@
+.registerContainer {
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+.title {
+  text-align: center;
+  color: #d92662;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+}
+
+.inputField {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #d92662;
+  background-color: #fff;
+}
+
+.textArea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.registerButton {
+  width: 100%;
+  padding: 14px;
+  background-color: #d92662;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+}
+
+.registerButton:hover:not(:disabled) {
+  background-color: #b01e4f;
+}
+
+.registerButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.footerText {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.footerText a {
+  color: #d92662;
+  text-decoration: none;
+  font-weight: bold;
+}

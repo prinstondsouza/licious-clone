@@ -1,0 +1,72 @@
+.container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.summarySection {
+  margin-top: 20px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.vendorName {
+  font-size: 14px;
+  color: #555;
+  margin: 4px 0;
+}
+
+.itemPrice {
+  font-weight: 600;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+
+.totalText {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.addressBox {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px dashed #ccc;
+  margin-bottom: 20px;
+}
+
+.placeOrderBtn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #d92662;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.placeOrderBtn:hover {
+  background-color: #b01e4f;
+}
+
+.placeOrderBtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

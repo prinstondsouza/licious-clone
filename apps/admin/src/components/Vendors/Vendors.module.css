@@ -1,0 +1,188 @@
+/* src/pages/Admin/Vendors/Vendors.module.css */
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #222;
+}
+
+.backBtn {
+  border: none;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.backBtn:hover {
+  border-color: #d92662;
+  color: #d92662;
+}
+
+.loadingText {
+  color: #444;
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.errorText {
+  color: #b00020;
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #f1d6dc;
+}
+
+.emptyText {
+  color: #666;
+  background: #fff;
+  padding: 18px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+  vertical-align: top;
+}
+
+.table tr:hover td {
+  background: #fff5f8;
+}
+
+.actionsHead {
+  min-width: 240px;
+}
+
+.addressCell {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.viewBtn,
+.approveBtn,
+.rejectBtn {
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+
+.viewBtn {
+  background: #fff;
+  border-color: #e8e8e8;
+  color: #333;
+}
+
+.viewBtn:hover {
+  border-color: #d92662;
+  color: #d92662;
+}
+
+.approveBtn {
+  background: #19a35b;
+  color: #fff;
+}
+
+.approveBtn:hover {
+  filter: brightness(0.95);
+}
+
+.rejectBtn {
+  background: #e04444;
+  color: #fff;
+}
+
+.rejectBtn:hover {
+  filter: brightness(0.95);
+}
+
+.viewBtn:disabled,
+.approveBtn:disabled,
+.rejectBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.statusPill {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+  border: 1px solid transparent;
+}
+
+.statusPending {
+  background: #fff7e6;
+  color: #a15c00;
+  border-color: #ffe2b3;
+}
+
+.statusApproved {
+  background: #e9fbf2;
+  color: #0f7a3b;
+  border-color: #bff0d6;
+}
+
+.statusRejected {
+  background: #ffecec;
+  color: #b21d1d;
+  border-color: #ffd0d0;
+}

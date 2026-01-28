@@ -1,0 +1,146 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 999;
+}
+
+.modalBox {
+  width: 100%;
+  max-width: 540px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #222;
+  font-weight: 900;
+}
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: #444;
+}
+
+.closeBtn:hover {
+  color: #d92662;
+}
+
+.addressForm {
+  padding: 16px 18px;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  background: #fff;
+}
+
+.input:focus {
+  border-color: #d92662;
+}
+
+.addBtn {
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  padding: 11px 12px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: 0.2s;
+}
+
+.addBtn:hover {
+  border-color: #d92662;
+  color: #d92662;
+}
+
+.addBtnFull {
+  width: 100%;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 8px;
+  padding: 11px 12px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: 0.2s;
+  margin-bottom: 12px;
+}
+
+.addBtnFull:hover {
+  border-color: #d92662;
+  color: #d92662;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.cancelBtn {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #333;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.saveBtn {
+  border: none;
+  background: #d92662;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #b01e4f;
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+}

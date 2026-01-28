@@ -1,0 +1,183 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* ===== Vendor Header ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 22px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+
+.username {
+  margin: 0;
+  color: #333;
+  font-size: 1.6rem;
+}
+
+/* ===== Status Badge ===== */
+.status {
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.approved {
+  background: #e6f7ee;
+  color: #1a7f37;
+}
+
+.pending {
+  background: #fff4e5;
+  color: #b45309;
+}
+
+.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== Vendor Info Card ===== */
+.card {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.label {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.value {
+  color: #111827;
+  max-width: 60%;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* ===== Notice ===== */
+.notice {
+  background: #fff7ed;
+  color: #92400e;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+/* ===== Loading / Error ===== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+/* ===== Existing Order History Styles (UNCHANGED) ===== */
+.userInfo {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+}
+
+.userInfo h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.userInfo p {
+  color: #666;
+  margin: 0;
+}
+
+.historyTitle {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.orderList {
+  list-style: none;
+  padding: 0;
+}
+
+.orderCard {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.orderCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d92662;
+}
+
+.orderHeader {
+  margin: 0 0 10px 0;
+  color: #d92662;
+}
+
+.orderMeta {
+  margin: 6px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.statusLabel {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.itemList {
+  margin: 10px 0 0 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.totalPrice {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.errorText {
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.loadingText {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}

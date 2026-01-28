@@ -1,0 +1,43 @@
+.addBtn {
+  width: min-content;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.211);
+  border: #d92662;
+  background-color: #fff;
+  color: #d92662;
+  cursor: pointer;
+}
+
+.counter {
+  width: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.211);
+  border-radius: 6px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: #d92662;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d92662;
+  display: flex;
+  align-items: center;
+}
+
+.count {
+  padding: 3px;
+  font-size: 14px;
+  font-weight: 600;
+}

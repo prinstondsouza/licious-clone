@@ -1,0 +1,169 @@
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.topSection {
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+  font-size: 2rem;
+  color: #222;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ===== Table ===== */
+.tableWrap {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 14px 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #444;
+  vertical-align: top;
+}
+
+.table tr:hover td {
+  background: #fff5f8;
+}
+
+.orderId {
+  font-weight: 800;
+  color: #d92662;
+}
+
+.total {
+  font-weight: 800;
+  color: #111;
+}
+
+/* ===== Select ===== */
+.select {
+  width: 170px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-family: inherit;
+  cursor: pointer;
+  background: #fff;
+}
+
+.select:focus {
+  border-color: #d92662;
+}
+
+/* ===== Partner Box ===== */
+.partnerBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.partnerName {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111;
+}
+
+/* ===== Buttons ===== */
+.actionBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.saveBtn,
+.assignBtn {
+  border: none;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.85rem;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.saveBtn {
+  background: #d92662;
+  color: #fff;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #b01e4f;
+}
+
+.assignBtn {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.assignBtn:hover:not(:disabled) {
+  border-color: #d92662;
+  color: #d92662;
+}
+
+.saveBtn:disabled,
+.assignBtn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* ===== Empty / Loading / Error ===== */
+.emptyBox {
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.emptyText {
+  margin: 0;
+  color: #666;
+}
+
+.loadingText {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.errorText {
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 15px;
+  border-radius: 6px;
+}

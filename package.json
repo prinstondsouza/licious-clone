@@ -1,0 +1,37 @@
+{
+  "name": "licious-clone",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noelquadras/licious-clone.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noelquadras/licious-clone/issues"
+  },
+  "homepage": "https://github.com/noelquadras/licious-clone#readme",
+  "devDependencies": {
+    "eslint-config-react-app": "^7.0.1",
+    "turbo": "^2.0.0"
+  },
+  "dependencies": {
+    "ajv-formats": "^3.0.1",
+    "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.562.0",
+    "react-toastify": "^11.0.5"
+  }
+}
