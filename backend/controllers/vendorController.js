@@ -132,6 +132,38 @@ export const getVendorById = async (req, res) => {
   }
 };
 
+
+// Similar one already exists below
+
+// // Get all vendors (Public)
+// export const getAllVendorsPublic = async (req, res) => {
+//   try {
+//     const status = "approved";
+//     const vendors = await Vendor.find(status).select("-email -password -documents -status -createdBy");
+//     res.json({ vendors });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+// Get vendor by ID (Public - only approved vendors)
+export const getVendorByIdPublic = async (req, res) => {
+  try {
+    const vendorId = req.params.id;
+    const vendor = await Vendor.findOne({ _id: vendorId, status: "approved", }).select("-email -password -documents -status -createdBy");
+    
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found or not approved" });
+    }
+
+    res.json({ vendor });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 // Vendor dashboard
 export const vendorDashboard = (req, res) => {
   res.json({
@@ -149,7 +181,7 @@ export const vendorDashboard = (req, res) => {
  */
 export const getPublicApprovedVendors = async (req, res) => {
   try {
-    const vendors = await Vendor.find({ status: "approved" }).select("-password -documents -createdBy -email -phone");
+    const vendors = await Vendor.find({ status: "approved" }).select("-password -documents -createdBy -email -status");
     res.json({ vendors });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -60,3 +60,30 @@ const uploadVendorProduct = multer({
 export const uploadUserImage = uploadUser.single("userImage");
 export const uploadBaseProductImages = uploadBaseProduct.array("images", 10);
 export const uploadVendorProductImages = uploadVendorProduct.array("images", 10);
+
+// Helper to delete file from filesystem
+export const deleteFile = (filePath) => {
+  if (!filePath) return;
+
+  // Convert URL path to system path if needed
+  // e.g., /uploads/baseProducts/image.jpg -> d:\licious-mern-clone\server\uploads\baseProducts\image.jpg
+  let systemPath = filePath;
+
+  if (filePath.startsWith('/uploads') || filePath.startsWith('uploads')) {
+    // Remove leading slash if present
+    const relativePath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
+    systemPath = path.join(__dirname, '..', relativePath);
+  }
+
+  // Check if file exists and delete
+  try {
+    if (fs.existsSync(systemPath)) {
+      fs.unlinkSync(systemPath);
+      console.log(`Deleted file: ${systemPath}`);
+    } else {
+      console.log(`File not found for deletion: ${systemPath}`);
+    }
+  } catch (error) {
+    console.error(`Error deleting file ${systemPath}:`, error);
+  }
+};

@@ -1,5 +1,5 @@
 import User from "../models/userModel.js";
-import { uploadUserImage } from "../utils/upload.js";
+import { uploadUserImage, deleteFile } from "../utils/upload.js";
 
 // Get all users (Admin only - for management)
 export const getAllUsers = async (req, res) => {
@@ -93,6 +93,9 @@ export const updateUserProfile = async (req, res) => {
     }
 
     if (req.file) {
+      if (user.userImage) {
+        deleteFile(user.userImage);
+      }
       user.userImage = `/uploads/userImages/${req.file.filename}`;
     }
 

@@ -1,5 +1,5 @@
 import BaseProduct from "../models/baseProductModel.js";
-import { uploadBaseProductImages } from "../utils/upload.js";
+import { uploadBaseProductImages, deleteFile } from "../utils/upload.js";
 
 // Admin creates base product (catalog item)
 export const createBaseProduct = async (req, res) => {
@@ -96,6 +96,12 @@ export const updateBaseProduct = async (req, res) => {
         }
       }
       if (Array.isArray(deletedImages)) {
+        // Delete files from filesystem
+        deletedImages.forEach(img => {
+          if (updatedImages.includes(img)) {
+            deleteFile(img);
+          }
+        });
         updatedImages = updatedImages.filter(img => !deletedImages.includes(img));
       }
     }
