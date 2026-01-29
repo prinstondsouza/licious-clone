@@ -359,14 +359,20 @@ export const getVendorProductById = async (req, res) => {
 export const getAllVendorProducts = async (req, res) => {
   try {
     const query = {};
-    const category = req.query.category;
+    const { category, search } = req.query;
 
-    // Filter by category if provided
+    query.status = "active";
+
+
     if (category) {
       query.category = category;
-      query.status = "active";
-    } else {
-      query.status = "active";
+    }
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
     }
 
     const vendorProducts = await VendorProduct.find(query)
