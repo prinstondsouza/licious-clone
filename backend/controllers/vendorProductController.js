@@ -377,7 +377,8 @@ export const getAllVendorProducts = async (req, res) => {
 
     const vendorProducts = await VendorProduct.find(query)
       .populate("vendor", "storeName ownerName")
-      .sort({ createdAt: -1 }).select('-baseProduct -addedBy -lastUpdatedBy -status -createdAt -updatedAt -__v');
+      .sort({ createdAt: -1 })
+      .select('-baseProduct -addedBy -lastUpdatedBy -status -createdAt -updatedAt -__v');
 
     res.json({ vendorProducts });
   } catch (error) {
