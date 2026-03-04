@@ -18,6 +18,7 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
   // new uploads
   const [newFiles, setNewFiles] = useState([]); // File[]
   const [previews, setPreviews] = useState([]); // string[]
+  const [deletedImages, setDeletedImages] = useState([]); // string[]
 
   useEffect(() => {
     setName(product?.name || "");
@@ -28,6 +29,7 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
 
     setNewFiles([]);
     setPreviews([]);
+    setDeletedImages([]);
   }, [product]);
 
   // cleanup preview blob urls
@@ -49,10 +51,20 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
         String(product?.description || "").trim() &&
       Number(basePrice || 0) === Number(product?.basePrice || 0) &&
       String(status) === String(product?.status || "active") &&
-      newFiles.length === 0;
+      newFiles.length === 0 &&
+      deletedImages.length === 0;
 
     return !same;
-  }, [name, category, description, basePrice, status, newFiles, product]);
+  }, [
+    name,
+    category,
+    description,
+    basePrice,
+    status,
+    newFiles,
+    deletedImages,
+    product,
+  ]);
 
   const handlePickFiles = (e) => {
     const files = Array.from(e.target.files || []);
@@ -91,6 +103,10 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
     setPreviews(nextPreviews);
   };
 
+  const removeExistingImage = (imgUrl) => {
+    setDeletedImages((prev) => [...prev, imgUrl]);
+  };
+
   const handleUpdate = async () => {
     try {
       if (!hasChanges) {
@@ -120,6 +136,10 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
       // backend uses req.files (multer) — must match its fieldname.
       // Most common: "images"
       newFiles.forEach((file) => fd.append("images", file));
+
+      if (deletedImages.length > 0) {
+        fd.append("deletedImages", JSON.stringify(deletedImages));
+      }
 
       const res = await axios.put(`/api/products/base/${product._id}`, fd, {
         headers: {
@@ -169,15 +189,25 @@ const EditProductModal = ({ product, onClose, onUpdated }) => {
         <div className={styles.section}>
           <p className={styles.sectionTitle}>Current Images</p>
 
-          {existingImages.length === 0 ? (
+          {existingImages.filter((img) => !deletedImages.includes(img))
+            .length === 0 ? (
             <div className={styles.emptyImages}>No images uploaded yet.</div>
           ) : (
             <div className={styles.imageRow}>
-              {existingImages.slice(0, 6).map((img, idx) => (
-                <div key={idx} className={styles.imageBox}>
-                  <img src={img} alt="product" className={styles.image} />
-                </div>
-              ))}
+              {existingImages
+                .filter((img) => !deletedImages.includes(img))
+                .map((img, idx) => (
+                  <div key={idx} className={styles.imageBox}>
+                    <img src={img} alt="product" className={styles.image} />
+                    <button
+                      className={styles.removeBtn}
+                      onClick={() => removeExistingImage(img)}
+                      type="button"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
         </div>

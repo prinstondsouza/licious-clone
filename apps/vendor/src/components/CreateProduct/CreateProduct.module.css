@@ -1,113 +1,154 @@
-.container {
+
+.pageWrap {
+  min-height: calc(100vh - 140px); /* Account for navbar + margins */
+  background: #f6f7fb;
+  display: flex;
+  align-items: center; /* Center content vertically */
+  justify-content: center; /* Center content horizontally */
   padding: 20px;
+  border-radius: 16px;
+  box-sizing: border-box; /* Include padding in dimensions */
+}
+
+.container {
+  width: 100%;
   max-width: 600px;
+  margin: 0 auto;
 }
 
 .title {
   font-size: 22px;
   font-weight: 800;
-  margin-bottom: 14px;
+  margin: 0;
+  color: #111;
 }
 
 .form {
-  border: 1px solid #eee;
-  border-radius: 14px;
-  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  padding: 24px;
   background: white;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.05);
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .field label {
   font-size: 14px;
   font-weight: 700;
+  color: #333;
 }
 
 .field input,
 .field textarea {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   outline: none;
   font-size: 14px;
+  transition: all 0.2s ease;
+  background: #f9fafb;
+}
+
+.field input:focus,
+.field textarea:focus {
+  border-color: #111;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .field textarea {
-  min-height: 90px;
+  min-height: 100px;
   resize: vertical;
 }
 
 .row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 16px;
 }
 
 .fileText {
   font-size: 13px;
-  color: #555;
-  margin-top: 4px;
+  color: #666;
+  font-weight: 600;
+  margin-top: 6px;
 }
 
 .submitBtn {
-  margin-top: 6px;
-  padding: 12px;
-  border-radius: 12px;
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 14px;
   border: none;
-  background: black;
+  background: #111;
   color: white;
   cursor: pointer;
   font-weight: 800;
+  font-size: 15px;
+  transition: transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.submitBtn:hover {
+  transform: translateY(-1px);
+}
+
+.submitBtn:active {
+  transform: translateY(1px);
 }
 
 .submitBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* ✅ Header row (Title + Add From Catalog button) */
+/* Header row (Title + Add From Catalog button) */
 .headRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 20px;
 }
 
 .linkBtn {
   text-decoration: none;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 13px;
-  padding: 10px 12px;
+  padding: 10px 16px;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   color: #111;
   background: white;
   transition: 0.15s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
 }
 
 .linkBtn:hover {
   background: #f6f6f6;
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
-/* ✅ Image preview grid */
+/* Image preview grid */
 .previewWrap {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .previewItem {
   position: relative;
-  border-radius: 14px;
+  aspect-ratio: 1;
+  border-radius: 12px;
   overflow: hidden;
   background: #f2f2f2;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -115,35 +156,31 @@
 
 .previewImg {
   width: 100%;
-  height: 92px;
+  height: 100%;
   object-fit: cover;
   display: block;
-  transition: 0.2s ease;
-}
-
-.previewItem:hover .previewImg {
-  transform: scale(1.05);
 }
 
 .removeImgBtn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-weight: 900;
-  background: rgba(0, 0, 0, 0.7);
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: 0.15s ease;
+  font-size: 12px;
+  padding: 0;
 }
 
 .removeImgBtn:hover {
-  background: rgba(255, 0, 0, 0.9);
-  transform: scale(1.05);
+  background: #ef4444;
 }

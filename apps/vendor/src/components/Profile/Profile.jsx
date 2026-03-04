@@ -19,7 +19,7 @@ const Profile = () => {
 
       const vendor = res.data.vendor;
 
-      setAddress(vendor.address.addressString);
+      setAddress(vendor.address);
       setEmail(vendor.email);
       setPhone(vendor.phone);
       setStatus(vendor.status);

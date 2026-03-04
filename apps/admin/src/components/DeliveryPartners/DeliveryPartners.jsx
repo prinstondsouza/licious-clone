@@ -16,7 +16,7 @@ const DeliveryPartners = () => {
       setLoading(true);
       setError("");
 
-      const res = await axios.get("/api/delivery/", {
+      const res = await axios.get("/api/delivery", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -27,10 +27,10 @@ const DeliveryPartners = () => {
     } catch (err) {
       console.error(
         "Fetch Delivery Partners Error:",
-        err.response?.data || err.message
+        err.response?.data || err.message,
       );
       setError(
-        err.response?.data?.message || "Failed to load delivery partners"
+        err.response?.data?.message || "Failed to load delivery partners",
       );
       toast.error("Failed to load delivery partners", {
         position: "top-center",
@@ -56,14 +56,14 @@ const DeliveryPartners = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success(`Partner ${status}`, { position: "top-center" });
 
       // Update UI instantly
       setPartners((prev) =>
-        prev.map((p) => (p._id === partnerId ? { ...p, status } : p))
+        prev.map((p) => (p._id === partnerId ? { ...p, status } : p)),
       );
     } catch (err) {
       console.error("Update Status Error:", err.response?.data || err.message);
@@ -139,8 +139,8 @@ const DeliveryPartners = () => {
                         p.status === "approved"
                           ? styles.approved
                           : p.status === "rejected"
-                          ? styles.rejected
-                          : styles.pending
+                            ? styles.rejected
+                            : styles.pending
                       }`}
                     >
                       {p.status || "pending"}

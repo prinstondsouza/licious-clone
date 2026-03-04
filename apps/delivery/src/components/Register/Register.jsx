@@ -9,7 +9,8 @@ const Register = ({ onLoginClick }) => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     phone: "",
@@ -35,7 +36,7 @@ const Register = ({ onLoginClick }) => {
     } catch (error) {
       console.error(
         "Registration Error:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
       const errorMsg = error.response?.data?.message || "Registration Failed";
       toast.error(errorMsg, { position: "top-center" });
@@ -46,18 +47,29 @@ const Register = ({ onLoginClick }) => {
 
   return (
     <div className={styles.registerContainer}>
-      <h2 className={styles.title}>Register as Admin</h2>
+      <h2 className={styles.title}>Register as Delivery Partner</h2>
 
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={handleChange}
-          className={styles.inputField}
-          required
-        />
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={formData.firstName || ""}
+            onChange={handleChange}
+            className={styles.inputField}
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={formData.lastName || ""}
+            onChange={handleChange}
+            className={styles.inputField}
+            required
+          />
+        </div>
 
         <input
           type="email"

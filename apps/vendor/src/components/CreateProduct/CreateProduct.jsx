@@ -89,101 +89,103 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.headRow}>
-        <h2 className={styles.title}>Create Your Own Product</h2>
-        <Link className={styles.linkBtn} to="/add-from-catalog">
-          Add From Catalog
-        </Link>
-      </div>
-
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.field}>
-          <label>Name</label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter product name"
-          />
+    <div className={styles.pageWrap}>
+      <div className={styles.container}>
+        <div className={styles.headRow}>
+          <h2 className={styles.title}>Create Your Own Product</h2>
+          <Link className={styles.linkBtn} to="/add-from-catalog">
+            Add From Catalog
+          </Link>
         </div>
 
-        <div className={styles.field}>
-          <label>Category</label>
-          <input
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder="Chicken, Fish, etc"
-          />
-        </div>
-
-        <div className={styles.field}>
-          <label>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Write short description"
-          />
-        </div>
-
-        <div className={styles.row}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label>Price</label>
+            <label>Name</label>
             <input
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="Enter price"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter product name"
             />
           </div>
 
           <div className={styles.field}>
-            <label>Stock</label>
+            <label>Category</label>
             <input
-              type="number"
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
-              placeholder="Enter stock"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Chicken, Fish, etc"
             />
           </div>
-        </div>
 
-        <div className={styles.field}>
-          <label>Images</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          <div className={styles.field}>
+            <label>Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Write short description"
+            />
+          </div>
 
-          {images.length > 0 && (
-            <p className={styles.fileText}>{images.length} file(s) selected</p>
-          )}
-
-          {/* ✅ Preview Grid */}
-          {previewUrls.length > 0 && (
-            <div className={styles.previewWrap}>
-              {previewUrls.map((url, index) => (
-                <div key={index} className={styles.previewItem}>
-                  <img src={url} alt="preview" className={styles.previewImg} />
-
-                  <button
-                    type="button"
-                    className={styles.removeImgBtn}
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
+          <div className={styles.row}>
+            <div className={styles.field}>
+              <label>Price</label>
+              <input
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="Enter price"
+              />
             </div>
-          )}
-        </div>
 
-        <button className={styles.submitBtn} disabled={saving}>
-          {saving ? "Creating..." : "Create Product"}
-        </button>
-      </form>
+            <div className={styles.field}>
+              <label>Stock</label>
+              <input
+                type="number"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                placeholder="Enter stock"
+              />
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label>Images</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+
+            {images.length > 0 && (
+              <p className={styles.fileText}>{images.length} file(s) selected</p>
+            )}
+
+            {/* ✅ Preview Grid */}
+            {previewUrls.length > 0 && (
+              <div className={styles.previewWrap}>
+                {previewUrls.map((url, index) => (
+                  <div key={index} className={styles.previewItem}>
+                    <img src={url} alt="preview" className={styles.previewImg} />
+
+                    <button
+                      type="button"
+                      className={styles.removeImgBtn}
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <button className={styles.submitBtn} disabled={saving}>
+            {saving ? "Creating..." : "Create Product"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

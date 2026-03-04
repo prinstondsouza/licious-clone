@@ -27,8 +27,9 @@ const Login = ({ isSidebar = false, onSuccess }) => {
       const user = res.data.deliveryPartner;
 
       localStorage.setItem("token", token);
-      localStorage.setItem("username", user.name);
+      localStorage.setItem("username", `${user.firstName} ${user.lastName}`);
       localStorage.setItem("phone", user.phone);
+      localStorage.setItem("deliveryPartner", JSON.stringify(user));
 
       const userType = getUserTypeFromToken();
 

@@ -13,7 +13,7 @@ const AddressModal = ({
   onClose,
   onSubmit,
 }) => {
-  const { addresses, user } = useUser();
+  const { addresses, user, currentAddress } = useUser();
 
   const [showLocationModal, setShowLocationModal] = useState(false);
   const homeExists = addresses?.some((a) => a.label === "Home");
@@ -26,6 +26,13 @@ const AddressModal = ({
       latitude: user.location.coordinates[1],
     });
   };
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      address: currentAddress,
+    });
+  }, [showLocationModal]);
 
   useEffect(() => {
     if (!isOpen) return;

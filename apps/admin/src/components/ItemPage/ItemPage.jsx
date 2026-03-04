@@ -48,8 +48,8 @@ const ItemPage = () => {
   }, [product]);
 
   const displayPrice = useMemo(() => {
-    if (!product?.price) return "—";
-    return `₹${product.price}`;
+    if (!product?.basePrice) return "—";
+    return `₹${product.basePrice}`;
   }, [product]);
 
   const displayCreated = useMemo(() => {
@@ -198,8 +198,8 @@ const ItemPage = () => {
               </div>
 
               <div className={styles.infoBox}>
-                <p className={styles.infoLabel}>Unit</p>
-                <p className={styles.infoValue}>{product?.unit || "—"}</p>
+                <p className={styles.infoLabel}>Status</p>
+                <p className={styles.infoValue}>{product?.status || "—"}</p>
               </div>
 
               <div className={styles.infoBox}>

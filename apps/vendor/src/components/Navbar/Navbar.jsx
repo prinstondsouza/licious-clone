@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Navbar.module.css";
+import SearchModal from "../Search/SearchModal";
 import { Store, Layers, MapPin, User } from "lucide-react";
 
 const Navbar = ({ onLoginClick }) => {
   const [address, setAddress] = useState("");
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [items, setItems] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +22,10 @@ const Navbar = ({ onLoginClick }) => {
         const res = await axios.get("/api/vendors/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setAddress(res?.data?.vendor?.address.addressString || "");
+        setAddress(
+          res?.data?.vendor?.address.addressString ||
+            res?.data?.vendor?.address,
+        );
       } catch (error) {
         console.error("Profile fetch error:", error);
       }
@@ -30,6 +37,34 @@ const Navbar = ({ onLoginClick }) => {
     window.addEventListener("click", closeMenu);
     return () => window.removeEventListener("click", closeMenu);
   }, []);
+
+  useEffect(() => {
+    if (isLoggedin) {
+      const fetchInventory = async () => {
+        try {
+          const res = await axios.get("/api/products/vendor/inventory", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          setItems(res.data.vendorProducts || []);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchInventory();
+    }
+  }, [isLoggedin]);
+
+  const filteredItems = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return items;
+
+    return items.filter((item) => {
+      const name = (item?.name || item?.baseProduct?.name || "").toLowerCase();
+      return name.includes(q);
+    });
+  }, [items, searchQuery]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -52,13 +87,27 @@ const Navbar = ({ onLoginClick }) => {
         </div>
 
         {/* Search */}
-        <div>
+        <div className={styles.searchWrap}>
           <input
             type="text"
             placeholder="Search for meat, seafood..."
             className={styles.searchBar}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setIsSearchModalOpen(true);
+            }}
+            onFocus={() => setIsSearchModalOpen(true)}
           />
         </div>
+
+        {isSearchModalOpen && (
+          <SearchModal
+            query={searchQuery}
+            onClose={() => setIsSearchModalOpen(false)}
+            results={filteredItems}
+          />
+        )}
 
         {/* Navigation Links */}
         <div className={styles.navLinks}>

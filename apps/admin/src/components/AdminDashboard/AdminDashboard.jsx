@@ -564,6 +564,12 @@ const AdminDashboard = () => {
                   days
                 </span>
               </div>
+              <div className={styles.miniLine}>
+                <span className={styles.dot} />
+                <span>
+                  <b>{calcStats.totalProducts}</b> total products in catalog
+                </span>
+              </div>
             </div>
           </div>
 

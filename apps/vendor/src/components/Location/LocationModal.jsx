@@ -18,23 +18,33 @@ const LocationModal = ({ onClose, onSave }) => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
+          setLoading(true);
+
           const { latitude, longitude } = position.coords;
 
-          const res = await axios.put(
-            "/api/users/location",
+          const res = await axios.get(
+            "https://nominatim.openstreetmap.org/reverse",
             {
-              latitude,
-              longitude,
-              address: "Current Location",
-            },
-            {
+              params: {
+                lat: latitude,
+                lon: longitude,
+                format: "json",
+                addressdetails: 1,
+              },
               headers: {
-                Authorization: `Bearer ${token}`,
+                "User-Agent":"licious-clone-vendor"
               },
             },
           );
 
-          onSave(res.data.user.address);
+          const place = res.data;
+
+          onSave({
+            addr: place.display_name || "Current Location",
+            lat: latitude,
+            lon: longitude,
+          });
+
           onClose();
         } catch (err) {
           console.error(err);

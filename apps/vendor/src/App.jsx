@@ -19,6 +19,7 @@ import CreateProduct from "./components/CreateProduct/CreateProduct";
 import AddFromCatalog from "./components/CreateProduct/AddFromCatalog";
 import VendorOrders from "./components/Orders/VendorOrders";
 import OrderDetails from "./components/Orders/OrderDetails";
+import PendingApproval from "./components/PendingApproval/PendingApproval";
 
 const VendorProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -116,6 +117,13 @@ function App() {
             />
 
             <Route path="/product/:id" element={<ItemPage />} />
+
+            <Route
+              path="/pending-approval"
+              element={
+                <PendingApproval onLoginClick={() => setLoginOpen(true)} />
+              }
+            />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

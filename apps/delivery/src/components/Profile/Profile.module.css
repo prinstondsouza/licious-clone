@@ -1,0 +1,148 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.userInfo {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 40px;
+}
+
+.userInfo h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.userInfo p {
+  color: #666;
+  margin: 0;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.infoItem {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.infoLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.infoValue {
+  font-weight: 500;
+  color: #333;
+}
+
+.historyTitle {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.orderList {
+  list-style: none;
+  padding: 0;
+}
+
+.orderCard {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.orderCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d92662;
+}
+
+.orderHeader {
+  margin: 0 0 10px 0;
+  color: #d92662;
+}
+
+.orderMeta {
+  margin: 6px 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.statusLabel {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.totalPrice {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.errorText {
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.loadingText {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.profileTop {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarFallback {
+  font-size: 22px;
+}
+
+.itemList {
+  margin: 10px 0 0 0;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  color: #777;
+}

@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // Use Link for SPA navigation
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom"; // Use Link for SPA navigation
 import { toast } from "react-toastify";
 import { getUserTypeFromToken } from "../../utils/auth.js";
 import styles from "./Login.module.css";
 
-const Login = ({ isSidebar = false, onSuccess}) => {
+const Login = ({ isSidebar = false, onSuccess }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -21,19 +21,19 @@ const Login = ({ isSidebar = false, onSuccess}) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/vendor/login', formData);
+      const res = await axios.post("/api/auth/vendor/login", formData);
 
       const token = res.data.token || res.data.accessToken;
       const user = res.data.vendor;
       console.log(res.data);
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', user.ownerName);
-      localStorage.setItem('email', user.email);
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", user.ownerName);
+      localStorage.setItem("email", user.email);
 
       const userType = getUserTypeFromToken();
 
-      toast.success('Login Successful!', { position: "top-center" });
+      toast.success("Login Successful!", { position: "top-center" });
 
       switch (userType) {
         case "admin":
@@ -50,10 +50,16 @@ const Login = ({ isSidebar = false, onSuccess}) => {
       }
 
       onSuccess();
-
     } catch (error) {
-      console.error('Login Error:', error.response?.data || error.message);
-      toast.error(error.response?.data?.message || 'Invalid Credentials', { position: "top-center" });
+      console.error("Login Error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Invalid Credentials", {
+        position: "top-center",
+      });
+      if (
+        error.response?.data?.message === "Vendor account is pending approval"
+      ) {
+        navigate("/pending-approval");
+      }
     } finally {
       setLoading(false);
     }
@@ -63,28 +69,24 @@ const Login = ({ isSidebar = false, onSuccess}) => {
     <div className={isSidebar ? styles.sidebarContainer : styles.container}>
       <h2 className={styles.title}>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
-          onChange={handleChange} 
-          className={styles.inputField} 
-          required 
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          onChange={handleChange}
+          className={styles.inputField}
+          required
         />
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Password" 
-          onChange={handleChange} 
-          className={styles.inputField} 
-          required 
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          onChange={handleChange}
+          className={styles.inputField}
+          required
         />
-        
-        <button 
-          type="submit" 
-          className={styles.loginButton}
-          disabled={loading}
-        >
+
+        <button type="submit" className={styles.loginButton} disabled={loading}>
           {loading ? "Signing in..." : "Login"}
         </button>
       </form>

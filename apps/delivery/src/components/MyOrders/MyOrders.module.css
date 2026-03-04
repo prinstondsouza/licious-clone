@@ -52,7 +52,12 @@
   vertical-align: top;
 }
 
-.table tr:hover td {
+.rowClickable {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rowClickable:hover td {
   background: #fff5f8;
 }
 

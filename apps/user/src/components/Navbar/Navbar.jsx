@@ -6,6 +6,7 @@ import { Store, Layers, MapPin, ShoppingCart, User } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useUser } from "../../context/UserContext";
 import SearchModal from "../Search/SearchModal";
+import CategoriesModal from "./CategoriesModal";
 
 const Navbar = ({ onCartClick, onLoginClick }) => {
   const { cart, setCart, fetchCart } = useCart();
@@ -20,6 +21,7 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
   const isLoggedin = Boolean(localStorage.getItem("token"));
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showCategoriesModal, setShowCategoriesModal] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -103,9 +105,13 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
           )}
 
           <div className={styles.navLinks}>
-            <Link to="/categories" className={styles.link}>
+            <div
+              className={styles.link}
+              onClick={() => setShowCategoriesModal(true)}
+              style={{ cursor: "pointer" }}
+            >
               <Layers size={18} /> Categories
-            </Link>
+            </div>
 
             <Link to="/stores" className={styles.link}>
               <Store size={18} /> Stores
@@ -185,6 +191,9 @@ const Navbar = ({ onCartClick, onLoginClick }) => {
 
       {showLocationModal && (
         <LocationModal onClose={() => setShowLocationModal(false)} />
+      )}
+      {showCategoriesModal && (
+        <CategoriesModal onClose={() => setShowCategoriesModal(false)} />
       )}
     </>
   );

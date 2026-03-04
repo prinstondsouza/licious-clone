@@ -51,6 +51,13 @@ const Navbar = ({ onLoginClick }) => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Link
+                      to="/profile"
+                      className={styles.dropdownItem}
+                      onClick={() => setShowProfileMenu(false)}
+                    >
+                      My Profile
+                    </Link>
+                    <Link
                       to="/orders"
                       className={styles.dropdownItem}
                       onClick={() => setShowProfileMenu(false)}

@@ -22,12 +22,27 @@ const LocationModal = ({ onClose }) => {
         try {
           const { latitude, longitude } = position.coords;
 
-          const res = await axios.put(
+          const pos = await axios.get(
+            "https://nominatim.openstreetmap.org/reverse",
+            {
+              params: {
+                lat: latitude,
+                lon: longitude,
+                format: "json",
+                addressdetails: 1,
+              },
+              headers: {
+                "User-Agent": "licious-clone-user",
+              },
+            },
+          );
+
+          await axios.put(
             "/api/users/location",
             {
               latitude,
               longitude,
-              address: "Current Location",
+              address: pos.data.display_name || "Current Location",
             },
             {
               headers: {

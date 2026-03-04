@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import OrderDetailsModal from "./OrderDetailsModal";
 import styles from "./MyOrders.module.css";
 
 const MyOrders = () => {
@@ -11,6 +12,8 @@ const MyOrders = () => {
   const [deliveryBy, setDeliveryBy] = useState(null);
 
   const [error, setError] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [savingStatusId, setSavingStatusId] = useState(null);
 
@@ -58,6 +61,16 @@ const MyOrders = () => {
 
   const handleStatusChange = (orderId, value) => {
     setStatusMap((prev) => ({ ...prev, [orderId]: value }));
+  };
+
+  const handleOpenModal = (order) => {
+    setSelectedOrder(order);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedOrder(null);
   };
 
   const saveOrderStatus = async (orderId) => {
@@ -151,7 +164,11 @@ const MyOrders = () => {
                   o.deliveryPartner?.name || "Not Assigned";
 
                 return (
-                  <tr key={o._id}>
+                  <tr
+                    key={o._id}
+                    onClick={() => handleOpenModal(o)}
+                    className={styles.rowClickable}
+                  >
                     <td className={styles.orderId}>#{orderIdShort}</td>
                     <td>{userName}</td>
                     <td>{vendorName}</td>
@@ -160,22 +177,27 @@ const MyOrders = () => {
                     </td>
 
                     <td>
-                      <select
-                        className={styles.select}
-                        value={statusMap[o._id] || "pending"}
-                        onChange={(e) =>
-                          handleStatusChange(o._id, e.target.value)
-                        }
-                      >
-                        {orderStatuses.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <select
+                          className={styles.select}
+                          value={statusMap[o._id] || "pending"}
+                          onChange={(e) =>
+                            handleStatusChange(o._id, e.target.value)
+                          }
+                        >
+                          {orderStatuses.map((s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
                     <td>
-                      <div className={styles.actionBtns}>
+                      <div
+                        className={styles.actionBtns}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <button
                           className={styles.saveBtn}
                           onClick={() => saveOrderStatus(o._id)}
@@ -193,6 +215,17 @@ const MyOrders = () => {
             </tbody>
           </table>
         </div>
+      )}
+      {isModalOpen && selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          onClose={handleCloseModal}
+          statusMap={statusMap}
+          handleStatusChange={handleStatusChange}
+          saveOrderStatus={saveOrderStatus}
+          savingStatusId={savingStatusId}
+          orderStatuses={orderStatuses}
+        />
       )}
     </div>
   );

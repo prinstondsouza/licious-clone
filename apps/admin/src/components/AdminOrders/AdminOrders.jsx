@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import styles from "./AdminOrders.module.css";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const AdminOrders = () => {
   const token = localStorage.getItem("token");
@@ -9,6 +10,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
   const [partners, setPartners] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [error, setError] = useState("");
 
   const [savingStatusId, setSavingStatusId] = useState(null);
@@ -17,6 +19,9 @@ const AdminOrders = () => {
   // Local UI state
   const [statusMap, setStatusMap] = useState({});
   const [partnerMap, setPartnerMap] = useState({});
+
+  // Modal State
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const orderStatuses = [
     "pending",
@@ -34,11 +39,14 @@ const AdminOrders = () => {
         setLoading(true);
         setError("");
 
-        const [ordersRes, partnersRes] = await Promise.all([
+        const [ordersRes, partnersRes, vendorsRes] = await Promise.all([
           axios.get("/api/orders/all", {
             headers: { Authorization: `Bearer ${token}` },
           }),
           axios.get("/api/delivery/", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("/api/vendors/get-all-vendors/", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -46,9 +54,11 @@ const AdminOrders = () => {
         const ordersData = ordersRes.data?.orders || ordersRes.data || [];
         const partnersData =
           partnersRes.data?.deliveryPartners || partnersRes.data || [];
+        const vendorsData = vendorsRes.data?.vendors || vendorsRes.data || [];
 
         setOrders(ordersData);
         setPartners(partnersData);
+        setVendors(vendorsData);
 
         // Pre-fill dropdown maps
         const initialStatusMap = {};
@@ -89,16 +99,21 @@ const AdminOrders = () => {
       await axios.put(
         `/api/orders/status/${orderId}`,
         { status: statusMap[orderId] },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Order status updated ✅", { position: "top-center" });
 
       setOrders((prev) =>
         prev.map((o) =>
-          o._id === orderId ? { ...o, status: statusMap[orderId] } : o
-        )
+          o._id === orderId ? { ...o, status: statusMap[orderId] } : o,
+        ),
       );
+
+      // Also update selectedOrder if it's open
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder((prev) => ({ ...prev, status: statusMap[orderId] }));
+      }
     } catch (err) {
       console.error("Update Status Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to update status", {
@@ -125,7 +140,7 @@ const AdminOrders = () => {
       await axios.post(
         `/api/delivery/assign`,
         { orderId, partnerId },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Delivery partner assigned ✅", { position: "top-center" });
@@ -135,17 +150,39 @@ const AdminOrders = () => {
       // Update UI instantly
       setOrders((prev) =>
         prev.map((o) =>
-          o._id === orderId ? { ...o, deliveryPartner: assignedPartner } : o
-        )
+          o._id === orderId ? { ...o, deliveryPartner: assignedPartner } : o,
+        ),
       );
+
+      // Also update selectedOrder if it's open
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder((prev) => ({
+          ...prev,
+          deliveryPartner: assignedPartner,
+        }));
+      }
     } catch (err) {
       console.error("Assign Partner Error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Failed to assign partner", {
         position: "top-center",
       });
+      // Reset dropdown on failure
+      const originalOrder = orders.find((o) => o._id === orderId);
+      setPartnerMap((prev) => ({
+        ...prev,
+        [orderId]: originalOrder?.deliveryPartner?._id || "",
+      }));
     } finally {
       setAssigningId(null);
     }
+  };
+
+  const openModal = (order) => {
+    setSelectedOrder(order);
+  };
+
+  const closeModal = () => {
+    setSelectedOrder(null);
   };
 
   if (loading) {
@@ -163,6 +200,12 @@ const AdminOrders = () => {
       </div>
     );
   }
+
+  // Helper to get formatted date
+  const formatDate = (dateString) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleString();
+  };
 
   return (
     <div className={styles.container}>
@@ -184,7 +227,6 @@ const AdminOrders = () => {
               <tr>
                 <th>Order ID</th>
                 <th>User</th>
-                <th>Vendor</th>
                 <th>Total</th>
                 <th>Status</th>
                 <th>Delivery Partner</th>
@@ -197,31 +239,23 @@ const AdminOrders = () => {
                 const orderIdShort = o._id?.slice(-6) || "-";
                 const userName =
                   o.user?.name || o.userName || o.customerName || "-";
-                const vendorName =
-                  o.vendor?.storeName ||
-                  o.vendor?.ownerName ||
-                  o.vendorName ||
-                  "-";
-
                 const total =
-                  o.totalAmount ??
-                  o.totalPrice ??
-                  o.total ??
-                  o.grandTotal ??
-                  0;
-
-                const assignedPartnerName =
-                  o.deliveryPartner?.name || "Not Assigned";
+                  o.totalAmount ?? o.totalPrice ?? o.total ?? o.grandTotal ?? 0;
 
                 return (
-                  <tr key={o._id}>
+                  <tr
+                    key={o._id}
+                    onClick={() => openModal(o)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <td className={styles.orderId}>#{orderIdShort}</td>
                     <td>{userName}</td>
-                    <td>{vendorName}</td>
-                    <td className={styles.total}>₹{Number(total).toFixed(0)}</td>
+                    <td className={styles.total}>
+                      ₹{Number(total).toFixed(0)}
+                    </td>
 
                     {/* ✅ Status Dropdown */}
-                    <td>
+                    <td onClick={(e) => e.stopPropagation()}>
                       <select
                         className={styles.select}
                         value={statusMap[o._id] || "pending"}
@@ -238,12 +272,8 @@ const AdminOrders = () => {
                     </td>
 
                     {/* ✅ Assign Partner */}
-                    <td>
+                    <td onClick={(e) => e.stopPropagation()}>
                       <div className={styles.partnerBox}>
-                        <p className={styles.partnerName}>
-                          {assignedPartnerName}
-                        </p>
-
                         <select
                           className={styles.select}
                           value={partnerMap[o._id] || ""}
@@ -262,14 +292,16 @@ const AdminOrders = () => {
                     </td>
 
                     {/* ✅ Actions */}
-                    <td>
+                    <td onClick={(e) => e.stopPropagation()}>
                       <div className={styles.actionBtns}>
                         <button
                           className={styles.saveBtn}
                           onClick={() => saveOrderStatus(o._id)}
                           disabled={savingStatusId === o._id}
                         >
-                          {savingStatusId === o._id ? "Saving..." : "Save Status"}
+                          {savingStatusId === o._id
+                            ? "Saving..."
+                            : "Save Status"}
                         </button>
 
                         <button
@@ -287,6 +319,25 @@ const AdminOrders = () => {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* ✅ Modal */}
+      {selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          onClose={closeModal}
+          partners={partners}
+          vendors={vendors}
+          statusMap={statusMap}
+          partnerMap={partnerMap}
+          handleStatusChange={handleStatusChange}
+          handlePartnerChange={handlePartnerChange}
+          saveOrderStatus={saveOrderStatus}
+          assignPartner={assignPartner}
+          savingStatusId={savingStatusId}
+          assigningId={assigningId}
+          orderStatuses={orderStatuses}
+        />
       )}
     </div>
   );

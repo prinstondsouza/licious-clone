@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import EditProductModal from "./EditProductModal";
 import styles from "./InventoryList.module.css";
+import { Search } from "lucide-react";
 
 const getImageSrc = (item) => {
   const raw =
@@ -103,7 +104,9 @@ const InventoryList = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className={styles.searchIcon}>⌕</span>
+            <span className={styles.searchIcon}>
+              <Search />
+            </span>
           </div>
 
           <Link to="/create-product" className={styles.addBtn}>

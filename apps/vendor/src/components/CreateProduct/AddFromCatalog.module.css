@@ -56,14 +56,7 @@
   color: #444;
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 16px;
-}
-
-.catalog,
-.formBox {
+.catalog {
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 18px;
   padding: 14px;
@@ -114,7 +107,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 450px;
+  max-height: 600px; /* Increased height since it's the main view now */
   overflow-y: auto;
   padding-right: 6px;
 }
@@ -146,10 +139,7 @@
   background: #fafafa;
 }
 
-.activeItem {
-  border-color: #111;
-  box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.08);
-}
+/* Removed activeItem since selection is transient now (modal opens) */
 
 .itemLeft {
   display: flex;
@@ -178,138 +168,21 @@
   border-radius: 999px;
 }
 
-.helperText {
-  font-size: 14px;
-  color: #666;
-  font-weight: 700;
-}
-
-.selectedInfo {
-  margin-bottom: 12px;
-  padding: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
-  background: #fafafa;
-}
-
-.selectedTop {
+/* Item Thumbnail in List */
+.itemRight {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
 }
 
-.selectedName {
-  margin: 0;
-  font-weight: 900;
-  font-size: 15px;
-  color: #111;
-}
-
-.selectedMeta {
-  margin: 6px 0 0 0;
-  font-size: 13px;
-  color: #555;
-  font-weight: 700;
-}
-
-.resetBtn {
-  border: none;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  padding: 8px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 800;
-  font-size: 12px;
-  transition: 0.15s ease;
-}
-
-.resetBtn:hover {
-  background: #f4f4f4;
-}
-
-.selectedImg {
-  width: 100%;
-  height: 150px;
+.itemThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   object-fit: cover;
-  border-radius: 14px;
-  margin-top: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field label {
-  font-size: 14px;
-  font-weight: 800;
-  color: #111;
-}
-
-.field input {
-  padding: 11px;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  outline: none;
-  background: white;
-  font-size: 14px;
-}
-
-.field input:focus {
-  border-color: #111;
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
-}
-
-.hint {
-  margin: 0;
-  font-size: 12px;
-  color: #666;
-  font-weight: 700;
-}
-
-.submitBtn {
-  margin-top: 6px;
-  padding: 12px;
-  border-radius: 14px;
-  border: none;
-  background: #111;
-  color: white;
-  cursor: pointer;
-  font-weight: 900;
-  transition: 0.15s ease;
-  box-shadow: 0px 14px 28px rgba(0, 0, 0, 0.18);
-}
-
-.submitBtn:hover {
-  transform: translateY(-1px);
-}
-
-.submitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
 }
 
 @media (max-width: 850px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .searchInput {
-    width: 100%;
-  }
-
   .catalogHead {
     flex-direction: column;
     align-items: stretch;

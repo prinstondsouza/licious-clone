@@ -138,19 +138,37 @@
 
 .carouselArrow {
   position: absolute;
-  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #fff;
+
+  z-index: 10;
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+  border: 1px solid #eee;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 22px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+.carouselArrow:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+.leftArrow {
+  left: 5px;
+}
+
+.rightArrow {
+  right: 5px;
 }
 
 .dots {

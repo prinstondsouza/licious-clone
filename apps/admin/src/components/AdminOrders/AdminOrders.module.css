@@ -52,6 +52,10 @@
   vertical-align: top;
 }
 
+.table tr {
+  cursor: pointer;
+}
+
 .table tr:hover td {
   background: #fff5f8;
 }
@@ -64,6 +68,32 @@
 .total {
   font-weight: 800;
   color: #111;
+}
+
+/* ===== Vendor Info ===== */
+.vendorInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+}
+
+.storeName {
+  font-weight: 700;
+  color: #111;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.ownerName {
+  font-size: 0.8rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 /* ===== Select ===== */

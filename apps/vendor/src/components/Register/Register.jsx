@@ -33,7 +33,7 @@ const Register = ({ onLoginClick }) => {
       toast.success("Registration Successful! Please Login.", {
         position: "top-center",
       });
-      navigate("/login");
+      navigate("/pending-approval");
     } catch (error) {
       console.error(
         "Registration Error:",
@@ -113,7 +113,7 @@ const Register = ({ onLoginClick }) => {
         <textarea
           name="address"
           placeholder="Store Address"
-          value={formData.address}
+          value={formData.addressString}
           onChange={handleChange}
           className={`${styles.inputField} ${styles.textArea}`}
           required

@@ -1,0 +1,81 @@
+.overlay {
+  max-height: fit-content;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  font-size: 16px;
+  outline: none;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.results {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.resultItem {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.resultItem:hover {
+  background: #f7f7f7;
+  border-radius: 12px;
+}
+
+.resultItem img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.price {
+  font-size: 13px;
+  color: #d92662;
+}
+
+.state {
+  padding: 16px;
+  font-size: 14px;
+  color: #777;
+  text-align: center;
+}

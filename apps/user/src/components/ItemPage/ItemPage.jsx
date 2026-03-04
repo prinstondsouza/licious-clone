@@ -5,6 +5,7 @@ import styles from "./ItemPage.module.css";
 import QuantityButton from "../Product/QuantityButton";
 import { getProductQuantity } from "../../utils/cartUtils";
 import { useCart } from "../../context/CartContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ItemPage = () => {
   const navigate = useNavigate();
@@ -66,6 +67,11 @@ const ItemPage = () => {
     setActiveImage((prev) => (prev + 1) % images.length);
   };
 
+  const prevImage = () => {
+    if (!images?.length) return;
+    setActiveImage((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   if (loading) {
     return <div className={styles.loading}>Loading product details...</div>;
   }
@@ -113,7 +119,7 @@ const ItemPage = () => {
 
         {/* PDP Top Container */}
         <div className={styles.pdpTop}>
-          {/* Left: Carousel */}
+          {/* Right: Carousel */}
           <div className={styles.leftCol}>
             <div className={styles.carouselContainer}>
               <div className={styles.carouselInner}>
@@ -125,8 +131,20 @@ const ItemPage = () => {
               </div>
 
               {images.length > 1 && (
-                <button className={styles.carouselArrow} onClick={nextImage}>
-                  ›
+                <button
+                  className={`${styles.carouselArrow} ${styles.rightArrow}`}
+                  onClick={nextImage}
+                >
+                  <ChevronRight size={22} />
+                </button>
+              )}
+
+              {images.length > 1 && (
+                <button
+                  className={`${styles.carouselArrow} ${styles.leftArrow}`}
+                  onClick={prevImage}
+                >
+                  <ChevronLeft size={22} />
                 </button>
               )}
 

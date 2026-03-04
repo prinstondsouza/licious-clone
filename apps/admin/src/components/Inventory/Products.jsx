@@ -178,7 +178,7 @@ const Products = () => {
 
                 <div className={styles.cardBottom}>
                   <span className={styles.pill}>
-                    {p?.unit || "unit"} • {p?.price ? `₹${p.price}` : "—"}
+                    {p?.basePrice ? `₹${p.basePrice}` : "—"}
                   </span>
                   <span className={styles.viewHint}>View →</span>
                 </div>

@@ -13,6 +13,7 @@ import Register from "./components/Register/Register";
 import DeliveryDashboard from "./components/DeliveryDashboard/DeliveryDashboard";
 import LoginSidebar from "./components/Login/LoginSidebar";
 import MyOrders from "./components/MyOrders/MyOrders";
+import Profile from "./components/Profile/Profile";
 
 const DeliveryProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -57,6 +58,15 @@ function App() {
               element={
                 <DeliveryProtectedRoute>
                   <MyOrders />
+                </DeliveryProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <DeliveryProtectedRoute>
+                  <Profile />
                 </DeliveryProtectedRoute>
               }
             />
